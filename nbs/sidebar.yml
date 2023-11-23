@@ -1,0 +1,16 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 00_compute_vpd.ipynb
+      - 01_compute_etp_pt.ipynb
+      - 02_compute_etp_pm.ipynb
+      - 03_calculate_radiation_diurnal_pattern.ipynb
+      - 04_calculate_temperature_diurnal_pattern.ipynb
+      - 05_calculate_rh_diurnal_pattern.ipynb
+      - 06_ppfd_umol_to_rg_watt.ipynb
+      - 07_rg_conversions.ipynb
+      - 08_potential_par.ipynb
+      - 10_create_simulation_parameters.ipynb
+      - 11_create_modeling_options.ipynb
+      - 12_create_climate_data.ipynb
