@@ -5,4 +5,6 @@ d = { 'settings': { 'branch': 'main',
                 'doc_host': 'https://ecamo19.github.io',
                 'git_url': 'https://github.com/ecamo19/sureau_ecos_py',
                 'lib_path': 'sureau_ecos_py'},
-  'syms': {'sureau_ecos_py.core': {'sureau_ecos_py.core.foo': ('core.html#foo', 'sureau_ecos_py/core.py')}}}
+  'syms': { 'sureau_ecos_py.compute_vpd_from_t_rh': { 'sureau_ecos_py.compute_vpd_from_t_rh.compute_vpd_from_t_rh': ( 'compute_vpd.html#compute_vpd_from_t_rh',
+                                                                                                                      'sureau_ecos_py/compute_vpd_from_t_rh.py')},
+            'sureau_ecos_py.core': {'sureau_ecos_py.core.foo': ('core.html#foo', 'sureau_ecos_py/core.py')}}}
