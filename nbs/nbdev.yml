@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "sureau_ecos_py"
+  site-url: "https://ecamo19.github.io/sureau_ecos_py"
+  description: "Repo containing the Python code for the SurEau model"
+  repo-branch: main
+  repo-url: "https://github.com/ecamo19/sureau_ecos_py"
