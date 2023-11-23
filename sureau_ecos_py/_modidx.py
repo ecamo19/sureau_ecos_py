@@ -17,4 +17,8 @@ d = { 'settings': { 'branch': 'main',
                                                                                                  'sureau_ecos_py/compute_etp_pt.py')},
             'sureau_ecos_py.compute_vpd_from_t_rh': { 'sureau_ecos_py.compute_vpd_from_t_rh.compute_vpd_from_t_rh': ( 'compute_vpd.html#compute_vpd_from_t_rh',
                                                                                                                       'sureau_ecos_py/compute_vpd_from_t_rh.py')},
-            'sureau_ecos_py.core': {'sureau_ecos_py.core.foo': ('core.html#foo', 'sureau_ecos_py/core.py')}}}
+            'sureau_ecos_py.core': {'sureau_ecos_py.core.foo': ('core.html#foo', 'sureau_ecos_py/core.py')},
+            'sureau_ecos_py.rg_watt_to_ppfd_umol': { 'sureau_ecos_py.rg_watt_to_ppfd_umol.ppfd_umol_to_rg_watt': ( 'ppfd_umol_to_rg_watt.html#ppfd_umol_to_rg_watt',
+                                                                                                                   'sureau_ecos_py/rg_watt_to_ppfd_umol.py'),
+                                                     'sureau_ecos_py.rg_watt_to_ppfd_umol.rg_watt_to_ppfd_umol': ( 'ppfd_umol_to_rg_watt.html#rg_watt_to_ppfd_umol',
+                                                                                                                   'sureau_ecos_py/rg_watt_to_ppfd_umol.py')}}}
