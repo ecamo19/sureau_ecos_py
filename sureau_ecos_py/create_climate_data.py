@@ -51,14 +51,14 @@ class ClimateDataValidation(pa.SchemaModel):
 
 @pa.check_types(lazy=True)
 def create_climate_data(
-    file_path: Path,  # Path of the input CSV climate file. i.e. path/to/file/climate.csv
+    file_path: Path,  # Path to the input CSV climate file. i.e. path/to/file/climate.csv
     sep: str = ";",  # CSV file separator can be "," or ";"
     modeling_options: List[
         int
-    ] = None,  # List containing the modeling option. Created with create_modeling_options function
+    ] = None,  # Dictionary created using the `create_modeling_options` function
     simulation_parameters: List[
         int
-    ] = None,  # List containing the simulation parameters. Created with create_simulation_parameters function
+    ] = None,  # Dictionary created using the `create_simulation_parameters` function
 ) -> DataFrame[ClimateDataValidation]:
     """
     Create a climate data.frame to run SureauR.
