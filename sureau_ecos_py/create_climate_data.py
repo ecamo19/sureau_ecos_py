@@ -12,7 +12,7 @@ import pandera as pa
 from pandera.typing import DataFrame, Series
 import numpy as np
 
-# from sureau_ecos_py import *
+from . import create_climate_data
 
 # %% ../nbs/12_create_climate_data.ipynb 4
 # This class is created for validating the input climate dataframe
