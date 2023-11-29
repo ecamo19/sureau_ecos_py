@@ -58,7 +58,6 @@ def create_climate_data(
     modeling_options: Dict,  # Dictionary created using the `create_modeling_options` function
     file_path: Path,  # Path to the input CSV climate file. i.e. path/to/file/climate.csv
     sep: str = ";",  # CSV file separator can be "," or ";"
-
 ) -> DataFrame[ClimateDataValidation]:
     """
     Create a climate data.frame to run SureauR.
@@ -70,12 +69,11 @@ def create_climate_data(
     # Make sure that simulation_parameters and modeling_options are dictionaries -----------------------------
     assert isinstance(
         simulation_parameters, Dict
-    ), f'simulation_parameters must be a dictionary not a {type(simulation_parameters)}'
+    ), f"simulation_parameters must be a dictionary not a {type(simulation_parameters)}"
 
     assert isinstance(
         modeling_options, Dict
-    ), f'modeling_options must be a dictionary not a {type(modeling_options)}'
-
+    ), f"modeling_options must be a dictionary not a {type(modeling_options)}"
 
     # Read file if it exists and climateData not provided, error otherwise ------------------------------------
 
@@ -90,11 +88,9 @@ def create_climate_data(
     else:
         print(f"file: {file_path}, does not exist, check presence or spelling")
 
-
     # Create climate data based on constant_climate parameter ------------------------------------------------
 
-    if modeling_options['constant_climate'] is False:
-
+    if modeling_options["constant_climate"] is False:
         # Break DATE into year,month, day_of_year, day_of_month columns
 
         # Create function for extracting the day of the year (from 0 to 365)
@@ -104,7 +100,7 @@ def create_climate_data(
         # Map function over each row and create new column
         climate_data["day_of_year"] = pd.DataFrame(
             map(get_day_of_year, climate_data["DATE"])
-            )
+        )
 
         # Get the day of the month (from 1 to 31)
         climate_data["day_of_month"] = pd.DatetimeIndex(climate_data["DATE"]).day
@@ -117,30 +113,38 @@ def create_climate_data(
 
         # Filter data based on start_year_simulation and end_year_simulation parameters
         # specified in similation_parameters dictionary
-        climate_data =  climate_data.loc[(climate_data['year'] >= simulation_parameters["start_year_simulation"]) &
-                                (climate_data['year'] <= simulation_parameters["end_year_simulation"])]
+        climate_data = climate_data.loc[
+            (climate_data["year"] >= simulation_parameters["start_year_simulation"])
+            & (climate_data["year"] <= simulation_parameters["end_year_simulation"])
+        ]
 
-        print(f'{climate_data.shape[0]} days were selected in the input climate file, covering the period: {climate_data["year"].min()} - {climate_data["year"].max()}')
+        print(
+            f'{climate_data.shape[0]} days were selected in the input climate file, covering the period: {climate_data["year"].min()} - {climate_data["year"].max()}'
+        )
 
         return climate_data
 
-
-    if modeling_options['constant_climate'] is True:
-
+    if modeling_options["constant_climate"] is True:
         # Use a List Comprehension to create a sequence of dates with the format Day/Month/Year
-        date_ref = [each_date.strftime('%d-%m-%Y') for each_date in pd.date_range(start= f'01/01/{simulation_parameters["start_year_simulation"]}',
-                                                                                  end = f'31/12/{simulation_parameters["end_year_simulation"]}',
-                                                                                  freq= 'D')]
-
+        date_ref = [
+            each_date.strftime("%d-%m-%Y")
+            for each_date in pd.date_range(
+                start=f'01/01/{simulation_parameters["start_year_simulation"]}',
+                end=f'31/12/{simulation_parameters["end_year_simulation"]}',
+                freq="D",
+            )
+        ]
 
         # Get the first row of the climate_data
         constant_climate_data = climate_data.loc[:0]
 
         # Repeat it based on the lenght of date_ref. This is done for creating a constant climate
-        constant_climate_data = constant_climate_data.loc[constant_climate_data.index.repeat(len(date_ref))]
+        constant_climate_data = constant_climate_data.loc[
+            constant_climate_data.index.repeat(len(date_ref))
+        ]
 
         # Substitute the old dates with the new ones
-        constant_climate_data.DATE = pd.to_datetime(date_ref, format='%d-%m-%Y')
+        constant_climate_data.DATE = pd.to_datetime(date_ref, format="%d-%m-%Y")
 
         # Break DATE into year,month, day_of_year, day_of_month columns -----------------------------------------------
 
@@ -151,19 +155,25 @@ def create_climate_data(
         # Map function over each row and create new column
         constant_climate_data["day_of_year"] = pd.DataFrame(
             map(get_day_of_year, constant_climate_data["DATE"])
-            )
+        )
 
         # Get the day of the month (from 1 to 31)
-        constant_climate_data["day_of_month"] = pd.DatetimeIndex(constant_climate_data["DATE"]).day
+        constant_climate_data["day_of_month"] = pd.DatetimeIndex(
+            constant_climate_data["DATE"]
+        ).day
 
         # Get the month (from 1 to 12)
-        constant_climate_data["month"] = pd.DatetimeIndex(constant_climate_data["DATE"]).month
+        constant_climate_data["month"] = pd.DatetimeIndex(
+            constant_climate_data["DATE"]
+        ).month
 
         # Get the year
-        constant_climate_data["year"] = pd.DatetimeIndex(constant_climate_data["DATE"]).year
+        constant_climate_data["year"] = pd.DatetimeIndex(
+            constant_climate_data["DATE"]
+        ).year
 
-        print(f'{constant_climate_data.shape[0]} days of the period: {constant_climate_data["year"].min()} - {constant_climate_data["year"].max()} have the same climatic conditions' )
+        print(
+            f'{constant_climate_data.shape[0]} days of the period: {constant_climate_data["year"].min()} - {constant_climate_data["year"].max()} have the same climatic conditions'
+        )
 
         return constant_climate_data
-
-
