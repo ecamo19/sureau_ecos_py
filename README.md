@@ -16,7 +16,7 @@ pip install sureau_ecos_py
 Fill me in please! Don’t forget code examples:
 
 ``` python
-1 + 1
+1 + 3
 ```
 
-    2
+
