@@ -28,32 +28,32 @@ Fill me in please! Don’t forget code examples:
       basic_run.R-->model;
 
 
-      run.write.configs-->output_1[updated settings with ensemble IDs for SA and ensemble analysis ];
-      run.write.configs-->posterior.files[post.distns.Rdata or prior.distns.Rdata];
-      output_1[updated settings with ensemble IDs for SA and ensemble analysis]-->get.ensemble.samples;
+      %%run.write.configs-->output_1[updated settings with ensemble IDs for SA and ensemble analysis ];
+      %%run.write.configs-->posterior.files[post.distns.Rdata or prior.distns.Rdata];
+      %%output_1[updated settings with ensemble IDs for SA and ensemble analysis]-->get.ensemble.samples;
 
-      posterior.files[post.distns.Rdata or prior.distns.Rdata]-->get_parameter_samples;
+      %%posterior.files[post.distns.Rdata or prior.distns.Rdata]-->get_parameter_samples;
 
-      input_get_ensemble_1[pft.samples]-->get.ensemble.samples;
-      input_get_ensemble_2[env.samples]-->get.ensemble.samples;
-      input_get_ensemble_3[ensemble.size]-->get.ensemble.samples;
-      input_get_ensemble_4[param.names]-->get.ensemble.samples;
+      %%input_get_ensemble_1[pft.samples]-->get.ensemble.samples;
+      %%input_get_ensemble_2[env.samples]-->get.ensemble.samples;
+      %%input_get_ensemble_3[ensemble.size]-->get.ensemble.samples;
+      %%input_get_ensemble_4[param.names]-->get.ensemble.samples;
 
-      get_parameter_samples-->input_get_ensemble_1[pft.samples];
-      get_parameter_samples-->input_get_ensemble_2[env.samples];
-      get_parameter_samples-->input_get_ensemble_3[ensemble.size];
-      get_parameter_samples-->input_get_ensemble_4[param.names];
+      %%get_parameter_samples-->input_get_ensemble_1[pft.samples];
+      %%get_parameter_samples-->input_get_ensemble_2[env.samples];
+      %%get_parameter_samples-->input_get_ensemble_3[ensemble.size];
+      %%get_parameter_samples-->input_get_ensemble_4[param.names];
 
-      get.ensemble.samples-->output_get_ensemble[ensemble.samples, matrix of random samples from trait distributions];
+      %%get.ensemble.samples-->output_get_ensemble[ensemble.samples, matrix of random samples from trait distributions];
 
-      output_get_ensemble[ensemble.samples, matrix of random samples from trait distributions]-->write.ensemble.configs;
-      model-->write.ensemble.configs;
-      simple_biocro.xml-->write.ensemble.configs;
+      %%output_get_ensemble[ensemble.samples, matrix of random samples from trait distributions]-->write.ensemble.configs;
+      %%model-->write.ensemble.configs;
+      %%simple_biocro.xml-->write.ensemble.configs;
 
-      write.ensemble.configs-->output_write_ensemble_1[$runs = data frame of runids];
-      write.ensemble.configs-->output_write_ensemble_2[$ensemble.id = the ensemble ID for these runs];
-      write.ensemble.configs-->output_write_ensemble_3[$samples with ids and samples used for each tag.];
-      write.ensemble.configs-->output_write_ensemble_4[sensitivity analysis configuration files as a side effect];
+      %%write.ensemble.configs-->output_write_ensemble_1[$runs = data frame of runids];
+      %%write.ensemble.configs-->output_write_ensemble_2[$ensemble.id = the ensemble ID for these runs];
+      %%write.ensemble.configs-->output_write_ensemble_3[$samples with ids and samples used for each tag.];
+      %%write.ensemble.configs-->output_write_ensemble_4[sensitivity analysis configuration files as a side effect];
 
       %% Blue color boxes ------------------------------------------------------------------
 
