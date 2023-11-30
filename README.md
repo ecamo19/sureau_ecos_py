@@ -32,6 +32,6 @@ Fill me in please! Don’t forget code examples:
 
         %% Red color boxes ------------------------------------------------------------------------
 
-        style write.ensemble.configs fill:#880808
+        %%style write.ensemble.configs fill:#880808
 
 ```
