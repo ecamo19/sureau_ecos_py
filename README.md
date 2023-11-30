@@ -55,7 +55,7 @@ Fill me in please! Don’t forget code examples:
       write.ensemble.configs-->output_write_ensemble_3[$samples with ids and samples used for each tag.];
       write.ensemble.configs-->output_write_ensemble_4[sensitivity analysis configuration files as a side effect];
 
-      %% Blue color boxes
+      %% Blue color boxes ------------------------------------------------------------------
 
       style get_parameter_samples fill:#00758f
       style basic_run.R fill:#00758f
@@ -72,8 +72,7 @@ Fill me in please! Don’t forget code examples:
       style get.ensemble.samples fill:#00758f
        style output_get_ensemble fill:#00758f
 
-      %% Red color boxes
-
+      %% Red color boxes ------------------------------------------------------------------------
 
       style write.ensemble.configs fill:#880808
       style output_write_ensemble_1 fill:#880808
