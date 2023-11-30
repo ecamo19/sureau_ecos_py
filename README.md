@@ -11,13 +11,7 @@ documentation.
 pip install sureau_ecos_py
 ```
 
-## How to use
-
-Fill me in please! Don’t forget code examples:
-
-``` python
-1 + 1
-```
+## Graph showing where functions are used
 
 ```mermaid
     graph TD;
