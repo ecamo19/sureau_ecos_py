@@ -22,11 +22,12 @@ Fill me in please! Don’t forget code examples:
 ```mermaid
     graph TD;
 
-        create_modeling_options-->create_climate_data;
         create_simulation_parameters-->create_climate_data;
+        create_modeling_options-->create_climate_data;
 
-        create_modeling_options-->create_soil_paramters
-        compute_theta_at_given_psoil-->create_soil_paramters
+
+        create_modeling_options-->create_soil_paramters;
+        compute_theta_at_given_psoil-->create_soil_paramters;
 
         %% Blue color boxes ------------------------------------------------------------------
 
