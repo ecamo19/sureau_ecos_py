@@ -26,6 +26,7 @@ Fill me in please! Don’t forget code examples:
         create_simulation_parameters-->create_climate_data;
 
         create_modeling_options-->create_soil_paramters
+        compute_theta_at_given_psoil-->create_soil_paramters
 
         %% Blue color boxes ------------------------------------------------------------------
 
@@ -35,8 +36,7 @@ Fill me in please! Don’t forget code examples:
         style create_soil_paramters fill:#00758f
 
 
-        %% Red color boxes ------------------------------------------------------------------------
-
-        %%style write.ensemble.configs fill:#880808
+        %% Red color boxes --------------------------------------------------------------------
+        style compute_theta_at_given_psoil fill:#880808
 
 ```
