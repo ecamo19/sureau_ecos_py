@@ -33,7 +33,7 @@ Fill me in please! Don’t forget code examples:
 
         style create_climate_data fill:#00758f
         style create_modeling_options fill:#00758f
-        style create_simulation_parameters fill:#00758f lineColor': '#F8B229'
+        style create_simulation_parameters fill:#00758f lineColor:#F8B229
         style create_soil_paramters fill:#00758f
 
 
