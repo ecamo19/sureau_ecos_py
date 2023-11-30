@@ -39,7 +39,13 @@ def create_simulation_parameters(
 
     simulation_parameters["resolution_output"] = resolution_output
 
-    assert isinstance(output_type, str)
+    assert output_type in [
+        None,
+        "simple_subdaily",
+        "simple_daily",
+        "simple_yearly"
+    ], f'{output_type} not a valid option, select  None, "simple_subdaily", "simple_daily" or "simple_yearly"'
+
     if output_type is None:
         if resolution_output == "subdaily":
             simulation_parameters["output_type"] = "simple_subdaily"
