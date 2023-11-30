@@ -11,9 +11,9 @@ documentation.
 pip install sureau_ecos_py
 ```
 
-## Graph showing where functions are used
+## How to use
 
-```mermaid
+``` mermaid
     graph TD;
 
         create_simulation_parameters-->create_climate_data;
@@ -33,5 +33,4 @@ pip install sureau_ecos_py
 
         %% Red color boxes --------------------------------------------------------------------
         style compute_theta_at_given_psoil fill:#880808
-
 ```
