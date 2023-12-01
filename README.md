@@ -33,4 +33,5 @@ pip install sureau_ecos_py
 
         %% Red color boxes --------------------------------------------------------------------
         style compute_theta_at_given_psoil fill:#880808
+
 ```

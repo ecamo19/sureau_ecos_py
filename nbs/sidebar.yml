@@ -11,6 +11,8 @@ website:
       - 06_ppfd_umol_to_rg_watt.ipynb
       - 07_rg_conversions.ipynb
       - 08_potential_par.ipynb
+      - 09_soil_utils.ipynb
       - 10_create_simulation_parameters.ipynb
       - 11_create_modeling_options.ipynb
       - 12_create_climate_data.ipynb
+      - 13_create_soil_parameters.ipynb
