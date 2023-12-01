@@ -14,7 +14,7 @@ pip install sureau_ecos_py
 ## How to use
 
 ``` mermaid
-    %%{init: {'theme': 'neutral' } }%%
+    %%{init:{'themeVariables': {'primaryBorderColor': '#00758f'}}}%%
     graph TD;
 
         create_simulation_parameters-->create_climate_data;
