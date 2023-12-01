@@ -15,7 +15,7 @@ pip install sureau_ecos_py
 
 ``` mermaid
     %%{init:{'themeVariables': {'primaryBorderColor': '#00758f'}}}%%
-    graph TD;
+    flowchart TD;
 
         create_simulation_parameters-->create_climate_data;
         create_modeling_options-->create_climate_data;
@@ -26,13 +26,13 @@ pip install sureau_ecos_py
 
         %% Blue color boxes ------------------------------------------------------------------
 
-        style create_climate_data fill:#00758f
-        style create_modeling_options fill:#00758f
-        style create_simulation_parameters fill:#00758f, lineColor:#00758f
-        style create_soil_paramters fill:#00758f
+        %%style create_climate_data fill:#00758f
+        %%style create_modeling_options fill:#00758f
+        %%style create_simulation_parameters fill:#00758f, lineColor:#00758f
+        %%style create_soil_paramters fill:#00758f
 
 
         %% Red color boxes --------------------------------------------------------------------
-        style compute_theta_at_given_psoil fill:#880808
+        %%style compute_theta_at_given_psoil fill:#880808
 
 ```
