@@ -43,7 +43,7 @@ def create_simulation_parameters(
         None,
         "simple_subdaily",
         "simple_daily",
-        "simple_yearly"
+        "simple_yearly",
     ], f'{output_type} not a valid option, select  None, "simple_subdaily", "simple_daily" or "simple_yearly"'
 
     if output_type is None:

@@ -6,28 +6,86 @@ __all__ = ['create_soil_parameters']
 # %% ../nbs/13_create_soil_parameters.ipynb 3
 from typing import Dict
 from pathlib import Path
+import collections
+import warnings
+import numpy as np
 from .create_modeling_options import create_modeling_options
 
 # %% ../nbs/13_create_soil_parameters.ipynb 4
-def create_soil_parameters(file_path: Path, # Path to a csv file containing parameter values i.e path/to/parameter_values.csv
-                           modeling_options, # Dictionary created using the `create_modeling_options` function
-                           list_of_parameters = None, # A list containing the necessary input parameters instead of reading them in file. Will only be used if 'filePath' arguement is not provided
-                           default_soil = False, # A logical value indicating whether a default soil should be used  to run tests
-                           off_set_psoil = 0, # A numerical value indicating the offset in soil water potential (default = 0)
-                           psoil_at_field_capacity = 33
-
+def create_soil_parameters(
+    file_path: Path = None,  # Path to a csv file containing parameter values i.e path/to/parameter_values.csv
+    modeling_options: Dict = None,  # Dictionary created using the `create_modeling_options` function
+    list_of_parameters=None,  # A list containing the necessary input parameters instead of reading them in file. Will only be used if 'filePath' arguement is not provided
+    default_soil: bool = False,  # A logical value indicating whether a default soil should be used  to run tests
+    offset_psoil: int = 0,  # A numerical value indicating the offset in soil water potential (MPa)
+    psoil_at_field_capacity=33,
 ) -> Dict:
     """
     Create a list with soil parameters to run SureauR
     """
-    pass
-    # Make sure that simulation_parameters and modeling_options are dictionaries -----------------------------
-    #assert isinstance(
-    #    simulation_parameters, Dict
-    #), f"simulation_parameters must be a dictionary not a {type(simulation_parameters)}"
+    # Create empty dictionary
+    soil_params = collections.defaultdict(list)
 
-    #assert isinstance(
-    #    modeling_options, Dict
-    #), f"modeling_options must be a dictionary not a {type(modeling_options)}"
+    # offset_psoil -----------------------------------------------------------------------------------
+    assert (
+        offset_psoil >= 0
+    ), "offset_psoil must be an integer greater than or equal to 0"
+    print(f"There is an offset on Psoil of {offset_psoil} MPa")
+    soil_params["offset_psoil"] = offset_psoil
 
+    # psoil_at_field_capacity -------------------------------------------------------------------------
+    assert (
+        100 >= psoil_at_field_capacity >= 0
+    ), "psoil_at_field_capacity must be an integer in the range between 0 and 100"
+    print(f"Psoil at field capacity = {psoil_at_field_capacity/1000} MPa")
+    soil_params["psoil_at_field_capacity"] = psoil_at_field_capacity / 1000
 
+    # default soil for tests --------------------------------------------------------------------------
+    if default_soil is True:
+        warnings.warn("Default soil used (Van-Genuchten Formulation)")
+
+        soil_params["pedo_transfer_formulation"] = "vg"
+        soil_params["rock_fragment_content"] = np.array([40, 75, 90])
+        soil_params["depth"] = np.array([0.3, 1, 4], dtype=float)
+        soil_params["layer_thickness"] = np.array([0, 0, 0], dtype=float)
+        soil_params["layer_thickness"][0] = soil_params["depth"][0]
+        soil_params["layer_thickness"][1] = (
+            soil_params["depth"][1] - soil_params["depth"][0]
+        )
+        soil_params["layer_thickness"][2] = (
+            soil_params["depth"][2] - soil_params["depth"][1]
+        )
+        soil_params["g_soil0"] = 30
+
+        # Van Genuchten parameters
+
+        # Shape parameters of the relationship between soil water content and soil water potential
+        soil_params["alpha_vg"] = np.repeat(0.0035, 3)
+
+        # Shape parameters of the relationship betwen soil water content and soil water potential
+        soil_params["n_vg"] = np.repeat(1.55, 3)
+
+        # m parameters Van Genuchten equations
+        soil_params["m"] = 1 - (1 / soil_params["n_vg"])
+
+        # Shape parameters of the relationship between soil water content and soil water potential
+        soil_params["i_vg"] = np.repeat(0.5, 3)
+
+        # Soil conductivity at saturation (mol/m/s/Mpa)
+        soil_params["ksat_vg"] = np.repeat(1.69, 3)
+
+        # Fraction of water at saturation capacity (cm3/cm3)
+        soil_params["saturation_capacity_vg"] = np.repeat(0.5, 3)
+
+        # Fraction of residual water (cm3/cm3)
+        soil_params["residual_capacity_vg"] = np.repeat(0.1, 3)
+
+        # add computation of wilting and field capacity from functions
+        # soil_params["wilting_point"] = compute_theta_at_given_psoil(psi_target = 1.5,
+        #                                                            theta_res = soil_params["residual_capacity_vg"],
+        #                                                            theta_sat = soil_params["saturation_capacity_vg"],
+        #                                                            alpha_vg = soil_params["alpha_vg"],
+        #                                                            n_vg = soil_params["n_vg"]
+        #                                                            )
+
+    return soil_params
