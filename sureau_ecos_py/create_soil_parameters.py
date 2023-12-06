@@ -10,6 +10,7 @@ import collections
 import warnings
 import numpy as np
 from .create_modeling_options import create_modeling_options
+#from sureau_ecos_py.soi
 
 # %% ../nbs/13_create_soil_parameters.ipynb 4
 def create_soil_parameters(

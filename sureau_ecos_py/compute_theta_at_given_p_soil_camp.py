@@ -4,19 +4,19 @@
 __all__ = ['compute_b', 'compute_b_gc', 'compute_k_soil', 'compute_k_soil_camp', 'compute_p_soil', 'compute_p_soil_camp',
            'compute_theta_at_given_p_soil', 'compute_theta_at_given_p_soil_camp']
 
-# %% ../nbs/09_soil_utils.ipynb 3
+# %% ../nbs/09_soil_utils.ipynb 10
 import numpy as np
 from math import pi
 import collections
 
-# %% ../nbs/09_soil_utils.ipynb 4
+# %% ../nbs/09_soil_utils.ipynb 11
 def compute_b(lv: float):  # length of fine root per unit volume
     """
     Calculate b used to compute the B of the Gardnar-Cowen model
     """
     return 1 / np.sqrt(pi * lv)
 
-# %% ../nbs/09_soil_utils.ipynb 5
+# %% ../nbs/09_soil_utils.ipynb 12
 def compute_b_gc(
     la: float, b: float, root_radius: float  # Calculated using the `compute_b` function
 ):
@@ -26,7 +26,7 @@ def compute_b_gc(
 
     return la * 2 * pi / np.log(b / root_radius)
 
-# %% ../nbs/09_soil_utils.ipynb 6
+# %% ../nbs/09_soil_utils.ipynb 13
 def compute_k_soil(
     rew: float,
     i_vg: float,
@@ -48,22 +48,22 @@ def compute_k_soil(
 
     return k_soil_parameters
 
-# %% ../nbs/09_soil_utils.ipynb 7
+# %% ../nbs/09_soil_utils.ipynb 14
 def compute_k_soil_camp(sws: float, tsc: float, b_camp: float, k_sat_campbell: float):
     return k_sat_campbell * (sws / tsc) ** (-b_camp * 2 + 2)
 
-# %% ../nbs/09_soil_utils.ipynb 8
+# %% ../nbs/09_soil_utils.ipynb 15
 def compute_p_soil(rew: float, alpha_vg: float, n_vg: float):
     m = 1 - (1 / n_vg)
 
     # diviser par 10000 pour passer de cm à MPa
     return -1 * ((((1 / rew) ** (1 / m)) - 1) ** (1 / n_vg)) / alpha_vg / 10000
 
-# %% ../nbs/09_soil_utils.ipynb 9
+# %% ../nbs/09_soil_utils.ipynb 16
 def compute_p_soil_camp(sws: float, tsc: float, b_camp: float, psie: float):
     return -1 * (psie * ((sws / tsc) ** -b_camp))
 
-# %% ../nbs/09_soil_utils.ipynb 10
+# %% ../nbs/09_soil_utils.ipynb 17
 def compute_theta_at_given_p_soil(
     psi_target: float, theta_res: float, theta_sat: float, alpha_vg: float, n_vg: float
 ):
@@ -71,7 +71,7 @@ def compute_theta_at_given_p_soil(
         1 + (alpha_vg * psi_target * 10000) ** n_vg
     ) ** (1 - 1 / n_vg)
 
-# %% ../nbs/09_soil_utils.ipynb 11
+# %% ../nbs/09_soil_utils.ipynb 18
 def compute_theta_at_given_p_soil_camp(
     theta_sat: float, psi_target: float, psie: float, b_camp: float
 ):
