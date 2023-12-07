@@ -7,7 +7,7 @@ wilting_point;0.12379
 alpha_vg;0.0005
 n_vg;1.55
 i_vg;0.5
-ksat_vg;1.69
+
 saturation_capacity_vg;0.5
 residual_capacity_vg;0.098
 g_soil_0;30
