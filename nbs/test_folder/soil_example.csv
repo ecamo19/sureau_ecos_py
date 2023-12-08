@@ -8,7 +8,7 @@ alpha_vg;0.0005
 n_vg;1.55
 i_vg;0.5
 ksat_vg;10
-saturation_capacity_vg;0.5
+saturation_capacity_vg;1
 residual_capacity_vg;0.098
 g_soil_0;30
 depth_1;0.2
