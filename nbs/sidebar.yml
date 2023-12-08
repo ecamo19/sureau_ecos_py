@@ -11,7 +11,15 @@ website:
       - 06_ppfd_umol_to_rg_watt.ipynb
       - 07_rg_conversions.ipynb
       - 08_potential_par.ipynb
-      - 09_soil_utils.ipynb
+      - 09_1_compute_b.ipynb
+      - 09_2_compute_b_gc.ipynb
+      - 09_3_compute_k_soil.ipynb
+      - 09_4_compute_k_soil_camp.ipynb
+      - 09_5_compute_p_soil.ipynb
+      - 09_6_compute_p_soil_camp.ipynb
+      - 09_7_compute_theta_at_given_p_soil.ipynb
+      - 09_8_compute_theta_at_given_p_soil_camp.ipynb
+      - 09_9_read_soil_file.ipynb
       - 10_create_simulation_parameters.ipynb
       - 11_create_modeling_options.ipynb
       - 12_create_climate_data.ipynb

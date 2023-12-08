@@ -57,7 +57,7 @@ def create_climate_data(
     simulation_parameters: Dict,  # Dictionary created using the `create_simulation_parameters` function
     modeling_options: Dict,  # Dictionary created using the `create_modeling_options` function
     file_path: Path,  # Path to the input CSV climate file. i.e. path/to/file/climate.csv
-    sep: str = ';',  # CSV file separator can be ',' or ';'
+    sep: str = ";",  # CSV file separator can be ',' or ';'
 ) -> DataFrame[ClimateDataValidation]:
     """
     Create a climate data.frame to run SureauR.

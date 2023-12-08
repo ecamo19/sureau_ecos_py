@@ -21,7 +21,6 @@ def create_soil_parameters(
     offset_psoil: int = 0,  # A numerical value indicating the offset in soil water potential (MPa)
     psoil_at_field_capacity=33,
 ) -> Dict:
-
     """
     Create a list with soil parameters to run SureauR
     """
@@ -30,7 +29,7 @@ def create_soil_parameters(
 
     # file_path -----------------------------------------------------------------
 
-    #TTT = read_soil_file(file_path, modeling_options)
+    # TTT = read_soil_file(file_path, modeling_options)
 
     # offset_psoil --------------------------------------------------------------
     assert (
@@ -92,19 +91,21 @@ def create_soil_parameters(
         soil_params["residual_capacity_vg"] = np.repeat(0.1, 3)
 
         # add computation of wilting
-        soil_params["wilting_point"] = compute_theta_at_given_p_soil(psi_target = 1.5,
-                                                                    theta_res = soil_params["residual_capacity_vg"],
-                                                                    theta_sat = soil_params["saturation_capacity_vg"],
-                                                                    alpha_vg = soil_params["alpha_vg"],
-                                                                    n_vg = soil_params["n_vg"]
-                                                                    )
+        soil_params["wilting_point"] = compute_theta_at_given_p_soil(
+            psi_target=1.5,
+            theta_res=soil_params["residual_capacity_vg"],
+            theta_sat=soil_params["saturation_capacity_vg"],
+            alpha_vg=soil_params["alpha_vg"],
+            n_vg=soil_params["n_vg"],
+        )
         # add computation of field capacity from functions
-        soil_params["field_capacity"] = compute_theta_at_given_p_soil(psi_target = psoil_at_field_capacity,
-                                                                    theta_res = soil_params["residual_capacity_vg"],
-                                                                    theta_sat = soil_params["saturation_capacity_vg"],
-                                                                    alpha_vg = soil_params["alpha_vg"],
-                                                                    n_vg = soil_params["n_vg"]
-                                                                    )
+        soil_params["field_capacity"] = compute_theta_at_given_p_soil(
+            psi_target=psoil_at_field_capacity,
+            theta_res=soil_params["residual_capacity_vg"],
+            theta_sat=soil_params["saturation_capacity_vg"],
+            alpha_vg=soil_params["alpha_vg"],
+            n_vg=soil_params["n_vg"],
+        )
         # Soil offset_psoil
         soil_params["offset_psoil"] = offset_psoil
 
@@ -113,12 +114,12 @@ def create_soil_parameters(
         soil_params["pedo_transfer_formulation"] = "vg"
 
     if default_soil is False and modeling_options is not None:
-        print(f'You are using {modeling_options["pedo_transfer_formulation"]} pedotransfer formulation')
-
+        print(
+            f'You are using {modeling_options["pedo_transfer_formulation"]} pedotransfer formulation'
+        )
 
     # Read soil file
     if file_path is None:
         print("path not found")
-
 
     return soil_params

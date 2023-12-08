@@ -4,10 +4,7 @@
 __all__ = ['declination']
 
 # %% ../nbs/08_potential_par.ipynb 3
-from math import sin, atan
 from math import cos, sin, atan
-from numpy import exp
-from math import pi
 
 # %% ../nbs/08_potential_par.ipynb 4
 def declination(doy: int):  # julian day (day of the year)
