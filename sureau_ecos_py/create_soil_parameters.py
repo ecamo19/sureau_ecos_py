@@ -10,38 +10,45 @@ import collections
 import warnings
 import numpy as np
 from .create_modeling_options import create_modeling_options
-#from sureau_ecos_py.soi
+from .compute_theta_at_given_p_soil import compute_theta_at_given_p_soil
 
 # %% ../nbs/13_create_soil_parameters.ipynb 4
 def create_soil_parameters(
-    file_path: Path = None,  # Path to a csv file containing parameter values i.e path/to/parameter_values.csv
+    file_path: Path,  # Path to a csv file containing parameter values i.e path/to/parameter_values.csv
     modeling_options: Dict = None,  # Dictionary created using the `create_modeling_options` function
     list_of_parameters=None,  # A list containing the necessary input parameters instead of reading them in file. Will only be used if 'filePath' arguement is not provided
     default_soil: bool = False,  # A logical value indicating whether a default soil should be used  to run tests
     offset_psoil: int = 0,  # A numerical value indicating the offset in soil water potential (MPa)
     psoil_at_field_capacity=33,
 ) -> Dict:
+
     """
     Create a list with soil parameters to run SureauR
     """
     # Create empty dictionary
     soil_params = collections.defaultdict(list)
 
-    # offset_psoil -----------------------------------------------------------------------------------
+    # file_path -----------------------------------------------------------------
+
+    #TTT = read_soil_file(file_path, modeling_options)
+
+    # offset_psoil --------------------------------------------------------------
     assert (
         offset_psoil >= 0
     ), "offset_psoil must be an integer greater than or equal to 0"
+
     print(f"There is an offset on Psoil of {offset_psoil} MPa")
     soil_params["offset_psoil"] = offset_psoil
 
-    # psoil_at_field_capacity -------------------------------------------------------------------------
+    # psoil_at_field_capacity ---------------------------------------------------
     assert (
         100 >= psoil_at_field_capacity >= 0
     ), "psoil_at_field_capacity must be an integer in the range between 0 and 100"
+
     print(f"Psoil at field capacity = {psoil_at_field_capacity/1000} MPa")
     soil_params["psoil_at_field_capacity"] = psoil_at_field_capacity / 1000
 
-    # default soil for tests --------------------------------------------------------------------------
+    # default soil for tests ----------------------------------------------------
     if default_soil is True:
         warnings.warn("Default soil used (Van-Genuchten Formulation)")
 
@@ -60,16 +67,19 @@ def create_soil_parameters(
 
         # Van Genuchten parameters
 
-        # Shape parameters of the relationship between soil water content and soil water potential
+        # Shape parameters of the relationship between soil water content and
+        # soil water potential
         soil_params["alpha_vg"] = np.repeat(0.0035, 3)
 
-        # Shape parameters of the relationship betwen soil water content and soil water potential
+        # Shape parameters of the relationship betwen soil water content and
+        # soil water potential
         soil_params["n_vg"] = np.repeat(1.55, 3)
 
         # m parameters Van Genuchten equations
         soil_params["m"] = 1 - (1 / soil_params["n_vg"])
 
-        # Shape parameters of the relationship between soil water content and soil water potential
+        # Shape parameters of the relationship between soil water content and
+        # soil water potential
         soil_params["i_vg"] = np.repeat(0.5, 3)
 
         # Soil conductivity at saturation (mol/m/s/Mpa)
@@ -81,12 +91,34 @@ def create_soil_parameters(
         # Fraction of residual water (cm3/cm3)
         soil_params["residual_capacity_vg"] = np.repeat(0.1, 3)
 
-        # add computation of wilting and field capacity from functions
-        # soil_params["wilting_point"] = compute_theta_at_given_psoil(psi_target = 1.5,
-        #                                                            theta_res = soil_params["residual_capacity_vg"],
-        #                                                            theta_sat = soil_params["saturation_capacity_vg"],
-        #                                                            alpha_vg = soil_params["alpha_vg"],
-        #                                                            n_vg = soil_params["n_vg"]
-        #                                                            )
+        # add computation of wilting
+        soil_params["wilting_point"] = compute_theta_at_given_p_soil(psi_target = 1.5,
+                                                                    theta_res = soil_params["residual_capacity_vg"],
+                                                                    theta_sat = soil_params["saturation_capacity_vg"],
+                                                                    alpha_vg = soil_params["alpha_vg"],
+                                                                    n_vg = soil_params["n_vg"]
+                                                                    )
+        # add computation of field capacity from functions
+        soil_params["field_capacity"] = compute_theta_at_given_p_soil(psi_target = psoil_at_field_capacity,
+                                                                    theta_res = soil_params["residual_capacity_vg"],
+                                                                    theta_sat = soil_params["saturation_capacity_vg"],
+                                                                    alpha_vg = soil_params["alpha_vg"],
+                                                                    n_vg = soil_params["n_vg"]
+                                                                    )
+        # Soil offset_psoil
+        soil_params["offset_psoil"] = offset_psoil
+
+    if default_soil is False and modeling_options is None:
+        warnings.warn("modeling_options' is missing. Van Genuchten used as default")
+        soil_params["pedo_transfer_formulation"] = "vg"
+
+    if default_soil is False and modeling_options is not None:
+        print(f'You are using {modeling_options["pedo_transfer_formulation"]} pedotransfer formulation')
+
+
+    # Read soil file
+    if file_path is None:
+        print("path not found")
+
 
     return soil_params

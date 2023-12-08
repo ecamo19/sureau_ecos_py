@@ -57,7 +57,7 @@ def create_climate_data(
     simulation_parameters: Dict,  # Dictionary created using the `create_simulation_parameters` function
     modeling_options: Dict,  # Dictionary created using the `create_modeling_options` function
     file_path: Path,  # Path to the input CSV climate file. i.e. path/to/file/climate.csv
-    sep: str = ";",  # CSV file separator can be "," or ";"
+    sep: str = ';',  # CSV file separator can be ',' or ';'
 ) -> DataFrame[ClimateDataValidation]:
     """
     Create a climate data.frame to run SureauR.
@@ -66,7 +66,7 @@ def create_climate_data(
     (see \code{create.modeling.options} and simulation parameters (see \code{create.simulation.parameters)
     """
 
-    # Make sure that simulation_parameters and modeling_options are dictionaries -----------------------------
+    # Make sure that simulation_parameters and modeling_options are dictionaries-
     assert isinstance(
         simulation_parameters, Dict
     ), f"simulation_parameters must be a dictionary not a {type(simulation_parameters)}"
@@ -75,7 +75,7 @@ def create_climate_data(
         modeling_options, Dict
     ), f"modeling_options must be a dictionary not a {type(modeling_options)}"
 
-    # Read file if it exists and climateData not provided, error otherwise ------------------------------------
+    # Read file if it exists and climateData not provided, error otherwise ------
 
     if os.path.exists(file_path):
         try:
