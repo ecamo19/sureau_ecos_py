@@ -20,7 +20,7 @@ import pandera as pa
 
 
 class SoilFile(pa.SchemaModel):
-    """Schema for validating the input soil parameter file"""
+    "Schema for validating the input soil parameter file"
 
     Name: Series[str] = pa.Field(description="Parameter names")
     Value: Series[float] = pa.Field(description="Parameter values")
@@ -31,10 +31,8 @@ def read_soil_file(
     modeling_options: Dict = None,  # Dictionary created using the `create_modeling_options` function
     sep: str = ";",  # CSV file separator can be ',' or ';'
 ) -> Dict:
-    """
-    Function for reading a data frame containing information about soil
-    characteristics
-    """
+    "Function for reading a data frame containing information about soil characteristics"
+
     # Make sure that modeling_options is a dictionary ---------------------------
     assert isinstance(
         modeling_options, Dict

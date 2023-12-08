@@ -11,8 +11,6 @@ from math import pi
 def compute_b_gc(
     la: float, b: float, root_radius: float  # Calculated using the `compute_b` function
 ):
-    """
-    Calculate B Gardner cowen thhe scaling factor for soil conductance
-    """
+    "Calculate B Gardner cowen thhe scaling factor for soil conductance"
 
     return la * 2 * pi / np.log(b / root_radius)

@@ -13,5 +13,5 @@ def calculate_rh_diurnal_pattern(
 ):
     "Calculate diurnal pattern of relative humidity from temperature"
 
-    # calculate rh diurnal pattern ----------------------------------------
+    # calculate rh diurnal pattern ----------------------------------------------
     return rhmax + ((temperature - tmin) / (tmax - tmin)) * (rhmin - rhmax)

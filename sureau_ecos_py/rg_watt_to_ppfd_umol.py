@@ -11,7 +11,7 @@ def ppfd_umol_to_rg_watt(
 ):
     "Convert ppfd (umol) to rg (watt)"
 
-    # calculate Global radiation (rg)(W/m2) ----------------------------------------------
+    # calculate Global radiation (rg)(W/m2) -------------------------------------
     rg = ppfd / frac_par / j_to_mol
     return rg
 
@@ -23,6 +23,6 @@ def rg_watt_to_ppfd_umol(
 ):
     "Convert rg (watt) to ppfd (umol)"
 
-    # calculate Photosynthetic photon flux density (umol.m-2.s-1) ----------------------------------------------
+    # calculate Photosynthetic photon flux density (umol.m-2.s-1) ---------------
 
     return rg * frac_par * j_to_mol

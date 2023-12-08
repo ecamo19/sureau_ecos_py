@@ -19,7 +19,7 @@ from .create_simulation_parameters import create_simulation_parameters
 # This class is created for validating the input climate dataframe
 # If the data don't follow the structure in the class the function will fail
 class ClimateDataValidation(pa.SchemaModel):
-    """Schema for validating the climate data"""
+    "Schema for validating the climate data"
 
     DATE: Series[np.datetime64] = pa.Field(description="date with format 1991/12/23")
     Tair_min: Series[float] = pa.Field(
@@ -59,12 +59,7 @@ def create_climate_data(
     file_path: Path,  # Path to the input CSV climate file. i.e. path/to/file/climate.csv
     sep: str = ";",  # CSV file separator can be ',' or ';'
 ) -> DataFrame[ClimateDataValidation]:
-    """
-    Create a climate data.frame to run SureauR.
-    Read input climate data select the desired period and put it in the right format to run `run.SurEauR`
-    Also check data consistency and input variables according to modeling options
-    (see \code{create.modeling.options} and simulation parameters (see \code{create.simulation.parameters)
-    """
+    "Create a climate data.frame to run SureauR. Read input climate data select the desired period and put it in the right format to run `run.SurEauR` Also check data consistency and input variables according to modeling options (see \code{create.modeling.options} and simulation parameters (see \code{create.simulation.parameters)"
 
     # Make sure that simulation_parameters and modeling_options are dictionaries-
     assert isinstance(
@@ -88,7 +83,7 @@ def create_climate_data(
     else:
         print(f"file: {file_path}, does not exist, check presence or spelling")
 
-    # Create climate data based on constant_climate parameter ------------------------------------------------
+    # Create climate data based on constant_climate parameter -------------------
 
     if modeling_options["constant_climate"] is False:
         # Break DATE into year,month, day_of_year, day_of_month columns
@@ -111,8 +106,8 @@ def create_climate_data(
         # Get the year
         climate_data["year"] = pd.DatetimeIndex(climate_data["DATE"]).year
 
-        # Filter data based on start_year_simulation and end_year_simulation parameters
-        # specified in similation_parameters dictionary
+        # Filter data based on start_year_simulation and end_year_simulation
+        # parameters specified in similation_parameters dictionary
         climate_data = climate_data.loc[
             (climate_data["year"] >= simulation_parameters["start_year_simulation"])
             & (climate_data["year"] <= simulation_parameters["end_year_simulation"])
@@ -125,7 +120,8 @@ def create_climate_data(
         return climate_data
 
     if modeling_options["constant_climate"] is True:
-        # Use a List Comprehension to create a sequence of dates with the format Day/Month/Year
+        # Use a List Comprehension to create a sequence of dates with the format
+        # Day/Month/Year
         date_ref = [
             each_date.strftime("%d-%m-%Y")
             for each_date in pd.date_range(
@@ -138,7 +134,8 @@ def create_climate_data(
         # Get the first row of the climate_data
         constant_climate_data = climate_data.loc[:0]
 
-        # Repeat it based on the lenght of date_ref. This is done for creating a constant climate
+        # Repeat it based on the lenght of date_ref. This is done for creating a
+        # constant climate
         constant_climate_data = constant_climate_data.loc[
             constant_climate_data.index.repeat(len(date_ref))
         ]
@@ -146,7 +143,7 @@ def create_climate_data(
         # Substitute the old dates with the new ones
         constant_climate_data.DATE = pd.to_datetime(date_ref, format="%d-%m-%Y")
 
-        # Break DATE into year,month, day_of_year, day_of_month columns -----------------------------------------------
+        # Break DATE into year,month, day_of_year, day_of_month columns ---------
 
         # Create function for extracting the day of the year (from 0 to 365)
         def get_day_of_year(date):

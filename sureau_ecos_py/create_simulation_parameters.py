@@ -18,9 +18,7 @@ def create_simulation_parameters(
     resolution_output: str = "subdaily",  # the resolution chosen to write variables in files, `subdaily`, `daily` or `yearly`.
     overwrite: bool = False,  # Indicates whether the output result file can be overwritten if it already exists
 ):
-    """
-    Create a dictionary with the simulation parameters to run SureauEcos. Can be used as an input in
-    """
+    "Create a dictionary with the simulation parameters to run SureauEcos. Can be used as an input in"
 
     simulation_parameters = collections.defaultdict(list)
 

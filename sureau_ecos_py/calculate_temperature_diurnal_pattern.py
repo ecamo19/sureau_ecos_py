@@ -21,7 +21,7 @@ def calculate_temperature_diurnal_pattern(
 ):
     "Calculated diurnal pattern of temperature assuming a sinusoidal pattern with T = tmin at sunrise and T = (tmin+tmax)/2 at sunset. From sunset to sunrise follows a linear trend"
 
-    # calculate_temperature_diurnal_pattern ----------------------------------
+    # calculate_temperature_diurnal_pattern -------------------------------------
 
     if time_of_the_day < 0.0 or time_of_the_day > day_length:
         tfin = 86400.0 - day_length

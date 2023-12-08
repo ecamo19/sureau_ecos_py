@@ -14,15 +14,17 @@ def compute_k_soil(
     k_sat_vg: float,
     b_gc: float,  # Calculated using the `compute_b_gc` function
 ):
-    # Create empty dict for storing params
+    # Create empty dict for storing params --------------------------------------
     k_soil_parameters = collections.defaultdict(list)
 
+    # Compute k_soil ------------------------------------------------------------
     m = 1 - (1 / n_vg)
 
     k_soil = k_sat_vg * rew ** (i_vg) * (1 - (1 - rew ** (1 / m)) ** m) ** 2
 
     k_soil_gc = 1000 * b_gc * k_soil
 
+    # Append to dictionary ------------------------------------------------------
     k_soil_parameters["k_soil"] = k_soil
     k_soil_parameters["k_soil_gc"] = k_soil_gc
 

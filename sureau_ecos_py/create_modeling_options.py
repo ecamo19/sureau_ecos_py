@@ -44,9 +44,7 @@ def create_modeling_options(
     ],  # type of regulation to be used for stomatal response to leaf symplasmic water potential, either `sigmoid` or `piecewise_linear`
     print_prog: bool = True,
 ):
-    """
-    Create a dictionary containing modeling options that can be used as an input in run.SurEauR
-    """
+    "Create a dictionary containing modeling options that can be used as an input in run.SurEauR"
 
     # Validate the function parameter types ------------------------------------------
 

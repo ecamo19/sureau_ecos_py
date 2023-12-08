@@ -15,10 +15,10 @@ def compute_etp_pt(
 ):
     "Calcule Potential evapotranspiration (mm) `PET` using Pristeley Taylor Formulation"
 
-    # Constants ---------------------------------------------------------------
+    # Constants -----------------------------------------------------------------
 
     # Stefan-Boltzman constant [MJ.K^-4.m^-2.day^-1]
-    sb_constant = 4.903 * 10**9
+    # sb_constant = 4.903 * 10**9
 
     # Psychometer constant
     gamma = 0.0666

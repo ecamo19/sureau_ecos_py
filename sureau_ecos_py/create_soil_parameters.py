@@ -21,9 +21,8 @@ def create_soil_parameters(
     offset_psoil: int = 0,  # A numerical value indicating the offset in soil water potential (MPa)
     psoil_at_field_capacity=33,
 ) -> Dict:
-    """
-    Create a list with soil parameters to run SureauR
-    """
+    "Create a list with soil parameters to run SureauR"
+
     # Create empty dictionary
     soil_params = collections.defaultdict(list)
 

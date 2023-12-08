@@ -12,10 +12,9 @@ def compute_vpd_from_t_rh(
     temperature: float,  # Air `temperature` (degrees Celsius)
     air_pressure: float = 101325,
 ):  # Air `pressure`, used?
-    "Compute vapor pressure deficit (VPD) from air `relative humidity` and \
-     air `temperature`"
+    "Compute vapor pressure deficit (VPD) from air `relative humidity` and air `temperature`"
 
-    # Constants ---------------------------------------------------------------
+    # Constants -----------------------------------------------------------------
 
     # molar weight dry air (g/mol)
     mass = 28.966

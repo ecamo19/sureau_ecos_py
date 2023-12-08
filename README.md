@@ -20,11 +20,11 @@ pip install sureau_ecos_py
         create_simulation_parameters-->create_climate_data;
         create_modeling_options-->create_climate_data;
 
-
         create_modeling_options-->create_soil_paramters;
         compute_theta_at_given_psoil-->create_soil_paramters;
+        read_soil_file-->create_soil_paramters;
 
-        %% Blue color boxes ------------------------------------------------------------------
+        %% Blue color boxes -----------------------------------------------------
 
         %%style create_climate_data fill:#00758f
         %%style create_modeling_options fill:#00758f
@@ -32,7 +32,7 @@ pip install sureau_ecos_py
         %%style create_soil_paramters fill:#00758f
 
 
-        %% Red color boxes --------------------------------------------------------------------
+        %% Red color boxes ------------------------------------------------------
         %%style compute_theta_at_given_psoil fill:#880808
 
 ```
