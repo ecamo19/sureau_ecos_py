@@ -28,6 +28,7 @@ website:
       - 10_6_stomatal_regulation_turgor.ipynb
       - 10_7_plc_comp.ipynb
       - 10_8_plc_prime_comp.ipynb
+      - 10_9_gs_curve.ipynb
       - 11_create_modeling_options.ipynb
       - 12_create_climate_data.ipynb
       - 13_create_simulation_parameters.ipynb
