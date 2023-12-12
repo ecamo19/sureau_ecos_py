@@ -25,6 +25,9 @@ website:
       - 10_3_compute_turgor_from_psi.ipynb
       - 10_4_osmo_comp.ipynb
       - 10_5_psi_total_symp_comp.ipynb
+      - 10_6_stomatal_regulation_turgor.ipynb
+      - 10_7_plc_comp.ipynb
+      - 10_8_plc_prime_comp.ipynb
       - 11_create_modeling_options.ipynb
       - 12_create_climate_data.ipynb
       - 13_create_simulation_parameters.ipynb

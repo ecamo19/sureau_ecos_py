@@ -4,7 +4,6 @@
 __all__ = ['compute_turgor_from_psi']
 
 # %% ../nbs/10_3_compute_turgor_from_psi.ipynb 3
-#from sureau_ecos_py.create_modeling_options import create_modeling_options
 import numpy as np
 from typing import List
 

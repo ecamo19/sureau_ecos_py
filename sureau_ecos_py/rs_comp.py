@@ -4,7 +4,6 @@
 __all__ = ['rs_comp']
 
 # %% ../nbs/10_1_rs_comp.ipynb 3
-#from sureau_ecos_py.create_modeling_options import create_modeling_options
 import numpy as np
 
 

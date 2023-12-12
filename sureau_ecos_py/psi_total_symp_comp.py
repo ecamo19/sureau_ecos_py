@@ -6,7 +6,6 @@ __all__ = ['psi_total_symp_comp']
 # %% ../nbs/10_5_psi_total_symp_comp.ipynb 3
 from .turgor_comp import turgor_comp
 from .osmo_comp import osmo_comp
-
 import numpy as np
 
 

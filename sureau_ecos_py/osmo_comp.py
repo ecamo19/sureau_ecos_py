@@ -4,7 +4,6 @@
 __all__ = ['osmo_comp']
 
 # %% ../nbs/10_4_osmo_comp.ipynb 3
-#from sureau_ecos_py.create_modeling_options import create_modeling_options
 import numpy as np
 
 
