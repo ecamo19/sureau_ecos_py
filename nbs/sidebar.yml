@@ -20,7 +20,12 @@ website:
       - 09_7_compute_theta_at_given_p_soil.ipynb
       - 09_8_compute_theta_at_given_p_soil_camp.ipynb
       - 09_9_read_soil_file.ipynb
-      - 10_create_simulation_parameters.ipynb
+      - 10_1_rs_comp.ipynb
+      - 10_2_turgor_comp.ipynb
+      - 10_3_compute_turgor_from_psi.ipynb
+      - 10_4_osmo_comp.ipynb
+      - 10_5_psi_total_symp_comp.ipynb
       - 11_create_modeling_options.ipynb
       - 12_create_climate_data.ipynb
-      - 13_create_soil_parameters.ipynb
+      - 13_create_simulation_parameters.ipynb
+      - 14_create_soil_parameters.ipynb
