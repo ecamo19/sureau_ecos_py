@@ -7,6 +7,8 @@ documentation.
 
 ## Install
 
+[Code](https://cuddly-train-pg45gq96vww26wgv.github.dev/)
+
 ``` sh
 pip install sureau_ecos_py
 ```
