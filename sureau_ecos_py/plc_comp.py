@@ -7,9 +7,9 @@ __all__ = ['plc_comp']
 import numpy as np
 
 # %% ../nbs/10_7_plc_comp.ipynb 4
-def plc_comp(p_min:float, # Unknown parameter
-             slope:float, # Unknown parameter
-             p50:float, # Unknown parameter
+def plc_comp(p_min:float, # Unknown parameter definition
+             slope:float, # Unknown parameter definition
+             p50:float, # Unknown parameter definition
              ) -> float:
 
     "Compute Percentage loss of conductivity"

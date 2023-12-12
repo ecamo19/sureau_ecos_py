@@ -9,7 +9,7 @@ import numpy as np
 # %% ../nbs/10_6_stomatal_regulation_turgor.ipynb 4
 def stomatal_regulation_turgor(turgor_pressure:float, # Turgor pressure
                                max_turgor_pressure:float, # Maximum turgor pressure,
-                               e_max:float, # Unknown parameter
+                               e_max:float, # Unknown parameter definition
                                e_cuti:float # Residual Transpiration
                                ) -> np.array:
     "This function computes stomatal regulation if stomatal closure is limited (linearly) by turgor pressure"

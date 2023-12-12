@@ -8,15 +8,15 @@ import numpy as np
 #from sureau_ecos_py.plc_comp import plc_comp
 
 # %% ../nbs/10_9_gs_curve.ipynb 4
-def gs_curve(x:float,# Unknown parameter
-             slope_gs:float, # Unknown parameter
-             p50_gs:float, # Unknown parameter
-             psi_start_closing:float, # Unknown parameter
-             psi_close:float, # Unknown parameter
+def gs_curve(x:float, # Unknown parameter definition
+             slope_gs:float, # Unknown parameter definition
+             p50_gs:float, # Unknown parameter definition
+             psi_start_closing:float, # Unknown parameter definition
+             psi_close:float, # Unknown parameter definition
              pi_ft:float, # Osmotic potential at full turgor (MPa)
              e_symp:float, # Modulus of elastoicoty of the Symplasm (MPa/%)
-             turgor_pressure_at_gs_max:float, # Unknown parameter
-             gs_max:float, # Unknown parameter
+             turgor_pressure_at_gs_max:float, # Unknown parameter definition
+             gs_max:float, # Unknown parameter definition
              transpiration_model: str = ["jarvis", "granier"], # Transpiration model type
              stomatal_reg_formulation: str = [
                  "sigmoid",

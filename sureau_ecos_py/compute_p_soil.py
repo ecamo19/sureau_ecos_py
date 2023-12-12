@@ -4,7 +4,11 @@
 __all__ = ['compute_p_soil']
 
 # %% ../nbs/09_5_compute_p_soil.ipynb 3
-def compute_p_soil(rew: float, alpha_vg: float, n_vg: float):
+def compute_p_soil(rew: float, # Unknown parameter definition
+                   alpha_vg: float, # Unknown parameter definition
+                   n_vg: float # Unknown parameter definition
+                   ) -> float:
+
     m = 1 - (1 / n_vg)
 
     # diviser par 10000 pour passer de cm à MPa

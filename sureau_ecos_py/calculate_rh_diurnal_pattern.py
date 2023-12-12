@@ -5,12 +5,12 @@ __all__ = ['calculate_rh_diurnal_pattern']
 
 # %% ../nbs/05_calculate_rh_diurnal_pattern.ipynb 3
 def calculate_rh_diurnal_pattern(
-    temperature: float,
-    rhmin: float,  # No info in source code
-    rhmax: float,  # No info in source code
-    tmin: float,  # No info in source code
-    tmax: float,  # No info in source code
-):
+    temperature: float, # Unknown parameter definition
+    rhmin: float,  # Unknown parameter definition
+    rhmax: float,  # Unknown parameter definition
+    tmin: float,  # Unknown parameter definition
+    tmax: float,  # Unknown parameter definition
+)->float:
     "Calculate diurnal pattern of relative humidity from temperature"
 
     # calculate rh diurnal pattern ----------------------------------------------

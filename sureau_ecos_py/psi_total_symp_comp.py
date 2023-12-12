@@ -12,7 +12,7 @@ import numpy as np
 # %% ../nbs/10_5_psi_total_symp_comp.ipynb 4
 def psi_total_symp_comp(pi_ft:float, # Osmotic potential at full turgor (MPa)
                         e_symp:float, # Modulus of elastoicoty of the Symplasm (MPa/%)
-                        r_stemp:float # Unknown parameter
+                        r_stemp:float # Unknown parameter definition
                         ) -> float:
 
         "Compute Total potential"

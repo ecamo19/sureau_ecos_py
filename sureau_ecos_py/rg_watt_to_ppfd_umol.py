@@ -8,7 +8,7 @@ def ppfd_umol_to_rg_watt(
     ppfd: float,  # Photosynthetic photon flux density (umol.m-2.s-1)
     j_to_mol: float = 4.6,  # Conversion factor
     frac_par: float = 0.5,  # Function of solar rdiation that is photosynthetically active radiation (PAR)
-):
+) ->float:
     "Convert ppfd (umol) to rg (watt)"
 
     # calculate Global radiation (rg)(W/m2) -------------------------------------
@@ -20,7 +20,7 @@ def rg_watt_to_ppfd_umol(
     rg: float,  # Global radiation (W/m2)
     j_to_mol: float = 4.6,  # Conversion factor
     frac_par: float = 0.5,  # Function of solar rdiation that is photosynthetically active radiation (PAR)
-):
+)->float:
     "Convert rg (watt) to ppfd (umol)"
 
     # calculate Photosynthetic photon flux density (umol.m-2.s-1) ---------------

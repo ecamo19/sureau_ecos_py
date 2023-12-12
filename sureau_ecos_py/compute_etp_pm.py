@@ -10,10 +10,10 @@ import numpy as np
 def compute_etp_pm(
     tmoy: float,  # Mean temperature over the considered time step (degrees Celsius)
     net_radiation: float,  # Cumulative Net radiation over the considered  time sep (MJ.m2)
-    u: float,  #  wind speed (m.s-1)
+    u: float,  #  Wind speed (m.s-1)
     vpd: float,  # Vapor pressure deficit (kpa)
-    g: float = 0,
-):
+    g: float = 0, # Unknown parameter definition
+)->float:
     "Compute reference ETP from Penmman formulation"
 
     # Constants -----------------------------------------------------------------

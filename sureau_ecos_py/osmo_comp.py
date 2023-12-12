@@ -10,7 +10,7 @@ import numpy as np
 # %% ../nbs/10_4_osmo_comp.ipynb 4
 # Osmotic potential
 def osmo_comp(pi_ft:float, # Osmotic potential at full turgor (MPa)
-              r_stemp:float # Unknown parameter
+              r_stemp:float # Unknown parameter definition
               ) -> float:
 
         "Compute osmotic potential"

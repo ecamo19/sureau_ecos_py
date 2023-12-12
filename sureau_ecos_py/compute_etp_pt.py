@@ -11,8 +11,8 @@ def compute_etp_pt(
     tmoy: float,  # Mean temperature over the considered time step (degrees Celsius)
     net_radiation: float,  # Cumulative Net radiation over the considered  time sep  (MJ.m2)
     pt_coeff: float = 1.26,  # An empirical constant accounting for the vapor pressure deficit and resistance values Typically, α is 1.26 for open bodies of water, but has a wide range of values from less than 1 (humid conditions) to almost 2 (arid conditions).
-    g: float = 0,
-):
+    g: float = 0, # Unknown parameter definition
+)-> float:
     "Calcule Potential evapotranspiration (mm) `PET` using Pristeley Taylor Formulation"
 
     # Constants -----------------------------------------------------------------

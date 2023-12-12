@@ -9,7 +9,7 @@ from .plc_comp import plc_comp
 
 # %% ../nbs/10_8_plc_prime_comp.ipynb 4
 def plc_prime_comp(plc:float, # Computed using the `plc_comp` function
-                   slope:float, # Unknown parameter
+                   slope:float, # Unknown parameter definition
                    ) -> float:
 
     "This function computes PLC Prime from PLC current value"

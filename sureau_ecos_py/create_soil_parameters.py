@@ -21,7 +21,7 @@ def create_soil_parameters(
     list_of_parameters:List = None,  # A list containing the necessary input parameters instead of reading them in file. Will only be used if 'file_path' arguement is not provided
     default_soil: bool = False,  # A logical value indicating whether a default soil should be used  to run tests
     offset_psoil: int = 0,  # A numerical value indicating the offset in soil water potential (MPa)
-    psoil_at_field_capacity:int = 33,
+    psoil_at_field_capacity:int = 33, # Unknown parameter definition
 ) -> Dict:
 
     "Create a Dictionary with soil parameters to run SureauR"

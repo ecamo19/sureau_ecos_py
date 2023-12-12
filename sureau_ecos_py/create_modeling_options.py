@@ -6,6 +6,7 @@ __all__ = ['create_modeling_options']
 # %% ../nbs/11_create_modeling_options.ipynb 3
 import numpy as np
 import collections
+from typing import Dict
 
 # %% ../nbs/11_create_modeling_options.ipynb 4
 def create_modeling_options(
@@ -33,17 +34,17 @@ def create_modeling_options(
         "custom",
     ],  # option to be used for the loops  (voir avec Francois)
     custom_small_time_step_in_sec: int = 600,  # Time step in seconds. Use if comp_options_for_evapo is set to `custom`
-    lcav: int = 1,
-    scav: int = 1,
-    eord: int = 1,
-    numerical_scheme: str = ["implicit", "semi-implicit", "explicit"],
+    lcav: int = 1, # Unknown parameter definition
+    scav: int = 1, # Unknown parameter definition
+    eord: int = 1, # Unknown parameter definition
+    numerical_scheme: str = ["implicit", "semi-implicit", "explicit"], # Unknown parameter definition
     stomatal_reg_formulation: str = [
         "sigmoid",
         "piecewise_linear",
         "turgor",
     ],  # type of regulation to be used for stomatal response to leaf symplasmic water potential, either `sigmoid` or `piecewise_linear`
-    print_prog: bool = True,
-):
+    print_prog: bool = True, # Unknown parameter definition
+) -> Dict:
     "Create a dictionary containing modeling options that can be used as an input in run.SurEauR"
 
     # Validate the function parameter types -------------------------------------

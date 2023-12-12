@@ -7,8 +7,8 @@ __all__ = ['rg_convertions']
 def rg_convertions(
     rg_watts: float = None,  # instantaneous radiation (watt)
     rg_mj: float = None,  # instantaneous radiation (in Mega Jule?)
-    nhours: float = None,
-):
+    nhours: float = None, # Unknown parameter definition
+)->float:
     "Convert instantaneous radiation in watt to dialy cumulative radiation in MJ (MJ.day-1)"
 
     if rg_watts is not None and rg_mj is None:
