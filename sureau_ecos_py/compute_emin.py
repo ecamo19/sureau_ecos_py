@@ -7,11 +7,10 @@ __all__ = ['compute_emin']
 import numpy as np
 
 # %% ../nbs/10_11_compute_emin.ipynb 4
-# Osmotic potential
 def compute_emin(gmin:float, # minimum conductance
                  vpd:float,  # Vapor Pressure Deficit  (kPa)
                  g_bl:float, # Unknown parameter definition
-                 g_crown:float, # Unknown parameter definition
+                 g_crown:float, # Unknown parameter definition. Use `compute_g_crown`
                  air_pressure:float = 101.3, # Surface air pressure (kPa)
                  ) -> float:
 
