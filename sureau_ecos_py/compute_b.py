@@ -8,7 +8,9 @@ import numpy as np
 from math import pi
 
 # %% ../nbs/09_1_compute_b.ipynb 4
-def compute_b(lv: float):  # length of fine root per unit volume
+def compute_b(lv: float # length of fine root per unit volume
+              )->float:
+
     "Calculate b used to compute the B of the Gardnar-Cowen model"
 
     return 1 / np.sqrt(pi * lv)

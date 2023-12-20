@@ -9,8 +9,10 @@ from math import pi
 
 # %% ../nbs/09_2_compute_b_gc.ipynb 4
 def compute_b_gc(
-    la: float, b: float, root_radius: float  # Calculated using the `compute_b` function
-):
+    la: float, # Unknown parameter definition
+    b: float, # Unknown parameter definition
+    root_radius: float  # Calculated using the `compute_b` function
+) -> float:
     "Calculate B Gardner cowen thhe scaling factor for soil conductance"
 
     return la * 2 * pi / np.log(b / root_radius)

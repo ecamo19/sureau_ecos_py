@@ -4,5 +4,9 @@
 __all__ = ['compute_k_soil_camp']
 
 # %% ../nbs/09_4_compute_k_soil_camp.ipynb 3
-def compute_k_soil_camp(sws: float, tsc: float, b_camp: float, k_sat_campbell: float):
+def compute_k_soil_camp(sws: float, # Unknown parameter definition
+                        tsc: float, # Unknown parameter definition
+                        b_camp: float, # Unknown parameter definition
+                        k_sat_campbell: float # Unknown parameter definition
+                        ) -> float:
     return k_sat_campbell * (sws / tsc) ** (-b_camp * 2 + 2)

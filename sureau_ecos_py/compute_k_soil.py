@@ -8,12 +8,13 @@ import collections
 
 # %% ../nbs/09_3_compute_k_soil.ipynb 4
 def compute_k_soil(
-    rew: float,
-    i_vg: float,
-    n_vg: float,
-    k_sat_vg: float,
+    rew: float, # Unknown parameter definition
+    i_vg: float, # Unknown parameter definition
+    n_vg: float, # Unknown parameter definition
+    k_sat_vg: float, # Unknown parameter definition
     b_gc: float,  # Calculated using the `compute_b_gc` function
-):
+) -> float:
+
     # Create empty dict for storing params --------------------------------------
     k_soil_parameters = collections.defaultdict(list)
 

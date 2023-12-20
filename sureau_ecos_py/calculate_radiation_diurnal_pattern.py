@@ -13,7 +13,7 @@ def calculate_radiation_diurnal_pattern(
         int
     ],  # a numeric value of vector indicating the time of the day (in seconds)
     day_length: int,  # value indicating the duration of the day (in seconds)
-):
+)->float:
     "Calculated diurnal pattern of temperature assuming a sinusoidal pattern with T = tmin at sunrise and T = (tmin + tmax)/2 at sunset. From sunset to sunrise follows a linear trend"
 
     # calculate_radiation_diurnal_pattern ---------------------------------------

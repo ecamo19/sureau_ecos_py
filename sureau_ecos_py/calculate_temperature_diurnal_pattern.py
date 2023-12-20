@@ -13,12 +13,12 @@ def calculate_temperature_diurnal_pattern(
         int
     ],  # a numeric value of vector indicating the time of the day (in seconds from sunrise)
     day_length: int,  # value indicating the duration of the day (in seconds)
-    tmin: float,  # No info in source code
-    tmax: float,  # No info in source code
-    tmin_prev: float,  # No info in source code
-    tmax_prev: float,  # No info in source code
-    tmin_next: float,  # No info in source code
-):
+    tmin: float,  # Unknown parameter definition
+    tmax: float,  # Unknown parameter definition
+    tmin_prev: float,  # Unknown parameter definition
+    tmax_prev: float,  # Unknown parameter definition
+    tmin_next: float,  # Unknown parameter definition
+)-> float:
     "Calculated diurnal pattern of temperature assuming a sinusoidal pattern with T = tmin at sunrise and T = (tmin+tmax)/2 at sunset. From sunset to sunrise follows a linear trend"
 
     # calculate_temperature_diurnal_pattern -------------------------------------
@@ -45,5 +45,5 @@ def calculate_temperature_diurnal_pattern(
     else:
         ct = cos(1.5 * pi * time_of_the_day / day_length)
 
-        # Return Temp
-        return 0.5 * (tmin + tmax - (tmax - tmin) * ct)
+    # Return Temp
+    return 0.5 * (tmin + tmax - (tmax - tmin) * ct)

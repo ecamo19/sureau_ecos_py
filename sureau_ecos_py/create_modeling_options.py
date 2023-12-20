@@ -6,6 +6,7 @@ __all__ = ['create_modeling_options']
 # %% ../nbs/11_create_modeling_options.ipynb 3
 import numpy as np
 import collections
+from typing import Dict
 
 # %% ../nbs/11_create_modeling_options.ipynb 4
 def create_modeling_options(
@@ -15,7 +16,7 @@ def create_modeling_options(
     soil_evapo: bool = True,  # Boolean indicating whether soil evaporation should be simulated (True) or not (False)
     defoliation: bool = False,  # Boolean indicating whether trees should loose leaves when`occurs.cavitation` occurs of the above part of plant. Defoliation starts only when PLC_Leaf > 10% .
     threshold_mortality: int = 90,  # Percentange value indicating the percentage loss of conductivity above which the plant is considered dead and simulation stops for the current year.
-    transpiration_model: str = ["jarvis", "granier"],
+    transpiration_model: str = ["jarvis", "granier"], # Transpiration model type
     etp_formulation: str = [
         "pt",
         "penman",
@@ -33,20 +34,20 @@ def create_modeling_options(
         "custom",
     ],  # option to be used for the loops  (voir avec Francois)
     custom_small_time_step_in_sec: int = 600,  # Time step in seconds. Use if comp_options_for_evapo is set to `custom`
-    lcav: int = 1,
-    scav: int = 1,
-    eord: int = 1,
-    numerical_scheme: str = ["implicit", "semi-implicit", "explicit"],
+    lcav: int = 1, # Unknown parameter definition
+    scav: int = 1, # Unknown parameter definition
+    eord: int = 1, # Unknown parameter definition
+    numerical_scheme: str = ["implicit", "semi-implicit", "explicit"], # Unknown parameter definition
     stomatal_reg_formulation: str = [
         "sigmoid",
         "piecewise_linear",
         "turgor",
     ],  # type of regulation to be used for stomatal response to leaf symplasmic water potential, either `sigmoid` or `piecewise_linear`
-    print_prog: bool = True,
-):
+    print_prog: bool = True, # Unknown parameter definition
+) -> Dict:
     "Create a dictionary containing modeling options that can be used as an input in run.SurEauR"
 
-    # Validate the function parameter types ------------------------------------------
+    # Validate the function parameter types -------------------------------------
 
     assert isinstance(reset_swc, bool), "reset_swc must be a bool (True/False)"
 
@@ -113,14 +114,14 @@ def create_modeling_options(
         6,
     ], "time_step_for_evap must be equal to 1, 2, 4, 6 or None"
 
-    # Create array with time steps for the evapo ---------------------------------
+    # Create array with time steps for the evapo --------------------------------
     if time_step_for_evapo is None:
         time = np.array([0, 6, 12, 14, 16, 22])
 
     elif time_step_for_evapo is not None:
         time = np.arange(0, 24, time_step_for_evapo, dtype=int)
 
-    # Create comp_options ------------------------------------------------------
+    # Create comp_options -------------------------------------------------------
 
     if time_step_for_evapo is not None:
         comp_options = collections.defaultdict(list)
@@ -178,7 +179,7 @@ def create_modeling_options(
             comp_options["lcav"] = lcav
             comp_options["scav"] = scav
 
-        # Create empty dictionary for storing modeling options ------------------------------------------
+        # Create empty dictionary for storing modeling options ------------------
         modeling_options = collections.defaultdict(list)
 
         # Append parameters to dictionary
@@ -200,4 +201,4 @@ def create_modeling_options(
         modeling_options["transpiration_model"] = transpiration_model
         modeling_options["print_prog"] = print_prog
 
-        return modeling_options
+    return modeling_options
