@@ -100,7 +100,7 @@ def read_soil_file(
         # Raise error if a parameter is missing from params
         if each_parameter not in np.array(soil_data["Name"]):
             raise ValueError(
-                f"{each_parameter} not provided in input soil parameter file, check presence or spelling\n"
+                f"{each_parameter} not provided in input soil parameter CSV file, check presence or spelling\n"
             )
 
     # Make sure there are no duplicate parameters -------------------------------

@@ -12,7 +12,9 @@ import warnings
 import numpy as np
 from .create_modeling_options import create_modeling_options
 from .compute_theta_at_given_p_soil import compute_theta_at_given_p_soil
+from .compute_theta_at_given_p_soil_camp import compute_theta_at_given_p_soil_camp
 from .read_soil_file import read_soil_file
+from .convert_f_cm3_to_v_mm import convert_f_cm3_to_v_mm
 
 # %% ../nbs/14_create_soil_parameters.ipynb 4
 def create_soil_parameters(
@@ -165,7 +167,7 @@ def create_soil_parameters(
 
         # Read list_of_parameters
         if list_of_parameters is not None:
-            print("This option is not implement yet")
+            print("This option has not bee implemented yet")
             #soil_params_csv_file = list_of_parameters
 
         # Create soil_params dictionary -----------------------------------------
@@ -225,7 +227,7 @@ def create_soil_parameters(
             # Fraction of residual water (cm3/cm3)
             soil_params["residual_capacity_vg"] = np.repeat(soil_params_csv_file['residual_capacity_vg'], 3)
 
-            # add computation of wilting point
+            # Add computation of wilting point
             soil_params["wilting_point"] = compute_theta_at_given_p_soil(
                 psi_target=1.5,
                 theta_res=soil_params_csv_file["residual_capacity_vg"],
@@ -234,7 +236,7 @@ def create_soil_parameters(
                 n_vg=soil_params_csv_file["n_vg"],
                 )
 
-            # add computation of field capacity from functions
+            # Add computation of field capacity from functions
             soil_params["field_capacity"] = compute_theta_at_given_p_soil(
                 psi_target=psoil_at_field_capacity,
                 theta_res=soil_params_csv_file["residual_capacity_vg"],
@@ -243,13 +245,71 @@ def create_soil_parameters(
                 n_vg=soil_params_csv_file["n_vg"],
                 )
 
-            #
-            soil_params["v_field_capacity"]
+            # Add v_field_capacity
+            soil_params["v_field_capacity"] = convert_f_cm3_to_v_mm(x = soil_params["field_capacity"],
+                                                                    rock_fragment_content = soil_params["rock_fragment_content"],
+                                                                    layer_thickness= soil_params["layer_thickness"]
+                                                                    )
+
+            # Add v_saturation_capacity_vg
+            soil_params["v_saturation_capacity_vg"] = convert_f_cm3_to_v_mm(x = soil_params["saturation_capacity_vg"],
+                                                                            rock_fragment_content = soil_params["rock_fragment_content"],
+                                                                            layer_thickness= soil_params["layer_thickness"]
+                                                                            )
+            # Add v_residual_capacity_vg
+            soil_params["v_residual_capacity_vg"] = convert_f_cm3_to_v_mm(x = soil_params["residual_capacity_vg"],
+                                                                          rock_fragment_content = soil_params["rock_fragment_content"],
+                                                                          layer_thickness= soil_params["layer_thickness"]
+                                                                          )
+
+
+
+            # Add v_wilting_point
+            soil_params["v_wilting_point"] = convert_f_cm3_to_v_mm(x = soil_params["wilting_point"],
+                                                                   rock_fragment_content = soil_params["rock_fragment_content"],
+                                                                   layer_thickness= soil_params["layer_thickness"]
+                                                                   )
+
+            # Original code duplicate v_saturation_capacity
+            #.soilParams$V_saturation_capacity <- .soilParams$V_saturation_capacity_vg
+
+            # For diagnostic, Unknown reason why
+            soil_params["v_soil_storage_capacity_wilt"] = np.sum(soil_params["v_field_capacity"]) - np.sum(soil_params["v_wilting_point"])
+            soil_params["v_soil_storage_capacity_res"] = np.sum(soil_params["v_field_capacity"]) - np.sum(soil_params["v_residual_capacity_vg"])
+            soil_params["v_soil_storage_capacity"] = soil_params["v_soil_storage_capacity_wilt"]
+
+            print(f'Available water capacity Wilting: {soil_params["v_soil_storage_capacity_wilt"]} mm')
+            print(f'Available water capacity Residual: {soil_params["v_soil_storage_capacity_res"]} mm')
+
+            print(f'Can soil_params["v_soil_storage_capacity"] be negative?? Ask')
 
 
         # Create Soil params for campbell formulation ---------------------------
         if soil_params["pedo_transfer_formulation"] == "campbell":
-            print("campbell")
+
+            # Shape parameters of the relationship between soil water content and
+            # soil water potential
+
+            # Shape parameter 1
+            soil_params["b_camp"] = np.repeat(soil_params_csv_file['b_camp'], 3)
+
+            # Shape parameter 2
+            soil_params["psie"] = np.repeat(soil_params_csv_file['psie'], 3)
+
+            # Soil conductivity at saturation (mol/m/s/Mpa)
+            # Value not repeated 3 times as ksat_vg
+            soil_params["ksat_campbell"] = soil_params_csv_file['ksat_campbell']
+
+            # Fraction of water at saturation capacity (cm3/cm3)
+            soil_params["saturation_capacity_campbell"] = np.repeat(soil_params_csv_file['saturation_capacity_campbell'], 3)
+
+            #.soilParams$wilting_point <- compute.thetaAtGivenPSoil.Camp (PsiTarget = -1.5, thetaSat=.soilParams$saturation_capacity_campbell, psie=.soilParams$psie, b_camp=.soilParams$b_camp)
+            soil_params["wilting_point"] = compute_theta_at_given_p_soil_camp(psi_target = -1.5,
+                                                                              theta_sat = soil_params['saturation_capacity_campbell'],
+                                                                              psie = soil_params["psie"],
+                                                                              b_camp= 4,#soil_params["b_camp"],
+                                                                              )
+
 
 
     return soil_params

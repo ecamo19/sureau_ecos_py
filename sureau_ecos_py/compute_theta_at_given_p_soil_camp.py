@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['compute_theta_at_given_p_soil_camp']
 
-# %% ../nbs/09_8_compute_theta_at_given_p_soil_camp.ipynb 3
+# %% ../nbs/09_8_compute_theta_at_given_p_soil_camp.ipynb 4
 def compute_theta_at_given_p_soil_camp(
     theta_sat: float, # Unknown parameter definition
     psi_target: float, # Unknown parameter definition
@@ -11,4 +11,9 @@ def compute_theta_at_given_p_soil_camp(
     b_camp: float # Unknown parameter definition
 ) -> float:
 
-    return theta_sat * (psi_target / -psie) ** (1 / -b_camp)
+    assert psie < 0,"psie values must be negative"
+    assert b_camp < 0,"b_camp values must be negative"
+    assert psi_target < 0, "psi_target values must be negative"
+
+    return theta_sat * (psi_target / psie) ** (1 / b_camp)
+
