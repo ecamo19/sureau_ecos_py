@@ -304,11 +304,11 @@ def create_soil_parameters(
             soil_params["saturation_capacity_campbell"] = np.repeat(soil_params_csv_file['saturation_capacity_campbell'], 3)
 
             #.soilParams$wilting_point <- compute.thetaAtGivenPSoil.Camp (PsiTarget = -1.5, thetaSat=.soilParams$saturation_capacity_campbell, psie=.soilParams$psie, b_camp=.soilParams$b_camp)
-            soil_params["wilting_point"] = compute_theta_at_given_p_soil_camp(psi_target = -1.5,
-                                                                              theta_sat = soil_params['saturation_capacity_campbell'],
-                                                                              psie = soil_params["psie"],
-                                                                              b_camp= 4,#soil_params["b_camp"],
-                                                                              )
+            #soil_params["wilting_point"] = compute_theta_at_given_p_soil_camp(psi_target = -1.5,
+            #                                                                  theta_sat = soil_params['saturation_capacity_campbell'],
+            #                                                                  psie = soil_params["psie"],
+            #                                                                  b_camp= 4,#soil_params["b_camp"],
+            #                                                                  )
 
 
 
