@@ -10,8 +10,8 @@ import numpy as np
 def compute_gmin(leaf_temp:float, # Temperature of the leaf (degC)
                  gmin_20:float, # leaf conductance at 20 degC
                  t_phase:float,  # Temperature for phase transition of gmin
-                 q10_1:float, # Q10 values for gmin= f(T) below T_phase
-                 q10_2:float, # Q10 values for gcuti = f(T) above T_phase
+                 q10_1:float, # Q10 values for g_min= f(T) below T_phase
+                 q10_2:float, # Q10 values for g_cuti = f(T) above T_phase
                  gmin_temp_off = False, # Unknown parameter definition
                  ) -> float:
 
