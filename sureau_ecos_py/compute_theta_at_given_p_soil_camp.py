@@ -3,6 +3,9 @@
 # %% auto 0
 __all__ = ['compute_theta_at_given_p_soil_camp']
 
+# %% ../nbs/09_8_compute_theta_at_given_p_soil_camp.ipynb 3
+import numpy as np
+
 # %% ../nbs/09_8_compute_theta_at_given_p_soil_camp.ipynb 4
 def compute_theta_at_given_p_soil_camp(
     theta_sat: float, # Unknown parameter definition
@@ -11,9 +14,20 @@ def compute_theta_at_given_p_soil_camp(
     b_camp: float # Unknown parameter definition
 ) -> float:
 
-    assert psie < 0,"psie values must be negative"
-    assert b_camp < 0,"b_camp values must be negative"
-    assert psi_target < 0, "psi_target values must be negative"
+    # Assert that values are negative.
+    # Using np.testing instead of assert because parameters can be np.arrays OR
+    # single values (i.e. 1). assert only works when params are always one
+    # type
+
+    np.testing.assert_array_less(np.array(psie), 0,
+                                 err_msg='\nError: psie values must be negative\n')
+
+    np.testing.assert_array_less(np.array(b_camp), 0,
+                                 err_msg='\nError: b_camp values must be negative\n')
+
+    np.testing.assert_array_less(np.array(psi_target), 0,
+                                 err_msg='\nError: psi_target values must be negative\n')
+
 
     return theta_sat * (psi_target / psie) ** (1 / b_camp)
 
