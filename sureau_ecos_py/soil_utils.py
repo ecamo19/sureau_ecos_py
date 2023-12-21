@@ -7,6 +7,15 @@ __all__ = ['compute_b', 'compute_b_gc', 'compute_k_soil', 'compute_k_soil_camp',
 # %% ../nbs/01_soil_utils.ipynb 3
 import numpy as np
 from math import pi
+import operator
+import collections
+from pathlib import Path
+import os
+import pandas as pd
+from typing import Dict
+from .create_modeling_options import create_modeling_options
+from pandera.typing import Series
+import pandera as pa
 
 # %% ../nbs/01_soil_utils.ipynb 4
 def compute_b(lv: float # length of fine root per unit volume
@@ -17,10 +26,6 @@ def compute_b(lv: float # length of fine root per unit volume
     return 1 / np.sqrt(pi * lv)
 
 # %% ../nbs/01_soil_utils.ipynb 5
-import numpy as np
-from math import pi
-
-# %% ../nbs/01_soil_utils.ipynb 6
 def compute_b_gc(
     la: float, # Unknown parameter definition
     b: float, # Unknown parameter definition
@@ -30,10 +35,7 @@ def compute_b_gc(
 
     return la * 2 * pi / np.log(b / root_radius)
 
-# %% ../nbs/01_soil_utils.ipynb 7
-import collections
-
-# %% ../nbs/01_soil_utils.ipynb 8
+# %% ../nbs/01_soil_utils.ipynb 6
 def compute_k_soil(
     rew: float, # Unknown parameter definition
     i_vg: float, # Unknown parameter definition
@@ -58,7 +60,7 @@ def compute_k_soil(
 
     return k_soil_parameters
 
-# %% ../nbs/01_soil_utils.ipynb 9
+# %% ../nbs/01_soil_utils.ipynb 7
 def compute_k_soil_camp(sws: float, # Unknown parameter definition
                         tsc: float, # Unknown parameter definition
                         b_camp: float, # Unknown parameter definition
@@ -66,7 +68,7 @@ def compute_k_soil_camp(sws: float, # Unknown parameter definition
                         ) -> float:
     return k_sat_campbell * (sws / tsc) ** (-b_camp * 2 + 2)
 
-# %% ../nbs/01_soil_utils.ipynb 10
+# %% ../nbs/01_soil_utils.ipynb 8
 def compute_p_soil(rew: float, # Unknown parameter definition
                    alpha_vg: float, # Unknown parameter definition
                    n_vg: float # Unknown parameter definition
@@ -77,7 +79,7 @@ def compute_p_soil(rew: float, # Unknown parameter definition
     # diviser par 10000 pour passer de cm à MPa
     return -1 * ((((1 / rew) ** (1 / m)) - 1) ** (1 / n_vg)) / alpha_vg / 10000
 
-# %% ../nbs/01_soil_utils.ipynb 11
+# %% ../nbs/01_soil_utils.ipynb 9
 def compute_p_soil_camp(sws: float, # Unknown parameter definition
                         tsc: float, # Unknown parameter definition
                         b_camp: float, # Unknown parameter definition
@@ -85,11 +87,7 @@ def compute_p_soil_camp(sws: float, # Unknown parameter definition
                         )-> float:
     return -1 * (psie * ((sws / tsc) ** -b_camp))
 
-# %% ../nbs/01_soil_utils.ipynb 12
-import numpy as np
-import operator
-
-# %% ../nbs/01_soil_utils.ipynb 13
+# %% ../nbs/01_soil_utils.ipynb 10
 def compute_theta_at_given_p_soil(
     psi_target: float, # Unknown parameter definition
     theta_res: float, # Unknown parameter definition
@@ -113,10 +111,7 @@ def compute_theta_at_given_p_soil(
         1 + (alpha_vg * psi_target * 10000) ** n_vg
     ) ** (1 - 1 / n_vg)
 
-# %% ../nbs/01_soil_utils.ipynb 16
-import numpy as np
-
-# %% ../nbs/01_soil_utils.ipynb 17
+# %% ../nbs/01_soil_utils.ipynb 13
 def compute_theta_at_given_p_soil_camp(
     theta_sat: float, # Unknown parameter definition
     psi_target: float, # Unknown parameter definition
@@ -142,22 +137,9 @@ def compute_theta_at_given_p_soil_camp(
     return theta_sat * (psi_target / psie) ** (1 / b_camp)
 
 
-# %% ../nbs/01_soil_utils.ipynb 20
-from pathlib import Path
-import os
-import pandas as pd
-from typing import Dict
-from .create_modeling_options import create_modeling_options
-import numpy as np
-import collections
-from pandera.typing import Series
-import pandera as pa
-
-# %% ../nbs/01_soil_utils.ipynb 21
+# %% ../nbs/01_soil_utils.ipynb 16
 # This class was created for validating the input dataframe
 # If the data don't follow the structure specified the function will fail
-
-
 class SoilFile(pa.SchemaModel):
     "Schema for validating the input soil parameter file"
 
