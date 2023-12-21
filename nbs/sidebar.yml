@@ -11,6 +11,36 @@ website:
       - 06_ppfd_umol_to_rg_watt.ipynb
       - 07_rg_conversions.ipynb
       - 08_potential_par.ipynb
-      - 10_create_simulation_parameters.ipynb
+      - 09_1_compute_b.ipynb
+      - 09_2_compute_b_gc.ipynb
+      - 09_3_compute_k_soil.ipynb
+      - 09_4_compute_k_soil_camp.ipynb
+      - 09_5_compute_p_soil.ipynb
+      - 09_6_compute_p_soil_camp.ipynb
+      - 09_7_compute_theta_at_given_p_soil.ipynb
+      - 09_8_compute_theta_at_given_p_soil_camp.ipynb
+      - 09_9_read_soil_file.ipynb
+      - 10_10_compute_gmin.ipynb
+      - 10_11_compute_emin.ipynb
+      - 10_12_compute_dfmc.ipynb
+      - 10_13_compute_hydraulic_conductances.ipynb
+      - 10_14_compute_g_crown.ipynb
+      - 10_15_1_convert_flux_from_mm_to_mmolm2s.ipynb
+      - 10_15_convert_flux_from_mm_to_mmolm2s.ipynb
+      - 10_16_calculate_ebound_mm_granier.ipynb
+      - 10_17_calculate_ebound_granier.ipynb
+      - 10_18_convert_f_cm3_to_v_mm.ipynb
+      - 10_19_compute_tleaf.ipynb
+      - 10_1_rs_comp.ipynb
+      - 10_2_turgor_comp.ipynb
+      - 10_3_compute_turgor_from_psi.ipynb
+      - 10_4_osmo_comp.ipynb
+      - 10_5_psi_total_symp_comp.ipynb
+      - 10_6_stomatal_regulation_turgor.ipynb
+      - 10_7_plc_comp.ipynb
+      - 10_8_plc_prime_comp.ipynb
+      - 10_9_gs_curve.ipynb
       - 11_create_modeling_options.ipynb
       - 12_create_climate_data.ipynb
+      - 13_create_simulation_parameters.ipynb
+      - 14_create_soil_parameters.ipynb

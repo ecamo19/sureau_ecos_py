@@ -7,16 +7,37 @@ documentation.
 
 ## Install
 
+[Code](https://cuddly-train-pg45gq96vww26wgv.github.dev/)
+
 ``` sh
 pip install sureau_ecos_py
 ```
 
 ## How to use
 
-Fill me in please! Don’t forget code examples:
+``` mermaid
+    %%{init:{'themeVariables': {'primaryBorderColor': '#00758f'}}}%%
+    flowchart TD;
 
-``` python
-1 + 1
+        create_simulation_parameters-->create_climate_data;
+        create_modeling_options-->create_climate_data;
+
+        create_modeling_options-->create_soil_paramters;
+        compute_theta_at_given_psoil-->create_soil_paramters;
+        read_soil_file-->create_soil_paramters;
+        convert_f_to_v-->create_soil_paramters;
+        compute_theta_at_given_p_soil_camp-->create_soil_paramters;
+
+
+        %% Blue color boxes -----------------------------------------------------
+
+        %%style create_climate_data fill:#00758f
+        %%style create_modeling_options fill:#00758f
+        %%style create_simulation_parameters fill:#00758f, lineColor:#00758f
+        %%style create_soil_paramters fill:#00758f
+
+
+        %% Red color boxes ------------------------------------------------------
+        %%style compute_theta_at_given_psoil fill:#880808
+
 ```
-
-    2
