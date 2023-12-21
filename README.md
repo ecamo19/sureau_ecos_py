@@ -26,6 +26,7 @@ pip install sureau_ecos_py
         compute_theta_at_given_psoil-->create_soil_paramters;
         read_soil_file-->create_soil_paramters;
         convert_f_to_v-->create_soil_paramters;
+        compute_theta_at_given_p_soil_camp-->create_soil_paramters;
 
 
         %% Blue color boxes -----------------------------------------------------

@@ -4,6 +4,10 @@
 __all__ = ['compute_theta_at_given_p_soil']
 
 # %% ../nbs/09_7_compute_theta_at_given_p_soil.ipynb 3
+import numpy as np
+import operator
+
+# %% ../nbs/09_7_compute_theta_at_given_p_soil.ipynb 4
 def compute_theta_at_given_p_soil(
     psi_target: float, # Unknown parameter definition
     theta_res: float, # Unknown parameter definition
@@ -11,6 +15,18 @@ def compute_theta_at_given_p_soil(
     alpha_vg: float, # Unknown parameter definition
     n_vg: float # Unknown parameter definition
 ) -> float:
+
+    # Assert that values are positive.
+    # Using np.testing instead of assert because parameters can be np.arrays OR
+    # single values (i.e. 1). assert only works when params are always one
+    # type
+    # Solution from:
+    # https://stackoverflow.com/questions/45987962/why-arent-there-numpy-testing-assert-array-greater-assert-array-less-equal-as
+
+    np.testing.assert_array_compare(operator.__gt__,
+                                    np.array(psi_target), 0,
+                                    err_msg='\nError: psi_target values must be greater thatn 0\n')
+
     return theta_res + (theta_sat - theta_res) / (
         1 + (alpha_vg * psi_target * 10000) ** n_vg
     ) ** (1 - 1 / n_vg)
