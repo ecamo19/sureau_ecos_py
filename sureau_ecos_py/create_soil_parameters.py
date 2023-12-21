@@ -11,9 +11,10 @@ import os
 import warnings
 import numpy as np
 from .create_modeling_options import create_modeling_options
-from .compute_theta_at_given_p_soil import compute_theta_at_given_p_soil
-from .compute_theta_at_given_p_soil_camp import compute_theta_at_given_p_soil_camp
-from .read_soil_file import read_soil_file
+#from sureau_ecos_py.compute_theta_at_given_p_soil import compute_theta_at_given_p_soil
+from .soil_utils import *
+#from sureau_ecos_py.compute_theta_at_given_p_soil_camp import compute_theta_at_given_p_soil_camp
+#from sureau_ecos_py.read_soil_file import read_soil_file
 from .convert_f_cm3_to_v_mm import convert_f_cm3_to_v_mm
 
 # %% ../nbs/14_create_soil_parameters.ipynb 4
