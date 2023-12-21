@@ -4,10 +4,7 @@
 __all__ = ['declination']
 
 # %% ../nbs/08_potential_par.ipynb 3
-from math import sin, atan
 from math import cos, sin, atan
-from numpy import exp
-from math import pi
 
 # %% ../nbs/08_potential_par.ipynb 4
 def declination(doy: int):  # julian day (day of the year)
@@ -17,7 +14,7 @@ def declination(doy: int):  # julian day (day of the year)
 
     # Sin(23.5*pi/180), 23.5 = Earth declination
 
-    # Constans ----------------------------------------------------------------
+    # Constans ------------------------------------------------------------------
     c1 = 0.398749068925246
 
     c2 = 2 * 3.1416 / 365
@@ -27,5 +24,5 @@ def declination(doy: int):  # julian day (day of the year)
 
     x = c1 * sin((doy - c3) * c2)  # ;
 
-    # Return declination ------------------------------------------------------
+    # Return declination --------------------------------------------------------
     return atan(x / ((1 - x * x) ^ 0.5))

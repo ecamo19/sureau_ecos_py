@@ -9,23 +9,23 @@ import numpy as np
 # %% ../nbs/02_compute_etp_pm.ipynb 4
 def compute_etp_pm(
     tmoy: float,  # Mean temperature over the considered time step (degrees Celsius)
-    net_radiation: float,  # Cumulative Net radiation over the considered  time sep  (MJ.m2)
-    u: float,  #  wind speed (m.s-1)
+    net_radiation: float,  # Cumulative Net radiation over the considered  time sep (MJ.m2)
+    u: float,  #  Wind speed (m.s-1)
     vpd: float,  # Vapor pressure deficit (kpa)
-    g: float = 0,
-):
+    g: float = 0, # Unknown parameter definition
+)->float:
     "Compute reference ETP from Penmman formulation"
 
-    # Constants ---------------------------------------------------------------
+    # Constants -----------------------------------------------------------------
 
     # Stefan-Boltzman constant [MJ.K^-4.m^-2.day^-1]
-    sb_constant = 4.903 * 10**9
+    # sb_constant = 4.903 * 10**9
 
     # Psychometer constant
     gamma = 0.0666
 
     # Latent heat of vaporisation
-    lamb = 2.45
+    # lamb = 2.45
 
     # Compute ETP -------------------------------------------------------------
 
@@ -35,7 +35,7 @@ def compute_etp_pm(
         4098 * 0.6108 * np.exp((17.27 * tmoy) / (tmoy + 237.3)) / ((tmoy + 237.3) ** 2)
     )
 
-    ga = 0.34 * max(u, 0.001)
+    # ga = 0.34 * max(u, 0.001)
 
     u2 = u * (4.87 / np.log(67.8 * 10 - 5.42))
 
