@@ -163,7 +163,6 @@ def create_soil_parameters(
         # Read soil file from csv data frame
         if file_path is not None:
             soil_params_csv_file = read_soil_file(file_path, modeling_options)
-            print(f' Remove this print {soil_params_csv_file}')
 
         # Read list_of_parameters
         if list_of_parameters is not None:
