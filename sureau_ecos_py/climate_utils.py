@@ -7,6 +7,7 @@ __all__ = ['compute_vpd_from_t_rh', 'compute_etp_pt', 'compute_etp_pm', 'calcula
 
 # %% ../nbs/00_climate_utils.ipynb 3
 import numpy as np
+from numpy import exp
 from typing import List
 from math import pi, cos, sin, atan
 
@@ -14,8 +15,8 @@ from math import pi, cos, sin, atan
 def compute_vpd_from_t_rh(
     relative_humidity: float,  # Air relative_humidity (%)
     temperature: float,  # Air temperature (degrees Celsius)
-    air_pressure: float = 101325, # Unknown parameter definition
-)-> float:  # Air pressure, used?
+    air_pressure: float = 101325,  # Unknown parameter definition
+) -> float:  # Air pressure, used?
     "Compute vapor pressure deficit (VPD) from air relative humidity and air temperature"
 
     # Constants -----------------------------------------------------------------
@@ -36,7 +37,7 @@ def compute_vpd_from_t_rh(
     d_air = ((air_pressure) / (rgz * (temp_kelvin))) * mass
 
     # Compute VPD -------------------------------------------------------------
-    es = 6.108 * np.exp(17.27 * temperature / (237.2 + temperature)) * 100
+    es = 6.108 * exp(17.27 * temperature / (237.2 + temperature)) * 100
 
     ea = relative_humidity * es / 100
 
@@ -52,8 +53,8 @@ def compute_etp_pt(
     tmoy: float,  # Mean temperature over the considered time step (degrees Celsius)
     net_radiation: float,  # Cumulative Net radiation over the considered  time sep  (MJ.m2)
     pt_coeff: float = 1.26,  # An empirical constant accounting for the vapor pressure deficit and resistance values Typically, α is 1.26 for open bodies of water, but has a wide range of values from less than 1 (humid conditions) to almost 2 (arid conditions).
-    g: float = 0, # Unknown parameter definition
-)-> float:
+    g: float = 0,  # Unknown parameter definition
+) -> float:
     "Calcule Potential evapotranspiration (mm) PET using Pristeley Taylor Formulation"
 
     # Constants -----------------------------------------------------------------
@@ -71,7 +72,7 @@ def compute_etp_pt(
 
     #  s: slope of the saturation vapour pressure function (AO 1998)
     slope_sta = (
-        4098 * 0.6108 * np.exp((17.27 * tmoy) / (tmoy + 237.3)) / ((tmoy + 237.3) ** 2)
+        4098 * 0.6108 * exp((17.27 * tmoy) / (tmoy + 237.3)) / ((tmoy + 237.3) ** 2)
     )
     # s <-       4098 * 0.6108 * exp((17.27 * Tmoy) / (Tmoy + 237.3)) / ((Tmoy + 237.3)^2)
 
@@ -86,8 +87,8 @@ def compute_etp_pm(
     net_radiation: float,  # Cumulative Net radiation over the considered  time sep (MJ.m2)
     u: float,  #  Wind speed (m.s-1)
     vpd: float,  # Vapor pressure deficit (kpa)
-    g: float = 0, # Unknown parameter definition
-)->float:
+    g: float = 0,  # Unknown parameter definition
+) -> float:
     "Compute reference ETP from Penmman formulation"
 
     # Constants -----------------------------------------------------------------
@@ -126,7 +127,7 @@ def calculate_radiation_diurnal_pattern(
         int
     ],  # a numeric value of vector indicating the time of the day (in seconds)
     day_length: int,  # value indicating the duration of the day (in seconds)
-)->float:
+) -> float:
     "Calculated diurnal pattern of temperature assuming a sinusoidal pattern with T = tmin at sunrise and T = (tmin + tmax)/2 at sunset. From sunset to sunrise follows a linear trend"
 
     # calculate_radiation_diurnal_pattern ---------------------------------------
@@ -150,7 +151,7 @@ def calculate_temperature_diurnal_pattern(
     tmin_prev: float,  # Unknown parameter definition
     tmax_prev: float,  # Unknown parameter definition
     tmin_next: float,  # Unknown parameter definition
-)-> float:
+) -> float:
     "Calculated diurnal pattern of temperature assuming a sinusoidal pattern with T = tmin at sunrise and T = (tmin+tmax)/2 at sunset. From sunset to sunrise follows a linear trend"
 
     # calculate_temperature_diurnal_pattern -------------------------------------
@@ -182,12 +183,12 @@ def calculate_temperature_diurnal_pattern(
 
 # %% ../nbs/00_climate_utils.ipynb 19
 def calculate_rh_diurnal_pattern(
-    temperature: float, # Unknown parameter definition
+    temperature: float,  # Unknown parameter definition
     rhmin: float,  # Unknown parameter definition
     rhmax: float,  # Unknown parameter definition
     tmin: float,  # Unknown parameter definition
     tmax: float,  # Unknown parameter definition
-)->float:
+) -> float:
     "Calculate diurnal pattern of relative humidity from temperature"
 
     # calculate rh diurnal pattern ----------------------------------------------
@@ -198,7 +199,7 @@ def ppfd_umol_to_rg_watt(
     ppfd: float,  # Photosynthetic photon flux density (umol.m-2.s-1)
     j_to_mol: float = 4.6,  # Conversion factor
     frac_par: float = 0.5,  # Function of solar rdiation that is photosynthetically active radiation (PAR)
-) ->float:
+) -> float:
     "Convert ppfd (umol) to rg (watt)"
 
     # calculate Global radiation (rg)(W/m2) -------------------------------------
@@ -210,7 +211,7 @@ def rg_watt_to_ppfd_umol(
     rg: float,  # Global radiation (W/m2)
     j_to_mol: float = 4.6,  # Conversion factor
     frac_par: float = 0.5,  # Function of solar rdiation that is photosynthetically active radiation (PAR)
-)->float:
+) -> float:
     "Convert rg (watt) to ppfd (umol)"
 
     # calculate Photosynthetic photon flux density (umol.m-2.s-1) ---------------
@@ -221,8 +222,8 @@ def rg_watt_to_ppfd_umol(
 def rg_convertions(
     rg_watts: float = None,  # instantaneous radiation (watt)
     rg_mj: float = None,  # instantaneous radiation (in Mega Jule?)
-    nhours: float = None, # Unknown parameter definition
-)->float:
+    nhours: float = None,  # Unknown parameter definition
+) -> float:
     "Convert instantaneous radiation in watt to dialy cumulative radiation in MJ (MJ.day-1)"
 
     if rg_watts is not None and rg_mj is None:
