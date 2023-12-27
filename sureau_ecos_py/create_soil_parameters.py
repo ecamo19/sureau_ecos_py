@@ -11,13 +11,8 @@ import os
 import warnings
 import numpy as np
 from .create_modeling_options import create_modeling_options
-
-# from sureau_ecos_py.compute_theta_at_given_p_soil import compute_theta_at_given_p_soil
-from .soil_utils import *
-
-# from sureau_ecos_py.compute_theta_at_given_p_soil_camp import compute_theta_at_given_p_soil_camp
-# from sureau_ecos_py.read_soil_file import read_soil_file
-from .convert_f_cm3_to_v_mm import convert_f_cm3_to_v_mm
+from .soil_utils import read_soil_file, compute_theta_at_given_p_soil, compute_theta_at_given_p_soil_camp
+from .plant_utils import convert_f_cm3_to_v_mm
 
 # %% ../nbs/14_create_soil_parameters.ipynb 4
 def create_soil_parameters(
@@ -308,7 +303,7 @@ def create_soil_parameters(
                 f'Available water capacity Residual: {soil_params["v_soil_storage_capacity_res"]} mm'
             )
 
-            print(f'Can soil_params["v_soil_storage_capacity"] be negative?? Ask')
+            print('Can soil_params["v_soil_storage_capacity"] be negative?? Ask')
 
         # Add soil params for campbell formulation ------------------------------
         if soil_params["pedo_transfer_formulation"] == "campbell":
@@ -408,6 +403,6 @@ def create_soil_parameters(
                 f'Available water capacity Residual: {soil_params["v_soil_storage_capacity_res_campbell"]} mm'
             )
 
-            print(f'Can soil_params["v_soil_storage_capacity"] be negative?? Ask')
+            print('Can soil_params["v_soil_storage_capacity"] be negative?? Ask')
 
     return soil_params
