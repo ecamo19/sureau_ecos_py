@@ -9,3 +9,11 @@ website:
       - 12_create_climate_data.ipynb
       - 13_create_simulation_parameters.ipynb
       - 14_create_soil_parameters.ipynb
+      - nbdev.yml
+      - sidebar.yml
+      - styles.css
+      - section: sample_data
+        contents:
+          - sample_data/climat_example.csv
+          - sample_data/climat_example_copy.csv
+          - sample_data/soil_example.csv
