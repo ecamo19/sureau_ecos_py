@@ -13,7 +13,9 @@ from pandera.typing import DataFrame, Series
 import numpy as np
 
 from .create_modeling_options import create_modeling_options
-from .create_simulation_parameters import create_simulation_parameters
+from sureau_ecos_py.create_simulation_parameters import (
+    create_simulation_parameters,
+)
 
 # %% ../nbs/12_create_climate_data.ipynb 4
 # This class is created for validating the input climate dataframe
@@ -21,7 +23,9 @@ from .create_simulation_parameters import create_simulation_parameters
 class ClimateDataValidation(pa.SchemaModel):
     "Schema for validating the climate data"
 
-    DATE: Series[np.datetime64] = pa.Field(description="date with format 1991/12/23")
+    DATE: Series[np.datetime64] = pa.Field(
+        description="date with format 1991/12/23"
+    )
     Tair_min: Series[float] = pa.Field(
         description="minimum air temperature of the day (degC)"
     )
@@ -31,7 +35,9 @@ class ClimateDataValidation(pa.SchemaModel):
     Tair_mean: Series[float] = pa.Field(
         description="mean air temperature of the day (degC)"
     )
-    RG_sum: Series[float] = pa.Field(ge=0, description="global radiation (MJ/m2)")
+    RG_sum: Series[float] = pa.Field(
+        ge=0, description="global radiation (MJ/m2)"
+    )
 
     PPT_sum: Series[float] = pa.Field(ge=0, description="precipitation (mm)")
 
@@ -109,8 +115,14 @@ def create_climate_data(
         # Filter data based on start_year_simulation and end_year_simulation
         # parameters specified in similation_parameters dictionary
         climate_data = climate_data.loc[
-            (climate_data["year"] >= simulation_parameters["start_year_simulation"])
-            & (climate_data["year"] <= simulation_parameters["end_year_simulation"])
+            (
+                climate_data["year"]
+                >= simulation_parameters["start_year_simulation"]
+            )
+            & (
+                climate_data["year"]
+                <= simulation_parameters["end_year_simulation"]
+            )
         ]
 
         print(

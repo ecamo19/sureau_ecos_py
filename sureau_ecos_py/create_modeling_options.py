@@ -63,7 +63,9 @@ def create_modeling_options(
         constant_climate, bool
     ), "constant_climate must be a bool (True/False)"
 
-    assert isinstance(defoliation, bool), "defoliation must be a bool (True/False)"
+    assert isinstance(
+        defoliation, bool
+    ), "defoliation must be a bool (True/False)"
 
     assert isinstance(soil_evapo, bool), "soil_evapo must be a bool (True/False)"
 
@@ -114,10 +116,13 @@ def create_modeling_options(
         ]
     ), f'{numerical_scheme} not a valid option, choose  "implicit", "semi-implicit" or "explicit"'
 
-    assert pedo_transfer_formulation in [
-        "vg",
-        "campbell",
-    ], f'{pedo_transfer_formulation} not a valid option, choose "vg" or "campbell" '
+    assert (
+        pedo_transfer_formulation
+        in [
+            "vg",
+            "campbell",
+        ]
+    ), f'{pedo_transfer_formulation} not a valid option, choose "vg" or "campbell" '
 
     assert time_step_for_evapo in [
         None,
@@ -169,7 +174,9 @@ def create_modeling_options(
         # every hours, every 10 min
         if comp_options_for_evapo == "fast":
             comp_options["numerical_scheme"] = numerical_scheme
-            comp_options["nsmalltimesteps"] = time_step_for_evapo * np.array(1, 6)
+            comp_options["nsmalltimesteps"] = time_step_for_evapo * np.array(
+                1, 6
+            )
             comp_options["lsym"] = 1
             comp_options["ssym"] = 1
             comp_options["clapo"] = 1

@@ -25,16 +25,21 @@ def create_simulation_parameters(
 
     assert isinstance(main_dir, str)
     if not os.path.isdir(main_dir):
-        return f"Directory: {main_dir}, does not exist, check presence or spelling"
+        return (
+            f"Directory: {main_dir}, does not exist, check presence or spelling"
+        )
 
     simulation_parameters["main_dir"] = main_dir
 
     # Make sure that resolution output only has three options
-    assert resolution_output in [
-        "subdaily",
-        "daily",
-        "yearly",
-    ], f'{resolution_output} not a valid option, select "subdaily", "daily" or "yearly"'
+    assert (
+        resolution_output
+        in [
+            "subdaily",
+            "daily",
+            "yearly",
+        ]
+    ), f'{resolution_output} not a valid option, select "subdaily", "daily" or "yearly"'
 
     simulation_parameters["resolution_output"] = resolution_output
 

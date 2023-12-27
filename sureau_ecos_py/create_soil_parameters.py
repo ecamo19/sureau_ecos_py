@@ -148,7 +148,9 @@ def create_soil_parameters(
     # Soil characteristics ------------------------------------------------------
     if default_soil is False:
         if modeling_options is None:
-            warnings.warn("modeling_options' is missing. Van Genuchten used as default")
+            warnings.warn(
+                "modeling_options' is missing. Van Genuchten used as default"
+            )
             soil_params["pedo_transfer_formulation"] = "vg"
 
         if modeling_options is not None:
@@ -218,7 +220,9 @@ def create_soil_parameters(
             # soil water potential
 
             # Shape parameter 1
-            soil_params["alpha_vg"] = np.repeat(soil_params_csv_file["alpha_vg"], 3)
+            soil_params["alpha_vg"] = np.repeat(
+                soil_params_csv_file["alpha_vg"], 3
+            )
 
             # Shape parameter 2
             soil_params["n_vg"] = np.repeat(soil_params_csv_file["n_vg"], 3)
@@ -227,7 +231,9 @@ def create_soil_parameters(
             soil_params["i_vg"] = np.repeat(soil_params_csv_file["i_vg"], 3)
 
             # Soil conductivity at saturation (mol/m/s/Mpa)
-            soil_params["ksat_vg"] = np.repeat(soil_params_csv_file["ksat_vg"], 3)
+            soil_params["ksat_vg"] = np.repeat(
+                soil_params_csv_file["ksat_vg"], 3
+            )
 
             # Fraction of water at saturation capacity (cm3/cm3)
             soil_params["saturation_capacity_vg"] = np.repeat(
@@ -315,7 +321,9 @@ def create_soil_parameters(
             # soil water potential
 
             # Shape parameter 1
-            soil_params["b_campbell"] = np.repeat(soil_params_csv_file["b_camp"], 3)
+            soil_params["b_campbell"] = np.repeat(
+                soil_params_csv_file["b_camp"], 3
+            )
 
             # Shape parameter 2
             soil_params["psie"] = np.repeat(soil_params_csv_file["psie"], 3)
@@ -362,7 +370,9 @@ def create_soil_parameters(
                 layer_thickness=soil_params["layer_thickness"],
             )
             # Add v_saturation_capacity_campbell
-            soil_params["v_saturation_capacity_campbell"] = convert_f_cm3_to_v_mm(
+            soil_params[
+                "v_saturation_capacity_campbell"
+            ] = convert_f_cm3_to_v_mm(
                 x=soil_params["saturation_capacity_campbell"],
                 rock_fragment_content=soil_params["rock_fragment_content"],
                 layer_thickness=soil_params["layer_thickness"],
