@@ -16,7 +16,7 @@ def create_modeling_options(
     soil_evapo: bool = True,  # Boolean indicating whether soil evaporation should be simulated (True) or not (False)
     defoliation: bool = False,  # Boolean indicating whether trees should loose leaves when`occurs.cavitation` occurs of the above part of plant. Defoliation starts only when PLC_Leaf > 10% .
     threshold_mortality: int = 90,  # Percentange value indicating the percentage loss of conductivity above which the plant is considered dead and simulation stops for the current year.
-    transpiration_model: str = ["jarvis", "granier"], # Transpiration model type
+    transpiration_model: str = ["jarvis", "granier"],  # Transpiration model type
     etp_formulation: str = [
         "pt",
         "penman",
@@ -34,16 +34,20 @@ def create_modeling_options(
         "custom",
     ],  # option to be used for the loops  (voir avec Francois)
     custom_small_time_step_in_sec: int = 600,  # Time step in seconds. Use if comp_options_for_evapo is set to `custom`
-    lcav: int = 1, # Unknown parameter definition
-    scav: int = 1, # Unknown parameter definition
-    eord: int = 1, # Unknown parameter definition
-    numerical_scheme: str = ["implicit", "semi-implicit", "explicit"], # Unknown parameter definition
+    lcav: int = 1,  # Unknown parameter definition
+    scav: int = 1,  # Unknown parameter definition
+    eord: int = 1,  # Unknown parameter definition
+    numerical_scheme: str = [
+        "implicit",
+        "semi-implicit",
+        "explicit",
+    ],  # Unknown parameter definition
     stomatal_reg_formulation: str = [
         "sigmoid",
         "piecewise_linear",
         "turgor",
     ],  # type of regulation to be used for stomatal response to leaf symplasmic water potential, either `sigmoid` or `piecewise_linear`
-    print_prog: bool = True, # Unknown parameter definition
+    print_prog: bool = True,  # Unknown parameter definition
 ) -> Dict:
     "Create a dictionary containing modeling options that can be used as an input in run.SurEauR"
 
@@ -77,29 +81,38 @@ def create_modeling_options(
         "linear",
     ], f'{rn_formulation} not a valid option, choose "linacre" or "linear"'
 
-    assert comp_options_for_evapo in [
-        "normal",
-        "accurate",
-        "fast",
-        "custom",
-    ], f'{comp_options_for_evapo} not a valid option, choose "normal", "accurate", "fast" or "custom" '
+    assert (
+        comp_options_for_evapo
+        in [
+            "normal",
+            "accurate",
+            "fast",
+            "custom",
+        ]
+    ), f'{comp_options_for_evapo} not a valid option, choose "normal", "accurate", "fast" or "custom" '
 
-    assert stomatal_reg_formulation in [
-        "sigmoid",
-        "piecewise_linear",
-        "turgor",
-    ], f'{stomatal_reg_formulation} not a valid option, choose "sigmoid", "piecewise_linear" or "turgor" '
+    assert (
+        stomatal_reg_formulation
+        in [
+            "sigmoid",
+            "piecewise_linear",
+            "turgor",
+        ]
+    ), f'{stomatal_reg_formulation} not a valid option, choose "sigmoid", "piecewise_linear" or "turgor" '
 
     assert transpiration_model in [
         "jarvis",
         "granier",
     ], f'{transpiration_model} not a valid option, choose  "jarvis" or "granier"'
 
-    assert numerical_scheme in [
-        "implicit",
-        "semi-implicit",
-        "explicit",
-    ], f'{numerical_scheme} not a valid option, choose  "implicit", "semi-implicit" or "explicit"'
+    assert (
+        numerical_scheme
+        in [
+            "implicit",
+            "semi-implicit",
+            "explicit",
+        ]
+    ), f'{numerical_scheme} not a valid option, choose  "implicit", "semi-implicit" or "explicit"'
 
     assert pedo_transfer_formulation in [
         "vg",

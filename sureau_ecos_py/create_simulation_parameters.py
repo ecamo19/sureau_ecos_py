@@ -11,7 +11,7 @@ from typing import Dict
 
 # %% ../nbs/13_create_simulation_parameters.ipynb 4
 def create_simulation_parameters(
-    main_dir: str, # Unknown parameter definition
+    main_dir: str,  # Unknown parameter definition
     start_year_simulation: int,  # Integer indicating the starting year for the simulation
     end_year_simulation: int,  # Integer indicating the ending year for the simulation (must match the dates of the input climate data file)
     output_path: str,  # Path of output result file.
@@ -38,12 +38,15 @@ def create_simulation_parameters(
 
     simulation_parameters["resolution_output"] = resolution_output
 
-    assert output_type in [
-        None,
-        "simple_subdaily",
-        "simple_daily",
-        "simple_yearly",
-    ], f'{output_type} not a valid option, select  None, "simple_subdaily", "simple_daily" or "simple_yearly"'
+    assert (
+        output_type
+        in [
+            None,
+            "simple_subdaily",
+            "simple_daily",
+            "simple_yearly",
+        ]
+    ), f'{output_type} not a valid option, select  None, "simple_subdaily", "simple_daily" or "simple_yearly"'
 
     if output_type is None:
         if resolution_output == "subdaily":
