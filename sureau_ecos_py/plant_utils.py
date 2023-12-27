@@ -12,15 +12,6 @@ import numpy as np
 from typing import List
 import collections
 from typing import Dict
-#from sureau_ecos_py.turgor_comp import turgor_comp
-#from sureau_ecos_py.osmo_comp import osmo_comp
-#from sureau_ecos_py.plc_comp import plc_comp
-
-# from sureau_ecos_py.plc_comp import plc_comp
-#from sureau_ecos_py.calculate_ebound_mm_granier import calculate_ebound_mm_granier
-#from sureau_ecos_py.convert_flux_from_mm_to_mmolm2s import (
-#    convert_flux_from_mm_to_mmolm2s,
-#)
 
 # %% ../nbs/02_plant_utils.ipynb 4
 def rs_comp(
@@ -103,11 +94,11 @@ def psi_total_symp_comp(
     r_stemp: float,  # Unknown parameter definition
 ) -> float:
     "Compute Total potential"
-    turgor_comp = turgor_comp(pi_ft=pi_ft, e_symp=e_symp, r_stemp=r_stemp)
+    turgor = turgor_comp(pi_ft=pi_ft, e_symp=e_symp, r_stemp=r_stemp)
 
-    osmo_comp = osmo_comp(pi_ft=pi_ft, r_stemp=r_stemp)
+    osmo = osmo_comp(pi_ft=pi_ft, r_stemp=r_stemp)
 
-    return turgor_comp + osmo_comp
+    return turgor + osmo
 
 # %% ../nbs/02_plant_utils.ipynb 12
 def stomatal_regulation_turgor(
