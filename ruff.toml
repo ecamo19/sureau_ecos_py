@@ -1,1 +1,13 @@
 extend-include = ["*.ipynb"]
+line-length = 81
+indent-width = 4
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+
+[format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
