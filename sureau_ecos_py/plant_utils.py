@@ -56,7 +56,9 @@ def compute_turgor_from_psi(
     # Generates an array of length psi
     rwd_1 = (
         -1 * (np.array(psi) + pi_ft - e_symp)
-        - np.sqrt((np.array(psi) + pi_ft - e_symp) ** 2 + 4 * (np.array(psi) * e_symp))
+        - np.sqrt(
+            (np.array(psi) + pi_ft - e_symp) ** 2 + 4 * (np.array(psi) * e_symp)
+        )
     ) / (2 * e_symp)
 
     # Generates an array of length psi
@@ -196,7 +198,9 @@ def gs_curve(
             regul_fact = 1
 
         else:
-            print("Original code don't take into account regul_fact between 0 and 1")
+            print(
+                "Original code don't take into account regul_fact between 0 and 1"
+            )
 
     if stomatal_reg_formulation == "turgor":
         # Only Rs1 is needed above TLP
@@ -218,7 +222,9 @@ def gs_curve(
             regul_fact = 1
 
         else:
-            print("Original code don't take into account regul_fact between 0 and 1")
+            print(
+                "Original code don't take into account regul_fact between 0 and 1"
+            )
 
     return regul_fact * gs_max
 
@@ -362,7 +368,9 @@ def calculate_ebound_granier(
 
     ebound_mm = calculate_ebound_mm_granier(etp=etp, lai=lai)
 
-    return convert_flux_from_mm_to_mmolm2s(x=ebound_mm, time_step=time_step, lai=lai)
+    return convert_flux_from_mm_to_mmolm2s(
+        x=ebound_mm, time_step=time_step, lai=lai
+    )
 
 # %% ../nbs/02_plant_utils.ipynb 28
 def convert_f_cm3_to_v_mm(
@@ -400,7 +408,9 @@ def compute_tleaf(
         -40 <= t_air <= 70
     ), "Unrealistic air temperature, value must be a value between -40 and 70"
 
-    assert isinstance(turn_off_eb, bool), "turn_off_eb must be boolean (True or False)"
+    assert isinstance(
+        turn_off_eb, bool
+    ), "turn_off_eb must be boolean (True or False)"
 
     assert 0 <= leaf_angle <= 90, "leaf_angle must be a value between 0 and 90"
 
@@ -485,7 +495,9 @@ def compute_tleaf(
         cloud_cover = 1
 
     # ; #kPa  Unknown meaning of e_sat
-    e_sat = e_sat_coeff_a * np.exp(e_sat_coeff_b * t_air / (t_air + e_sat_coeff_z))
+    e_sat = e_sat_coeff_a * np.exp(
+        e_sat_coeff_b * t_air / (t_air + e_sat_coeff_z)
+    )
 
     # Unknown meaning of ea
     ea = e_sat * (relative_humidity / 100)
@@ -530,7 +542,9 @@ def compute_tleaf(
     if leaf_size > 3:
         # Unknown meaning of rbl
         rbl = 1 / (
-            1.5 * g_flat * ((wind_speed**j_flat) / ((leaf_size / 1000) ** (1 - j_flat)))
+            1.5
+            * g_flat
+            * ((wind_speed**j_flat) / ((leaf_size / 1000) ** (1 - j_flat)))
         )
 
     else:
@@ -539,7 +553,9 @@ def compute_tleaf(
 
         # Unknown meaning of rbl
         rbl = 1 / (
-            1.5 * g_cyl * ((wind_speed**j_cyl) / ((leaf_size / 1000) ** (1 - j_cyl)))
+            1.5
+            * g_cyl
+            * ((wind_speed**j_cyl) / ((leaf_size / 1000) ** (1 - j_cyl)))
         )  # A flat leaf if > 3mm
 
     # leaf boundary layer conductance in mmol/s/m2
@@ -574,9 +590,9 @@ def compute_tleaf(
     ym = psychro_constant * (rst / rblr)
 
     # Compute Tleaf with linear approximation -------------------------------
-    delta_t = (ym * rni * rblr / (dry_air_density * heat_capacity_dry_air) - vpd_x) / (
-        s + ym
-    )
+    delta_t = (
+        ym * rni * rblr / (dry_air_density * heat_capacity_dry_air) - vpd_x
+    ) / (s + ym)
 
     t_leaf = t_air + delta_t
 
@@ -584,7 +600,9 @@ def compute_tleaf(
     # t_leaf_copy =  t_leaf
 
     # Saturation vapour water pressure at Tair in Pa from Buck's equation
-    e_sat_air = 611.21 * np.exp((18.678 - t_air / 234.5) * t_air / (257.14 + t_air))
+    e_sat_air = 611.21 * np.exp(
+        (18.678 - t_air / 234.5) * t_air / (257.14 + t_air)
+    )
 
     # Vapour water pressure at Tair and RHair
     e_air = e_sat_air * relative_humidity / 100
@@ -593,7 +611,9 @@ def compute_tleaf(
     vpd_air = (e_sat_air - e_air) / 1000
 
     # Saturation vapour water pressure at Tair in Pa from Buck's equation
-    e_sat_leaf = 611.21 * np.exp((18.678 - t_leaf / 234.5) * t_leaf / (257.14 + t_leaf))
+    e_sat_leaf = 611.21 * np.exp(
+        (18.678 - t_leaf / 234.5) * t_leaf / (257.14 + t_leaf)
+    )
 
     # Unknown meaning of e
     e = e_sat_leaf * np.exp(psi_leaf * 2.16947115 / (t_leaf + 273.15))

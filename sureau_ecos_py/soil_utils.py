@@ -135,7 +135,9 @@ def compute_theta_at_given_p_soil_camp(
     )
 
     np.testing.assert_array_less(
-        np.array(psi_target), 0, err_msg="\nError: psi_target values must be negative\n"
+        np.array(psi_target),
+        0,
+        err_msg="\nError: psi_target values must be negative\n",
     )
 
     return theta_sat * (psi_target / psie) ** (1 / b_camp)

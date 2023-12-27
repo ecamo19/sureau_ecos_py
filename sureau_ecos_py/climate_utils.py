@@ -72,11 +72,18 @@ def compute_etp_pt(
 
     #  s: slope of the saturation vapour pressure function (AO 1998)
     slope_sta = (
-        4098 * 0.6108 * exp((17.27 * tmoy) / (tmoy + 237.3)) / ((tmoy + 237.3) ** 2)
+        4098
+        * 0.6108
+        * exp((17.27 * tmoy) / (tmoy + 237.3))
+        / ((tmoy + 237.3) ** 2)
     )
     # s <-       4098 * 0.6108 * exp((17.27 * Tmoy) / (Tmoy + 237.3)) / ((Tmoy + 237.3)^2)
 
-    etp = pt_coeff * (slope_sta / (slope_sta + gamma)) * ((net_radiation - g) / lamb)
+    etp = (
+        pt_coeff
+        * (slope_sta / (slope_sta + gamma))
+        * ((net_radiation - g) / lamb)
+    )
     # ETP <- PTcoeff * (s / (s + gamma)) * ((NetRadiation - G) / lambda)
 
     return etp
@@ -107,7 +114,10 @@ def compute_etp_pm(
     #  s: slope of the saturation vapour pressure function (AO 1998)
     # delta = 4098 * 0.6108 * exp((17.27 * Tmoy) / (Tmoy + 237.3)) / ((Tmoy + 237.3)^2)
     delta = (
-        4098 * 0.6108 * np.exp((17.27 * tmoy) / (tmoy + 237.3)) / ((tmoy + 237.3) ** 2)
+        4098
+        * 0.6108
+        * np.exp((17.27 * tmoy) / (tmoy + 237.3))
+        / ((tmoy + 237.3) ** 2)
     )
 
     # ga = 0.34 * max(u, 0.001)
