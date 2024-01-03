@@ -57,7 +57,11 @@ class ClimateDataValidation(pa.SchemaModel):
         ge=0, description="mean wind speed of the day (m/s)"
     )
 
+    # Added for making sure that it only accepts the columns specified above
+    class Config:
+        strict = True
 
+# Check if this decorator is necessary?
 @pa.check_types(lazy=True)
 def create_climate_data(
     simulation_parameters: Dict,  # Dictionary created using the `create_simulation_parameters` function

@@ -16,6 +16,7 @@ from typing import Dict
 from .create_modeling_options import create_modeling_options
 from pandera.typing import Series
 import pandera as pa
+from pandera.errors import SchemaErrors
 
 # %% ../nbs/01_soil_utils.ipynb 4
 def compute_b(
@@ -151,6 +152,11 @@ class SoilFile(pa.SchemaModel):
     Name: Series[str] = pa.Field(description="Parameter names")
     Value: Series[float] = pa.Field(description="Parameter values")
 
+    # Added for making sure that it only accepts the columns specified above
+    class Config:
+        strict = True
+
+
 
 def read_soil_file(
     file_path: Path,  # Path to a csv file containing parameter values i.e path/to/file_name.csv
@@ -159,21 +165,24 @@ def read_soil_file(
 ) -> Dict:
     "Function for reading a data frame containing information about soil characteristics"
 
-    # Make sure that modeling_options is a dictionary ---------------------------
+
+    # Assert parameters ---------------------------------------------------------
+    # Make sure that modeling_options is a dictionary
     assert isinstance(
         modeling_options, Dict
     ), f"modeling_options must be a dictionary not a {type(modeling_options)}"
 
+    # Make sure the file_path exist
+    assert os.path.exists(file_path
+                           ), f"Path: {file_path} not found, check spelling"
+
     # Read data frame -----------------------------------------------------------
-    if os.path.exists(file_path):
-        # Read file
-        soil_data = pd.read_csv(file_path, header=0, sep=sep)
 
-        # Raise error if soil data don't follow the SoilFile Schema
-        SoilFile.validate(soil_data)
 
-    else:
-        print(f"file: {file_path}, does not exist, check presence or spelling")
+    soil_data = pd.read_csv(file_path, header=0, sep=sep)
+
+    # Raise error if soil data don't follow the SoilFile Schema
+    SoilFile.validate(soil_data, lazy=True)
 
     # Setting common parameters for WB_soil (regardless of the options) ---------
     if modeling_options["pedo_transfer_formulation"] == "vg":
