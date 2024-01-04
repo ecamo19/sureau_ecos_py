@@ -60,8 +60,7 @@ class ClimateDataValidation(pa.SchemaModel):
     class Config:
         strict = True
 
-# Check if this decorator is necessary?
-@pa.check_types(lazy=True)
+
 def create_climate_data(
     simulation_parameters: Dict,  # Dictionary created using the `create_simulation_parameters` function
     modeling_options: Dict,  # Dictionary created using the `create_modeling_options` function
@@ -70,7 +69,17 @@ def create_climate_data(
 ) -> DataFrame[ClimateDataValidation]:
     "Create a climate data.frame to run SureauR. Read input climate data select the desired period and put it in the right format to run `run.SurEauR` Also check data consistency and input variables according to modeling options (see \code{create.modeling.options} and simulation parameters (see \code{create.simulation.parameters)"
 
-    # Make sure that simulation_parameters and modeling_options are dictionaries-
+
+
+    # Assert parameters ---------------------------------------------------------
+
+        # Make sure the file_path exist or is None
+    assert file_path is None or os.path.exists(
+        file_path
+    ), f"Path: {file_path} not found, check presence or spelling"
+
+
+    # Make sure that simulation_parameters and modeling_options are dictionaries
     assert isinstance(
         simulation_parameters, Dict
     ), f"simulation_parameters must be a dictionary not a {type(simulation_parameters)}"
@@ -79,18 +88,16 @@ def create_climate_data(
         modeling_options, Dict
     ), f"modeling_options must be a dictionary not a {type(modeling_options)}"
 
-    # Read file if it exists and climateData not provided, error otherwise ------
 
-    if os.path.exists(file_path):
-        try:
-            climate_data = pd.read_csv(
+
+    # Read csv file  ------------------------------------------------------------
+
+    climate_data = pd.read_csv(
                 file_path, sep=sep, header=0, parse_dates=["DATE"], dayfirst=True
             )
 
-        except pa.errors.SchemaErrors as err:
-            print(err)
-    else:
-        print(f"file: {file_path}, does not exist, check presence or spelling")
+    # Raise error if climate_data don't follow the ClimateDataValidation Schema
+    ClimateDataValidation.validate(climate_data)
 
     # Create climate data based on constant_climate parameter -------------------
 
