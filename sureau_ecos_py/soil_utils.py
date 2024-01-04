@@ -5,18 +5,17 @@ __all__ = ['compute_b', 'compute_b_gc', 'compute_k_soil', 'compute_k_soil_camp',
            'compute_theta_at_given_p_soil', 'compute_theta_at_given_p_soil_camp', 'SoilFile', 'read_soil_file']
 
 # %% ../nbs/01_soil_utils.ipynb 3
-import numpy as np
-from math import pi
-import operator
-import collections
-from pathlib import Path
 import os
+import operator
+import numpy as np
+import collections
 import pandas as pd
-from typing import Dict
-from .create_modeling_options import create_modeling_options
-from pandera.typing import Series
+from math import pi
 import pandera as pa
-from pandera.errors import SchemaErrors
+from typing import Dict
+from pathlib import Path
+from pandera.typing import Series
+from .create_modeling_options import create_modeling_options
 
 # %% ../nbs/01_soil_utils.ipynb 4
 def compute_b(

@@ -1,8 +1,4 @@
-Name;
-Species;Fagus sylvatica
-Foliage;Deciduous
-lifeForm;BroadLeafTree
-Group;Angiosperm
+Name;Value
 P50_VC_Leaf; -3.15
 slope_VC_Leaf;70
 P50_VC_Stem; -3.15
@@ -34,9 +30,7 @@ Q10_2_gmin;2.1
 gmin_S;5
 k_PlantInit;2
 k_SSymInit;0.26
-C_LApoInit;0.00001
-C_SApoInit;0.00002
-leaf_size;
+leaf_size;1
 leaf_angle;45
 vol_Stem;15
 fTRBToLeaf;0.8
@@ -50,3 +44,7 @@ Fcrit;500
 canopyStorageParam;2
 K;0.5
 PTcoeff;1.14
+Species;Fagus_sylvatica
+Foliage;Deciduous
+lifeForm;BroadLeafTree
+Group;Angiosperm
