@@ -69,15 +69,12 @@ def create_climate_data(
 ) -> DataFrame[ClimateDataValidation]:
     "Create a climate data.frame to run SureauR. Read input climate data select the desired period and put it in the right format to run `run.SurEauR` Also check data consistency and input variables according to modeling options (see \code{create.modeling.options} and simulation parameters (see \code{create.simulation.parameters)"
 
-
-
     # Assert parameters ---------------------------------------------------------
 
-        # Make sure the file_path exist or is None
+    # Make sure the file_path exist or is None
     assert file_path is None or os.path.exists(
         file_path
     ), f"Path: {file_path} not found, check presence or spelling"
-
 
     # Make sure that simulation_parameters and modeling_options are dictionaries
     assert isinstance(
@@ -88,13 +85,11 @@ def create_climate_data(
         modeling_options, Dict
     ), f"modeling_options must be a dictionary not a {type(modeling_options)}"
 
-
-
     # Read csv file  ------------------------------------------------------------
 
     climate_data = pd.read_csv(
-                file_path, sep=sep, header=0, parse_dates=["DATE"], dayfirst=True
-            )
+        file_path, sep=sep, header=0, parse_dates=["DATE"], dayfirst=True
+    )
 
     # Raise error if climate_data don't follow the ClimateDataValidation Schema
     ClimateDataValidation.validate(climate_data)

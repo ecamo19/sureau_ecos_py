@@ -157,14 +157,12 @@ class SoilFile(pa.SchemaModel):
         strict = True
 
 
-
 def read_soil_file(
     file_path: Path,  # Path to a csv file containing parameter values i.e path/to/file_name.csv
     modeling_options: Dict = None,  # Dictionary created using the `create_modeling_options` function
     sep: str = ";",  # CSV file separator can be ',' or ';'
 ) -> Dict:
     "Function for reading a data frame containing information about soil characteristics"
-
 
     # Assert parameters ---------------------------------------------------------
     # Make sure that modeling_options is a dictionary
@@ -173,11 +171,11 @@ def read_soil_file(
     ), f"modeling_options must be a dictionary not a {type(modeling_options)}"
 
     # Make sure the file_path exist
-    assert os.path.exists(file_path
-                           ), f"Path: {file_path} not found, check spelling"
+    assert os.path.exists(
+        file_path
+    ), f"Path: {file_path} not found, check spelling"
 
     # Read data frame -----------------------------------------------------------
-
 
     soil_data = pd.read_csv(file_path, header=0, sep=sep)
 
