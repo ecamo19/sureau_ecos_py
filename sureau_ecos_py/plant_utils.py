@@ -5,13 +5,19 @@ __all__ = ['rs_comp', 'turgor_comp', 'compute_turgor_from_psi', 'osmo_comp', 'ps
            'plc_comp', 'plc_prime_comp', 'gs_curve', 'compute_gmin', 'compute_emin', 'compute_dfmc',
            'distribute_conductances', 'compute_g_crown', 'convert_flux_from_mmolm2s_to_mm',
            'convert_flux_from_mm_to_mmolm2s', 'calculate_ebound_mm_granier', 'calculate_ebound_granier',
-           'convert_f_cm3_to_v_mm', 'compute_tleaf']
+           'convert_f_cm3_to_v_mm', 'compute_tleaf', 'VegetationFile', 'read_vegetation_file']
 
 # %% ../nbs/02_plant_utils.ipynb 3
-import numpy as np
-from typing import List
+import os
 import collections
+import numpy as np
+import pandas as pd
+import pandera as pa
 from typing import Dict
+from typing import List
+from pathlib import Path
+from pandera import Check
+from pandera.typing import Series
 
 # %% ../nbs/02_plant_utils.ipynb 4
 def rs_comp(
@@ -649,3 +655,109 @@ def compute_tleaf(
         )
 
     return vecres
+
+# %% ../nbs/02_plant_utils.ipynb 33
+class VegetationFile(pa.SchemaModel):
+    "Schema for validating the input vegetation parameter file. The CSV spreadsheet must contain at least the following traits:"
+
+    p50_vc_leaf: Series[float] = pa.Field(description="Water potential (MPa) causing 50% Cavitation in the vulnerability curve", coerce=True)
+    slope_vc_leaf: Series[float] = pa.Field(description="Slope (%/MPa) of the vulnerability curve", coerce=True)
+    p50_vc_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
+    slope_vc_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
+    epsilonsym_leaf: Series = pa.Field(description="Modulus of elasticity (MPa) in leaves", coerce=True)
+    pifullturgor_leaf: Series[float] = pa.Field(description="Osmotic Potentia (MPa) at full turgor in leaves", coerce=True)
+    apofrac_leaf: Series[float] = pa.Field(description="Apoplasmic Fraction (Unitless) in leaves", coerce=True)
+    ldmc: Series[float] = pa.Field(ge = 0, description="Leaf dry matter content (mgMS/g) measured for fully watered leaves", coerce=True)
+    lma: Series[float] = pa.Field(description="Leaf mass per area (g/m2leaf)", coerce=True)
+    k: Series[float] = pa.Field(description="Light extinction coefficient (Unitless??) of the vegetation layer", coerce=True)
+    k_plantinit: Series[float] = pa.Field(description="Hydaulic conductance ( [mmol/MPa/s/m2leaf]) of the plant from soil to leaves", coerce=True)
+    gmin20: Series[float] = pa.Field(description="Minimum conductance (gmin, mmol/m2leaf/s) at the reference temperature (same as cuticular conductance)", coerce=True)
+    tphase_gmin: Series[float] = pa.Field(description="Temperature for phase transition (degC) of minimum conductance", coerce=True)
+    q10_1_gmin: Series[float] = pa.Field(description="Q10 (unitless??) value for gmin = f(T) <= Tphase_gmin", coerce=True)
+    q10_2_gmin: Series[float] = pa.Field(description="Q10 unitless??) value for gmin = f(T)  > Tphase_gmin", coerce=True)
+    gmin_s: Series[float] = pa.Field(description="conductance (gmin) of the stem (same as k_plant??)", coerce=True)
+    canopystorageparam: Series[float] = pa.Field(description="Depth of water that can be retained by leaves and trunks per unit of leaf area index (l/m2leaf, used to compute the canopy water storage capacity as a function of LAI)", coerce=True)
+    k_ssyminit: Series[float] = pa.Field(description="No definition found", coerce=True)
+    froottoleaf: Series[float] = pa.Field(description="root to leaf ratio (unitless??)", coerce=True)
+    rootradius: Series[float] = pa.Field(description="radius of roots (m)", coerce=True)
+    betarootprofile: Series[float] = pa.Field(description="parameter for the distribution of roots in the soil (unitless??)", coerce=True)
+    pifullturgor_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
+    epsilonsym_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
+    apofrac_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
+    symfrac_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
+    vol_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
+    ftrbtoleaf: Series[float] = pa.Field(description="No definition found", coerce=True)
+    c_lapoinit: Series[float] = pa.Field(description="No definition found", coerce=True)
+    c_sapoinit: Series[float] = pa.Field(description="No definition found", coerce=True)
+
+
+    # Added for making sure that it only accepts the columns specified above
+    #class Config:
+    #    strict = True
+
+
+def read_vegetation_file(
+    file_path: Path,  # Path to a csv file containing parameter values i.e path/to/file_name.csv
+    modeling_options: Dict = None,  # Dictionary created using the `create_modeling_options` function
+    sep: str = ";",  # CSV file separator can be ',' or ';'):
+) -> Dict:
+
+    "Function for reading a data frame containing information about vegetation characteristics"
+
+    # Assert parameters ---------------------------------------------------------
+
+    # Make sure that modeling_options is a dictionary
+    assert modeling_options is None or isinstance(
+        modeling_options, Dict
+    ), f"modeling_options must be a dictionary not a {type(modeling_options)}"
+
+    # Make sure the file_path exist
+    assert os.path.exists(
+        file_path
+    ), f"Path: {file_path} not found, check spelling or presence"
+
+    # Read data frame -----------------------------------------------------------
+
+    vegetation_csv_data = pd.read_csv(file_path, header=0, sep=sep)
+
+    # Raise error if soil data don't follow the SoilFile Schema
+    VegetationFile.validate(vegetation_csv_data, lazy = True)
+
+
+    # setting commomn params for WB_veg (regardless of the options) -------------
+
+    # List of traits that must be provided
+    #traits = np.array([
+    #    "p50_vc_leaf", # [MPa] / Water potential causing 50% Cavitation in the vulnerability curve
+    #    "slope_vc_leaf", # [%/MPa]             / Slope of the vulnerability curve
+    #    "p50_vc_stem",
+    #    "slope_vc_stem",
+    #    "epsilonsym_leaf", # [MPa]            / Modulus of elasticity in leaves
+    #    "pifullturgor_Leaf", # [MPa]           / Osmotic Potential at full turgor in leaves
+    #    "apofrac_leaf", # [-]           / Apoplasmic Fraction in leaves
+    #    "ldmc", # [mgMS/g]                     / Leaf dry matter content (measured for fully watered leaves)
+    #    "lma", # [g/m2leaf]                   / Leaf mass per area
+    #    "k", # [-]                            / Light extinction coefficient of the vegetation layer
+    #    "k_plantinit", # [mmol/MPa/s/m2leaf]  / Hydaulic conductance of the plant from soil to leaves
+    #    "gmin20", # [mmol/m2leaf/s]         / Minimum conductance (gmin) at the reference temperature
+    #    "tphase_gmin", # [degC]            / Temperature for phase transition of minimum conductance
+    #    "q10_1_gmin", # [-]                 / Q10 value for gmin = f(T) <= Tphase_gmin
+    #    "q10_2_gmin", # [-]                 / Q10 value for gmin = f(T)  > Tphase_gmin
+    #    "gmin_s",      #  conductance (gmin) of the stem
+    #    "canopystorageparam", # [l/m2leaf]    / Depth of water that can be retained by leaves and trunks per unit of leaf area index (used to compute the canopy water storage capacity as a function of LAI)
+    #    "k_ssyminit",
+    #    "froottleaf", # root to leaf ratio
+    #    "rootradius",  #  radius of roots (m)
+    #    "betarootprofile", # parameter for the distribution of roots in the soil
+    #    "pifullturgor_stem",
+    #    "epsilonsym_stem",
+    #    "apofrac_stem",
+    #    "symfrac_stem",
+    #    "vol_stem",
+    #    "ftrbtoleaf",
+    #    "c_lapoinit",
+    #    "c_sapoinit"],
+    #        dtype=object,
+    #    )
+
+    return vegetation_csv_data
