@@ -11,7 +11,6 @@ import pandera as pa
 from typing import Dict
 from pathlib import Path
 from pandera.typing import Series
-from pydantic_extra_types.coordinate import Coordinate
 
 # %% ../nbs/15_create_stand_parameters.ipynb 4
 # This class was created for validating the input dataframe
@@ -31,8 +30,8 @@ class StandFile(pa.SchemaModel):
 
 def create_stand_parameters(file_path: Path = None,  # Path to a csv file containing lai_max, latitude and longitude values i.e path/to/parameter_values.csv
                             lai_max:float = None, # Value indicating the maximum leaf area index of the stand (m2/m2)
-                            latitude:Coordinate = None, # Value indicating the latitude of the stand
-                            longitude:Coordinate = None, # Value indicating the longitude of the stand
+                            latitude:float = None, # Value indicating the latitude of the stand
+                            longitude:float = None, # Value indicating the longitude of the stand
                             sep: str = ";",  # CSV file separator can be ',' or ';'
 ) -> Dict:  # Dictionary containing parameters
 
