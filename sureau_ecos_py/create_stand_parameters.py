@@ -16,12 +16,12 @@ from pandera.typing import Series
 # This class was created for validating the input dataframe
 # If the data don't follow the structure specified the function will fail
 class StandFile(pa.SchemaModel):
-    "Schema for validating the input stand parameter csv file"
+    "Schema for validating the input stand parameter data. The CSV must contain columns with the plot_id, lai_max, latitude, and longitude"
 
     plot_id:Series[str] = pa.Field(description="Plot id from which the data was collected")
-    lai_max: Series[float] = pa.Field(ge = 0, description="maximum leaf area index of the stand (m2/m2)")
-    latitude: Series[float] = pa.Field(description="latitude of the stand")
-    longitude: Series[float] = pa.Field(description="longitude of the stand")
+    lai_max: Series[float] = pa.Field(ge = 0, description="Maximum leaf area index of the stand (m2/m2)")
+    latitude: Series[float] = pa.Field(description="Latitude of the stand")
+    longitude: Series[float] = pa.Field(description="Longitude of the stand")
 
     # Added for making sure that it only accepts the columns specified above
     class Config:
