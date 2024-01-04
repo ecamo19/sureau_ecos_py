@@ -10,3 +10,4 @@ website:
       - 13_create_simulation_parameters.ipynb
       - 14_create_soil_parameters.ipynb
       - 15_create_stand_parameters.ipynb
+      - 16_create_vegetation_parameters.ipynb
