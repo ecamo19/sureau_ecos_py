@@ -4,19 +4,19 @@
 __all__ = ['create_soil_parameters']
 
 # %% ../nbs/14_create_soil_parameters.ipynb 3
-from typing import Dict, List
-from pathlib import Path
-import collections
 import os
 import warnings
+import collections
 import numpy as np
-from .create_modeling_options import create_modeling_options
+from pathlib import Path
+from typing import Dict, List
 from sureau_ecos_py.soil_utils import (
     read_soil_file,
     compute_theta_at_given_p_soil,
     compute_theta_at_given_p_soil_camp,
 )
 from .plant_utils import convert_f_cm3_to_v_mm
+from .create_modeling_options import create_modeling_options
 
 # %% ../nbs/14_create_soil_parameters.ipynb 4
 def create_soil_parameters(

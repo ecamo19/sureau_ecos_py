@@ -9,7 +9,7 @@ import collections
 import pandas as pd
 from pathlib import Path
 from typing import Dict, List
-from pandera.typing import Series
+from .plant_utils import read_vegetation_file
 
 # %% ../nbs/16_create_vegetation_parameters.ipynb 4
 def create_stand_parameters(
