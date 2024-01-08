@@ -76,7 +76,7 @@ def create_stand_parameters(
         # Convert a plot_id column to rownames
         stand_params_csv = stand_params_csv.set_index("plot_id")
 
-        # Covert dataframe to dictionary
+        # Convert dataframe to dictionary
         stand_params = stand_params_csv.to_dict("index")
 
         # Return dictionary as a defaultdict to keep consistency
