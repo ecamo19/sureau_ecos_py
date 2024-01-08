@@ -29,10 +29,10 @@ def create_soil_parameters(
 ) -> Dict:  # Dictionary containing parameters
     "Create a Dictionary with soil parameters to run SureauR"
 
-    # Create empty dictionary
-    soil_params = collections.defaultdict(list)
 
-    # Make file_path and/or list_of_parameters are present ----------------------
+    # Assert parameters ---------------------------------------------------------
+
+    # Make file_path and/or list_of_parameters are present
 
     # Raise error if file_path and list_of_parameters both are missing
     if file_path is None and list_of_parameters is None:
@@ -46,28 +46,37 @@ def create_soil_parameters(
             "Both file_path and list_of_parameters are provided, only one of these two arguments should be used"
         )
 
-    # file_path -----------------------------------------------------------------
+    # file_path
 
     # Make sure the file_path exist or is None
     assert file_path is None or os.path.exists(
         file_path
     ), f"Path: {file_path} not found, check spelling or set file_path = None"
 
-    # offset_psoil --------------------------------------------------------------
+    # offset_psoil
     assert (
         offset_psoil >= 0
     ), "offset_psoil must be an integer greater than or equal to 0"
 
-    print(f"There is an offset on Psoil of {offset_psoil} MPa")
-    soil_params["offset_psoil"] = offset_psoil
 
-    # psoil_at_field_capacity ---------------------------------------------------
+    # psoil_at_field_capacity
     assert (
         40 >= psoil_at_field_capacity >= -40
     ), "psoil_at_field_capacity must be an integer in the range between -10 and 10"
 
+
+    # Create soil_params dictionary ---------------------------------------------
+    soil_params = collections.defaultdict(list)
+
+    # Add offset_psoil and psoil_at_field_capacity to dictionary
+
+    print(f"There is an offset on Psoil of {offset_psoil} MPa")
+    soil_params["offset_psoil"] = offset_psoil
+
     print(f"Psoil at field capacity = {psoil_at_field_capacity/1000} MPa")
+
     soil_params["psoil_at_field_capacity"] = psoil_at_field_capacity / 1000
+
 
     # default soil for tests ----------------------------------------------------
     if default_soil is True:
@@ -169,10 +178,9 @@ def create_soil_parameters(
 
         # Read list_of_parameters
         if list_of_parameters is not None:
-            print("This option has not bee implemented yet")
+            print("This option has not been implemented yet")
             # soil_params_csv_file = list_of_parameters
 
-        # Create soil_params dictionary -----------------------------------------
 
         # set soil parameters that are independent of the Pedo-tranfert
         # formulation
