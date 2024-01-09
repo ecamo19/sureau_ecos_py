@@ -698,7 +698,7 @@ class VegetationFile(pa.SchemaModel):
 def read_vegetation_file(
     file_path: Path,  # Path to a csv file containing parameter values i.e path/to/file_name.csv
     modeling_options: Dict,  # Dictionary created using the `create_modeling_options` function
-    sep: str = ";",  # CSV file separator can be ',' or ';'):
+    sep: str = ";",  # CSV file separator can be ',' or ';'
 ) -> Dict:
 
     "Function for reading a data frame containing information about vegetation characteristics"
