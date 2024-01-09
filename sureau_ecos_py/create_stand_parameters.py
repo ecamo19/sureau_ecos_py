@@ -18,9 +18,9 @@ from pandera.typing import Series
 class StandFile(pa.SchemaModel):
     "Schema for validating the input stand parameter data. The CSV must contain columns with the plot_id, lai_max, latitude, and longitude"
 
-    plot_id: Series[str] = pa.Field(
-        description="Plot id from which the data was collected"
-    )
+    #plot_id: Series[str] = pa.Field(
+    #    description="Plot id from which the data was collected"
+    #)
     lai_max: Series[float] = pa.Field(
         ge=0, description="Maximum leaf area index of the stand (m2/m2)"
     )
@@ -74,22 +74,26 @@ def create_stand_parameters(
         StandFile.validate(stand_params_csv)
 
         # Convert a plot_id column to rownames
-        stand_params_csv = stand_params_csv.set_index("plot_id")
+        #stand_params_csv = stand_params_csv.set_index("plot_id")
 
-        # Convert dataframe to dictionary
-        stand_params = stand_params_csv.to_dict("index")
+        # Create dictionary with params
 
-        # Return dictionary as a defaultdict to keep consistency
-        return collections.defaultdict(list, stand_params)
+        # Reshape dataframe for converting it to a list
+        stand_params_csv = pd.DataFrame(stand_params_csv.melt(ignore_index=True).reset_index()[['variable', 'value']])
+
+        # Transform data to a list and then create dictionary
+        stand_params  = collections.defaultdict(list, { each_cell[0]: each_cell[1] for each_cell in stand_params_csv.values.tolist() })
 
     # Create stand_parameters from function inputs ------------------------------
 
-    # Create empty dictionary
-    stand_params = collections.defaultdict(list)
+    elif file_path is None:
 
-    if file_path is None:
+        # Create empty dictionary
+        stand_params = collections.defaultdict(list)
+
+        # Add params to empty dict
         stand_params["lai_max"] = lai_max
         stand_params["latitude"] = latitude
         stand_params["longitude"] = longitude
 
-        return stand_params
+    return stand_params
