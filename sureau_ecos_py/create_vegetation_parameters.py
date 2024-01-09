@@ -5,18 +5,19 @@ __all__ = ['create_vegetation_parameters']
 
 # %% ../nbs/16_create_vegetation_parameters.ipynb 3
 import os
-import collections
-import pandas as pd
 from pathlib import Path
 from typing import Dict, List
 from .plant_utils import read_vegetation_file
+from .create_modeling_options import create_modeling_options
+from .create_stand_parameters import create_stand_parameters
 
 # %% ../nbs/16_create_vegetation_parameters.ipynb 4
 def create_vegetation_parameters(
+    stand_parameters:Dict, # Dictionary created using the `create_stand_parameters` function
     file_path: Path = None,  # Path to a csv file containing lai_max, latitude and longitude values i.e path/to/parameter_values.csv
     list_of_parameters: List = None,  # A list containing the necessary input parameters instead of reading them in file. Will only be used if 'file_path' arguement is not provided
-    stand_parameters:Dict = None, # Dictionary created using the `create_stand_parameters` function
     modeling_options: Dict = None,  # Dictionary created using the `create_modeling_options` function
+    sep: str = ";",  # CSV file separator can be ',' or ';'
 
 
 ) -> Dict:  # Dictionary containing parameters to run the model
@@ -43,6 +44,13 @@ def create_vegetation_parameters(
             "Both file_path and list_of_parameters are provided, only one of these two arguments should be used"
         )
 
+    # Delete as soon the option is implemented
+    if list_of_parameters is not None:
+        raise ValueError(
+            "Option for including list_of_parameters not implemented yet"
+        )
+
+
     # Make sure that modeling_options is a dictionary
     assert isinstance(
         modeling_options, Dict
@@ -51,9 +59,29 @@ def create_vegetation_parameters(
     # Make sure that stand_parameters is a dictionary
     assert isinstance(
         stand_parameters, Dict
-    ), f"modeling_options must be a dictionary not a {type(stand_parameters)}"
+    ), f"stand_parameters must be a dictionary not a {type(stand_parameters)}"
 
 
     # Create vegetation_parameters from function inputs -------------------------
+    vegetation_parameters = read_vegetation_file(file_path = file_path,
+                                                 modeling_options = modeling_options,
+                                                 sep = sep)
+
+    # Compute stomatal response parameters for the sigmoid from P12_gs and P88_gs
+    # provided in the file
+    if modeling_options["stomatal_reg_formulation"] == "sigmoid":
+
+        # Calculate p50
+        if "p50_gs" not in vegetation_parameters:
+            vegetation_parameters["p50_gs"] = (vegetation_parameters["p88_gs"] + vegetation_parameters["p12_gs"])/2
+            vegetation_parameters["slope_gs"] = 100/(vegetation_parameters["p12_gs"] - vegetation_parameters["p88_gs"])
 
 
+    # Get  maximum leaf area index of the stand (LAImax) from stand parameters
+    #vegetation_parameters["lai_max"] = stand_parameters["lai_max"]
+
+
+
+
+    #if modeling_options['']
+    return vegetation_parameters
