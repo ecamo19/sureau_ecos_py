@@ -20,17 +20,25 @@ pip install sureau_ecos_py
     %%{init:{'themeVariables': {'primaryBorderColor': '#00758f'}}}%%
     flowchart TD;
 
+        compute_theta_at_given_p_soil_camp-->create_vegetation_parameters;
+        create_modeling_options-->create_vegetation_parameters;
+        convert_f_to_v-->create_vegetation_parameters;
+        read_vegetation_file-->create_vegetation_parameters;
+
+        compute_theta_at_given_psoil-->create_vegetation_parameters;
+        create_soil_paramters-->create_vegetation_parameters;
+
+
         create_simulation_parameters-->create_climate_data;
         create_modeling_options-->create_climate_data;
 
         create_modeling_options-->create_soil_paramters;
-        compute_theta_at_given_psoil-->create_soil_paramters;
+        compute_theta_at_given_p_soil_camp-->create_soil_paramters;
         read_soil_file-->create_soil_paramters;
         convert_f_to_v-->create_soil_paramters;
-        compute_theta_at_given_p_soil_camp-->create_soil_paramters;
+        compute_theta_at_given_psoil-->create_soil_paramters;
 
-        read_vegetation_file-->create_vegetation_parameters;
-
+        
 
         %% Blue color boxes -----------------------------------------------------
 
