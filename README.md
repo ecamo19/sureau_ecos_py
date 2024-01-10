@@ -22,6 +22,7 @@ pip install sureau_ecos_py
 
         compute_theta_at_given_p_soil_camp-->create_vegetation_parameters;
         create_modeling_options-->create_vegetation_parameters;
+        convert_f_to_v-->create_soil_paramters;
         convert_f_to_v-->create_vegetation_parameters;
         read_vegetation_file-->create_vegetation_parameters;
 
@@ -37,7 +38,7 @@ pip install sureau_ecos_py
         compute_theta_at_given_p_soil_camp-->create_soil_paramters;
         compute_theta_at_given_psoil-->create_soil_paramters;
         compute_theta_at_given_psoil-->create_vegetation_parameters;
-        convert_f_to_v-->create_soil_paramters;
+        
         
 
         
