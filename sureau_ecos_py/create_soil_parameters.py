@@ -60,9 +60,15 @@ def create_soil_parameters(
 
 
     # psoil_at_field_capacity
-    assert (
-        40 >= psoil_at_field_capacity >= -40
-    ), "psoil_at_field_capacity must be an integer in the range between -10 and 10"
+    if modeling_options["pedo_transfer_formulation"] == 'campbell':
+        assert (
+             psoil_at_field_capacity < 0
+        ), "psoil_at_field_capacity must be negative for campbell pedo_transfer_formulation"
+
+    if modeling_options["pedo_transfer_formulation"] == 'vg':
+        assert (
+             psoil_at_field_capacity >= 0
+        ), "psoil_at_field_capacity must be positive for vg pedo_transfer_formulation"
 
 
     # Create soil_params dictionary ---------------------------------------------
