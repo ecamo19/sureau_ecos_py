@@ -5,6 +5,7 @@ __all__ = ['create_vegetation_parameters']
 
 # %% ../nbs/16_create_vegetation_parameters.ipynb 3
 import os
+import math
 import warnings
 import numpy as np
 from pathlib import Path
@@ -13,8 +14,12 @@ from sureau_ecos_py.soil_utils import (
     compute_theta_at_given_p_soil,
     compute_theta_at_given_p_soil_camp,
 )
-from .plant_utils import read_vegetation_file
-from .plant_utils import convert_f_cm3_to_v_mm
+from sureau_ecos_py.plant_utils import (
+    read_vegetation_file,
+    convert_f_cm3_to_v_mm,
+    distribute_conductances
+)
+
 from .create_soil_parameters import create_soil_parameters
 from .create_modeling_options import create_modeling_options
 from .create_stand_parameters import create_stand_parameters
@@ -85,13 +90,14 @@ def create_vegetation_parameters(
 
     # Compute stomatal response parameters for the sigmoid from P12_gs and P88_gs
     # provided in the CSV file
-    if modeling_options["stomatal_reg_formulation"] == "sigmoid":
+    if modeling_options["stomatal_reg_formulation"] == "sigmoid" and "p50_gs" not in vegetation_parameters :
 
         # Calculate p50_gs
-        if "p50_gs" not in vegetation_parameters:
-            vegetation_parameters["p50_gs"] = (vegetation_parameters["p88_gs"] + vegetation_parameters["p12_gs"])/2
-            vegetation_parameters["slope_gs"] = 100/(vegetation_parameters["p12_gs"] - vegetation_parameters["p88_gs"])
+        vegetation_parameters["p50_gs"] = (vegetation_parameters["p88_gs"] + vegetation_parameters["p12_gs"])/2
+        vegetation_parameters["slope_gs"] = 100/(vegetation_parameters["p12_gs"] - vegetation_parameters["p88_gs"])
 
+    else:
+        print("p50_gs already provided")
 
     # Get maximum leaf area index of the stand (LAImax) from stand parameters
     vegetation_parameters["lai_max"] = stand_parameters["lai_max"]
@@ -106,7 +112,7 @@ def create_vegetation_parameters(
     # to centimeters
 
     # Layer 1
-    vegetation_parameters["root_distribution"][0] = 1 - vegetation_parameters["betarootprofile"]**(soil_parameters["soil_depths"][0]*100)
+    vegetation_parameters["root_distribution"][0] = 1 - (vegetation_parameters["betarootprofile"]**(soil_parameters["soil_depths"][0]*100))
 
     # Layer 2
     vegetation_parameters["root_distribution"][1] = (1 - vegetation_parameters["betarootprofile"]**(soil_parameters["soil_depths"][1]*100)) - vegetation_parameters["root_distribution"][0]
@@ -182,7 +188,45 @@ def create_vegetation_parameters(
         print(f"Available water capacity @Tlp (Campbell):{vegetation_parameters['taw_at_tlp']} mm")
         print(f"Available water capacity @P50 (Campbell):{vegetation_parameters['taw_at_p50']} mm")
 
+    else:
+        raise ValueError(
+            "pedo_transfer_formulation is missing"
+        )
+
+    # Determine root lenght (La gardner cowan)
+
+    # I am assumming that this is the LAI growth rate per day
+    rai = vegetation_parameters['lai_max'] * vegetation_parameters['froottoleaf']
+
+    vegetation_parameters['la'] = (rai * vegetation_parameters['root_distribution'])/(2 * math.pi * vegetation_parameters['rootradius'])
+    vegetation_parameters['lv'] = vegetation_parameters['la']/(soil_parameters['layer_thickness'] * (1 - (soil_parameters['rock_fragment_content']/100)) )
 
 
-    #if modeling_options['']
+    # Calculate the different conductance of the plant from k_PlantInit
+    conductances = distribute_conductances(k_plant_init=vegetation_parameters['k_plantinit'],
+                                          ri = vegetation_parameters['root_distribution'],
+                                          frac_leaf_sym = vegetation_parameters['frac_leaf_sym'],
+                                          )
+
+
+    # I am assumming that this is the Maximum conductance from trunk apoplasm to
+    # the leaf apoplasm KSApo−LApo,max
+    vegetation_parameters['k_slapo_init'] = conductances['k_slapo_init']
+
+    # I am assumming that this is the Maximum conductance from the root surface
+    # to the stem apoplasm
+    vegetation_parameters['k_rsapo_init'] = conductances['k_rsapo_init']
+
+    # I am assumming that this is the Conductance from the leaf apoplasm to leaf
+    # symplasm
+    vegetation_parameters['k_lsym_init'] = conductances['k_lsym_init']
+
+    # Add Hydaulic conductance of the plant from soil to leaves
+    vegetation_parameters["k_plant_init"] = conductances['k_plant_init']
+
+    # Add Volume of tissue of the stem (includes the root, trunk and branches)
+    # Original line is adding it twice. not added
+    #TTT$vol_Stem = TTT$vol_Stem
+    #vegetation_parameters['vol_stem'] = vegetation_parameters['vol_stem']
+
     return vegetation_parameters
