@@ -115,7 +115,7 @@ def create_vegetation_parameters(
     vegetation_parameters["root_distribution"][2] = 1 - (vegetation_parameters["root_distribution"][0] + vegetation_parameters["root_distribution"][1])
 
     # Calculate turgor loss point (tlp)
-    tlp = (vegetation_parameters["pifullturgor_leaf"]*vegetation_parameters["epsilonsym_leaf"])/vegetation_parameters["pifullturgor_leaf"] + vegetation_parameters["epsilonsym_leaf"]
+    tlp = (vegetation_parameters["pifullturgor_leaf"]*vegetation_parameters["epsilonsym_leaf"])/(vegetation_parameters["pifullturgor_leaf"] + vegetation_parameters["epsilonsym_leaf"])
 
     # Pedotransfer function == vg
     if modeling_options['pedo_transfer_formulation'] == "vg":
@@ -153,35 +153,34 @@ def create_vegetation_parameters(
 
     # Pedotransfer function == Campbell
     elif modeling_options['pedo_transfer_formulation'] == "campbell":
-        print('In process')
-        #theta_at_tlp = compute_theta_at_given_p_soil_camp(psi_target = tlp,
-        #                                                  theta_sat = soil_parameters['saturation_capacity_campbell'],
-        #                                                  psie = soil_parameters["psie"],
-        #                                                  b_camp = soil_parameters['b_camp']
-        #                                                  )
+        theta_at_tlp = compute_theta_at_given_p_soil_camp(psi_target = tlp,
+                                                          theta_sat = soil_parameters['saturation_capacity_campbell'],
+                                                          psie = soil_parameters["psie"],
+                                                          b_camp = soil_parameters['b_campbell']
+                                                          )
 
-        #theta_at_p50 = compute_theta_at_given_p_soil_camp(psi_target = vegetation_parameters['p50_vc_leaf'],
-        #                                                  theta_sat = soil_parameters['saturation_capacity_campbell'],
-        #                                                  psie = soil_parameters["psie"],
-        #                                                  b_camp = soil_parameters['b_camp']
-        #                                                  )
+        theta_at_p50 = compute_theta_at_given_p_soil_camp(psi_target = vegetation_parameters['p50_vc_leaf'],
+                                                          theta_sat = soil_parameters['saturation_capacity_campbell'],
+                                                          psie = soil_parameters["psie"],
+                                                          b_camp = soil_parameters['b_campbell']
+                                                          )
 
         # Compute TAW @Tlp @P12 & @P50 (Diagnoostic)
-        #vegetation_parameters['taw_at_tlp'] = np.sum(soil_parameters['v_field_capacity'] - convert_f_cm3_to_v_mm(x = theta_at_tlp,
-        #                                                                                                         rock_fragment_content = soil_parameters['rock_fragment_content'],
-        #                                                                                                         layer_thickness = soil_parameters['layer_thickness']
-        #                                                                                                         )
-        #                                             )
+        vegetation_parameters['taw_at_tlp'] = np.sum(soil_parameters['v_field_capacity'] - convert_f_cm3_to_v_mm(x = theta_at_tlp,
+                                                                                                                 rock_fragment_content = soil_parameters['rock_fragment_content'],
+                                                                                                                 layer_thickness = soil_parameters['layer_thickness']
+                                                                                                                 )
+                                                     )
 
-        #vegetation_parameters['taw_at_p50'] = np.sum(soil_parameters['v_field_capacity'] - convert_f_cm3_to_v_mm(x = theta_at_p50,
-        #                                                                                                         rock_fragment_content = soil_parameters['rock_fragment_content'],
-        #                                                                                                         layer_thickness = soil_parameters['layer_thickness']
-        #                                                                                                         )
-        #                                             )
+        vegetation_parameters['taw_at_p50'] = np.sum(soil_parameters['v_field_capacity'] - convert_f_cm3_to_v_mm(x = theta_at_p50,
+                                                                                                                 rock_fragment_content = soil_parameters['rock_fragment_content'],
+                                                                                                                 layer_thickness = soil_parameters['layer_thickness']
+                                                                                                                 )
+                                                     )
 
 
-        #print(f"Available water capacity @Tlp (Campbell):{vegetation_parameters['taw_at_tlp']} mm")
-        #print(f"Available water capacity @P50 (Campbell):{vegetation_parameters['taw_at_p50']} mm")
+        print(f"Available water capacity @Tlp (Campbell):{vegetation_parameters['taw_at_tlp']} mm")
+        print(f"Available water capacity @P50 (Campbell):{vegetation_parameters['taw_at_p50']} mm")
 
 
 
