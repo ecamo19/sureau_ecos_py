@@ -170,7 +170,7 @@ def gs_curve(
         "sigmoid",
         "piecewise_linear",
         "turgor",
-    ],  # type of regulation to be used for stomatal response to leaf symplasmic water potential, either `sigmoid` or `piecewise_linear`
+    ], # Type of regulation to be used for stomatal response to leaf symplasmic water potential, either sigmoid, piecewise_linear or Turgor
 ) -> float:
     "To obtain plots of the gs regulation curve"
 
