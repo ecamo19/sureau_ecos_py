@@ -657,7 +657,7 @@ def compute_tleaf(
 
     return vecres
 
-# %% ../nbs/02_plant_utils.ipynb 37
+# %% ../nbs/02_plant_utils.ipynb 36
 class VegetationFile(pa.SchemaModel):
     "Schema for validating the input CSV spreadsheet with trait parameters."
 
