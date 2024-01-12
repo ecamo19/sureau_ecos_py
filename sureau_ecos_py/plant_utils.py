@@ -661,38 +661,110 @@ def compute_tleaf(
 class VegetationFile(pa.SchemaModel):
     "Schema for validating the input vegetation parameter file. The CSV spreadsheet must contain at least the following traits:"
 
-
     # setting commomn params for WB_veg (regardless of the options) -------------
-    apofrac_leaf: Series[float] = pa.Field(description="Apoplasmic Fraction (Unitless) in leaves", coerce=True)
-    apofrac_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
-    betarootprofile: Series[float] = pa.Field(description="parameter for the distribution of roots in the soil (unitless??)", coerce=True)
-    canopystorageparam: Series[float] = pa.Field(description="Depth of water that can be retained by leaves and trunks per unit of leaf area index (l/m2leaf, used to compute the canopy water storage capacity as a function of LAI)", coerce=True)
-    c_lapoinit: Series[float] = pa.Field(description="No definition found", coerce=True)
-    c_sapoinit: Series[float] = pa.Field(description="No definition found", coerce=True)
-    epsilonsym_leaf: Series[float] = pa.Field(description="Modulus of elasticity (MPa) in leaves", coerce=True)
-    epsilonsym_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
-    foliage: Series[str] = pa.Field(isin=["evergreen", "deciduous", "forced"], description="")
-    froottoleaf: Series[float] = pa.Field(description="root to leaf ratio (unitless??)", coerce=True)
-    ftrbtoleaf: Series[float] = pa.Field(description="No definition found", coerce=True)
-    gmin20: Series[float] = pa.Field(description="Minimum conductance (gmin, mmol/m2leaf/s) at the reference temperature (same as cuticular conductance)", coerce=True)
-    gmin_s: Series[float] = pa.Field(description="conductance (gmin) of the stem (same as k_plant??)", coerce=True)
-    k_ssyminit: Series[float] = pa.Field(description="No definition found", coerce=True)
-    k: Series[float] = pa.Field(description="Light extinction coefficient (Unitless??) of the vegetation layer", coerce=True)
-    k_plantinit: Series[float] = pa.Field(description="Hydaulic conductance ( [mmol/MPa/s/m2leaf]) of the plant from soil to leaves", coerce=True)
-    ldmc: Series[float] = pa.Field(ge = 0, description="Leaf dry matter content (mgMS/g) measured for fully watered leaves", coerce=True)
-    lma: Series[float] = pa.Field(description="Leaf mass per area (g/m2leaf)", coerce=True)
-    p50_vc_leaf: Series[float] = pa.Field(description="Water potential (MPa) causing 50% Cavitation in the vulnerability curve", coerce=True)
-    p50_vc_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
-    pifullturgor_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
-    pifullturgor_leaf: Series[float] = pa.Field(description="Osmotic Potentia (MPa) at full turgor in leaves", coerce=True)
-    q10_1_gmin: Series[float] = pa.Field(description="Q10 (unitless??) value for gmin = f(T) <= Tphase_gmin", coerce=True)
-    q10_2_gmin: Series[float] = pa.Field(description="Q10 unitless??) value for gmin = f(T)  > Tphase_gmin", coerce=True)
-    rootradius: Series[float] = pa.Field(description="radius of roots (m)", coerce=True)
-    symfrac_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
-    slope_vc_leaf: Series[float] = pa.Field(description="Slope (%/MPa) of the vulnerability curve", coerce=True)
-    slope_vc_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
-    tphase_gmin: Series[float] = pa.Field(description="Temperature for phase transition (degC) of minimum conductance", coerce=True)
-    vol_stem: Series[float] = pa.Field(description="No definition found", coerce=True)
+    apofrac_leaf: Series[float] = pa.Field(
+        description="Apoplasmic Fraction (Unitless) in leaves", coerce=True
+    )
+    apofrac_stem: Series[float] = pa.Field(
+        description="No definition found", coerce=True
+    )
+    betarootprofile: Series[float] = pa.Field(
+        description="parameter for the distribution of roots in the soil (unitless??)",
+        coerce=True,
+    )
+    canopystorageparam: Series[float] = pa.Field(
+        description="Depth of water that can be retained by leaves and trunks per unit of leaf area index (l/m2leaf, used to compute the canopy water storage capacity as a function of LAI)",
+        coerce=True,
+    )
+    c_lapoinit: Series[float] = pa.Field(
+        description="No definition found", coerce=True
+    )
+    c_sapoinit: Series[float] = pa.Field(
+        description="No definition found", coerce=True
+    )
+    epsilonsym_leaf: Series[float] = pa.Field(
+        description="Modulus of elasticity (MPa) in leaves", coerce=True
+    )
+    epsilonsym_stem: Series[float] = pa.Field(
+        description="No definition found", coerce=True
+    )
+    foliage: Series[str] = pa.Field(
+        isin=["evergreen", "deciduous", "forced"], description=""
+    )
+    froottoleaf: Series[float] = pa.Field(
+        description="root to leaf ratio (unitless??)", coerce=True
+    )
+    ftrbtoleaf: Series[float] = pa.Field(
+        description="No definition found", coerce=True
+    )
+    gmin20: Series[float] = pa.Field(
+        description="Minimum conductance (gmin, mmol/m2leaf/s) at the reference temperature (same as cuticular conductance)",
+        coerce=True,
+    )
+    gmin_s: Series[float] = pa.Field(
+        description="conductance (gmin) of the stem (same as k_plant??)",
+        coerce=True,
+    )
+    k_ssyminit: Series[float] = pa.Field(
+        description="No definition found", coerce=True
+    )
+    k: Series[float] = pa.Field(
+        description="Light extinction coefficient (Unitless??) of the vegetation layer",
+        coerce=True,
+    )
+    k_plantinit: Series[float] = pa.Field(
+        description="Hydaulic conductance ( [mmol/MPa/s/m2leaf]) of the plant from soil to leaves",
+        coerce=True,
+    )
+    ldmc: Series[float] = pa.Field(
+        ge=0,
+        description="Leaf dry matter content (mgMS/g) measured for fully watered leaves",
+        coerce=True,
+    )
+    lma: Series[float] = pa.Field(
+        description="Leaf mass per area (g/m2leaf)", coerce=True
+    )
+    p50_vc_leaf: Series[float] = pa.Field(
+        description="Water potential (MPa) causing 50% Cavitation in the vulnerability curve",
+        coerce=True,
+    )
+    p50_vc_stem: Series[float] = pa.Field(
+        description="No definition found", coerce=True
+    )
+    pifullturgor_stem: Series[float] = pa.Field(
+        description="No definition found", coerce=True
+    )
+    pifullturgor_leaf: Series[float] = pa.Field(
+        description="Osmotic Potentia (MPa) at full turgor in leaves",
+        coerce=True,
+    )
+    q10_1_gmin: Series[float] = pa.Field(
+        description="Q10 (unitless??) value for gmin = f(T) <= Tphase_gmin",
+        coerce=True,
+    )
+    q10_2_gmin: Series[float] = pa.Field(
+        description="Q10 unitless??) value for gmin = f(T)  > Tphase_gmin",
+        coerce=True,
+    )
+    rootradius: Series[float] = pa.Field(
+        description="radius of roots (m)", coerce=True
+    )
+    symfrac_stem: Series[float] = pa.Field(
+        description="No definition found", coerce=True
+    )
+    slope_vc_leaf: Series[float] = pa.Field(
+        description="Slope (%/MPa) of the vulnerability curve", coerce=True
+    )
+    slope_vc_stem: Series[float] = pa.Field(
+        description="No definition found", coerce=True
+    )
+    tphase_gmin: Series[float] = pa.Field(
+        description="Temperature for phase transition (degC) of minimum conductance",
+        coerce=True,
+    )
+    vol_stem: Series[float] = pa.Field(
+        description="No definition found", coerce=True
+    )
 
 
 def read_vegetation_file(
@@ -700,7 +772,6 @@ def read_vegetation_file(
     modeling_options: Dict,  # Dictionary created using the `create_modeling_options` function
     sep: str = ";",  # CSV file separator can be ',' or ';'
 ) -> Dict:
-
     "Function for reading a data frame containing information about vegetation characteristics"
 
     # Assert parameters ---------------------------------------------------------
@@ -719,21 +790,25 @@ def read_vegetation_file(
     vegetation_csv_data = pd.read_csv(file_path, header=0, sep=sep)
 
     # Raise error if soil data don't follow the VegetationFile Schema
-    VegetationFile.validate(vegetation_csv_data, lazy = True)
-
+    VegetationFile.validate(vegetation_csv_data, lazy=True)
 
     # Remove the dots and numbers in column names. This is done for detecting
     # duplicated colnames since pandas reads columns with the same name as col1
     # col1.1, col1.2 etc
-    vegetation_csv_data.columns = vegetation_csv_data.columns.str.replace(r"\.\d+", "", regex=True)
+    vegetation_csv_data.columns = vegetation_csv_data.columns.str.replace(
+        r"\.\d+", "", regex=True
+    )
 
     # Raise error if duplicated coulmn names exists
-    if len(vegetation_csv_data.columns) is not len(set(vegetation_csv_data.columns)):
-
+    if len(vegetation_csv_data.columns) is not len(
+        set(vegetation_csv_data.columns)
+    ):
         duplicated_params = []
 
         # Save duplicated parameters into list
-        for each_param, each_count in collections.Counter(vegetation_csv_data.columns).items():
+        for each_param, each_count in collections.Counter(
+            vegetation_csv_data.columns
+        ).items():
             if each_count > 1:
                 duplicated_params.append(each_param)
 
@@ -744,10 +819,20 @@ def read_vegetation_file(
 
     # Create dictionary with params ---------------------------------------------
     # Reshape dataframe for converting it to a list
-    vegetation_csv_data = pd.DataFrame(vegetation_csv_data.melt(ignore_index=True).reset_index()[['variable', 'value']])
+    vegetation_csv_data = pd.DataFrame(
+        vegetation_csv_data.melt(ignore_index=True).reset_index()[
+            ["variable", "value"]
+        ]
+    )
 
     # Transform data to a list and then create dictionary
-    vegetation_parameters = collections.defaultdict(list, { each_cell[0]: each_cell[1] for each_cell in vegetation_csv_data.values.tolist() })
+    vegetation_parameters = collections.defaultdict(
+        list,
+        {
+            each_cell[0]: each_cell[1]
+            for each_cell in vegetation_csv_data.values.tolist()
+        },
+    )
 
     # Add frac_leaf_sym if not provided -----------------------------------------
     if "frac_leaf_sym" not in vegetation_parameters:
@@ -760,10 +845,10 @@ def read_vegetation_file(
     # Set parameters for stomatal regulation of vegetation according to the type
     # of stomatal regulation
     if modeling_options["stomatal_reg_formulation"] == "piecewise_linear":
-        stomatal_regulation_params = ["psi_start_closing","psi_close"]
+        stomatal_regulation_params = ["psi_start_closing", "psi_close"]
 
     elif modeling_options["stomatal_reg_formulation"] == "sigmoid":
-        stomatal_regulation_params = ["p12_gs","p88_gs"]
+        stomatal_regulation_params = ["p12_gs", "p88_gs"]
 
     elif modeling_options["stomatal_reg_formulation"] == "turgor":
         stomatal_regulation_params = ["turgor_pressure_at_gs_max"]
@@ -773,18 +858,22 @@ def read_vegetation_file(
     for each_stomatal_regulation_param in stomatal_regulation_params:
         if each_stomatal_regulation_param not in vegetation_parameters:
             raise ValueError(
-            f'Trait {each_stomatal_regulation_param} for {modeling_options["stomatal_reg_formulation"]} stomatal_reg_formulation is missing. Add it to the CSV file'
-        )
+                f'Trait {each_stomatal_regulation_param} for {modeling_options["stomatal_reg_formulation"]} stomatal_reg_formulation is missing. Add it to the CSV file'
+            )
 
     # transpiration_model traits
     if modeling_options["transpiration_model"] == "jarvis":
-        transpiration_model_params = ["g_crown0", "gs_max","gs_night","jarvis_par","tgs_sens","tgs_optim"]
+        transpiration_model_params = [
+            "g_crown0",
+            "gs_max",
+            "gs_night",
+            "jarvis_par",
+            "tgs_sens",
+            "tgs_optim",
+        ]
 
     elif modeling_options["transpiration_model"] == "granier":
-        raise ValueError(
-            print('granier option have been not implemented yet')
-            )
-
+        raise ValueError(print("granier option have been not implemented yet"))
 
     # Check if traits for modeling_options["transpiration_model"] are missing in
     # the vegetation_parameters
@@ -792,7 +881,7 @@ def read_vegetation_file(
         if each_transpiration_model_param not in vegetation_parameters:
             raise ValueError(
                 f'Trait {each_transpiration_model_param} for {modeling_options["transpiration_model"]} transpiration model is missing. Add it to the CSV file'
-                )
+            )
 
     # Foliage traits
     if vegetation_parameters["foliage"] == "deciduous":
@@ -810,18 +899,16 @@ def read_vegetation_file(
         if each_foliage_param not in vegetation_parameters:
             raise ValueError(
                 f'Trait {each_foliage_param} for {vegetation_parameters["foliage"]} foliage is missing. Add it to the CSV file'
-                )
+            )
 
     # ETP parameters for PT or PM
     if modeling_options["etp_formulation"] == "pt":
         if "pt_coeff" not in vegetation_parameters:
             raise ValueError(
                 'pt_coeff for "pt" etp_formulation is missing. Add it to the CSV file'
-                )
+            )
 
     elif modeling_options["etp_formulation"] == "penman":
-             raise ValueError(
-                 print('penman option have been not implemented yet')
-                 )
+        raise ValueError(print("penman option have been not implemented yet"))
 
     return vegetation_parameters

@@ -29,7 +29,6 @@ def create_soil_parameters(
 ) -> Dict:  # Dictionary containing parameters
     "Create a Dictionary with soil parameters to run SureauR"
 
-
     # Assert parameters ---------------------------------------------------------
 
     # Make file_path and/or list_of_parameters are present
@@ -58,18 +57,16 @@ def create_soil_parameters(
         offset_psoil >= 0
     ), "offset_psoil must be an integer greater than or equal to 0"
 
-
     # psoil_at_field_capacity
-    if modeling_options["pedo_transfer_formulation"] == 'campbell':
+    if modeling_options["pedo_transfer_formulation"] == "campbell":
         assert (
-             psoil_at_field_capacity < 0
+            psoil_at_field_capacity < 0
         ), "psoil_at_field_capacity must be negative for campbell pedo_transfer_formulation"
 
-    if modeling_options["pedo_transfer_formulation"] == 'vg':
+    if modeling_options["pedo_transfer_formulation"] == "vg":
         assert (
-             psoil_at_field_capacity >= 0
+            psoil_at_field_capacity >= 0
         ), "psoil_at_field_capacity must be positive for vg pedo_transfer_formulation"
-
 
     # Create soil_params dictionary ---------------------------------------------
     soil_params = collections.defaultdict(list)
@@ -82,7 +79,6 @@ def create_soil_parameters(
     print(f"Psoil at field capacity = {psoil_at_field_capacity/1000} MPa")
 
     soil_params["psoil_at_field_capacity"] = psoil_at_field_capacity / 1000
-
 
     # default soil for tests ----------------------------------------------------
     if default_soil is True:
@@ -186,7 +182,6 @@ def create_soil_parameters(
         if list_of_parameters is not None:
             print("This option has not been implemented yet")
             # soil_params_csv_file = list_of_parameters
-
 
         # set soil parameters that are independent of the Pedo-tranfert
         # formulation

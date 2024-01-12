@@ -17,7 +17,7 @@ from sureau_ecos_py.soil_utils import (
 from sureau_ecos_py.plant_utils import (
     read_vegetation_file,
     convert_f_cm3_to_v_mm,
-    distribute_conductances
+    distribute_conductances,
 )
 
 from .create_soil_parameters import create_soil_parameters
@@ -26,16 +26,13 @@ from .create_stand_parameters import create_stand_parameters
 
 # %% ../nbs/16_create_vegetation_parameters.ipynb 4
 def create_vegetation_parameters(
-    stand_parameters:Dict, # Dictionary created using the `create_stand_parameters` function
-    soil_parameters:Dict, # Dictionary created using the `create_soil_parameters` function
+    stand_parameters: Dict,  # Dictionary created using the `create_stand_parameters` function
+    soil_parameters: Dict,  # Dictionary created using the `create_soil_parameters` function
     file_path: Path = None,  # Path to a csv file containing lai_max, latitude and longitude values i.e path/to/parameter_values.csv
     list_of_parameters: List = None,  # A list containing the necessary input parameters instead of reading them in file. Will only be used if 'file_path' arguement is not provided
     modeling_options: Dict = None,  # Dictionary created using the `create_modeling_options` function
     sep: str = ";",  # CSV file separator can be ',' or ';'
-
-
 ) -> Dict:  # Dictionary containing parameters to run the model
-
     "Create a dictionary with the vegetation parameters to run \code{run.SurEauR}"
 
     # Assert parameters ---------------------------------------------------------
@@ -44,7 +41,6 @@ def create_vegetation_parameters(
     assert file_path is None or os.path.exists(
         file_path
     ), f"Path: {file_path} not found, check spelling or set file_path = None"
-
 
     # Raise error if file_path and list_of_parameters both are missing
     if file_path is None and list_of_parameters is None:
@@ -64,7 +60,6 @@ def create_vegetation_parameters(
             "Option for including list_of_parameters not implemented yet"
         )
 
-
     # Make sure that modeling_options is a dictionary
     assert isinstance(
         modeling_options, Dict
@@ -80,21 +75,26 @@ def create_vegetation_parameters(
         soil_parameters, Dict
     ), f"soil_parameters must be a dictionary not a {type(soil_parameters)}"
 
-
     # Create vegetation_parameters from function inputs -------------------------
 
     # Read CSV file
-    vegetation_parameters = read_vegetation_file(file_path = file_path,
-                                                 modeling_options = modeling_options,
-                                                 sep = sep)
+    vegetation_parameters = read_vegetation_file(
+        file_path=file_path, modeling_options=modeling_options, sep=sep
+    )
 
     # Compute stomatal response parameters for the sigmoid from P12_gs and P88_gs
     # provided in the CSV file
-    if modeling_options["stomatal_reg_formulation"] == "sigmoid" and "p50_gs" not in vegetation_parameters :
-
+    if (
+        modeling_options["stomatal_reg_formulation"] == "sigmoid"
+        and "p50_gs" not in vegetation_parameters
+    ):
         # Calculate p50_gs
-        vegetation_parameters["p50_gs"] = (vegetation_parameters["p88_gs"] + vegetation_parameters["p12_gs"])/2
-        vegetation_parameters["slope_gs"] = 100/(vegetation_parameters["p12_gs"] - vegetation_parameters["p88_gs"])
+        vegetation_parameters["p50_gs"] = (
+            vegetation_parameters["p88_gs"] + vegetation_parameters["p12_gs"]
+        ) / 2
+        vegetation_parameters["slope_gs"] = 100 / (
+            vegetation_parameters["p12_gs"] - vegetation_parameters["p88_gs"]
+        )
 
     else:
         print("p50_gs already provided")
@@ -112,121 +112,160 @@ def create_vegetation_parameters(
     # to centimeters
 
     # Layer 1
-    vegetation_parameters["root_distribution"][0] = 1 - (vegetation_parameters["betarootprofile"]**(soil_parameters["soil_depths"][0]*100))
+    vegetation_parameters["root_distribution"][0] = 1 - (
+        vegetation_parameters["betarootprofile"]
+        ** (soil_parameters["soil_depths"][0] * 100)
+    )
 
     # Layer 2
-    vegetation_parameters["root_distribution"][1] = (1 - vegetation_parameters["betarootprofile"]**(soil_parameters["soil_depths"][1]*100)) - vegetation_parameters["root_distribution"][0]
+    vegetation_parameters["root_distribution"][1] = (
+        1
+        - vegetation_parameters["betarootprofile"]
+        ** (soil_parameters["soil_depths"][1] * 100)
+    ) - vegetation_parameters["root_distribution"][0]
 
     # Layer 3
-    vegetation_parameters["root_distribution"][2] = 1 - (vegetation_parameters["root_distribution"][0] + vegetation_parameters["root_distribution"][1])
+    vegetation_parameters["root_distribution"][2] = 1 - (
+        vegetation_parameters["root_distribution"][0]
+        + vegetation_parameters["root_distribution"][1]
+    )
 
     # Calculate turgor loss point (tlp)
-    tlp = (vegetation_parameters["pifullturgor_leaf"]*vegetation_parameters["epsilonsym_leaf"])/(vegetation_parameters["pifullturgor_leaf"] + vegetation_parameters["epsilonsym_leaf"])
+    tlp = (
+        vegetation_parameters["pifullturgor_leaf"]
+        * vegetation_parameters["epsilonsym_leaf"]
+    ) / (
+        vegetation_parameters["pifullturgor_leaf"]
+        + vegetation_parameters["epsilonsym_leaf"]
+    )
 
     # Pedotransfer function == vg
-    if modeling_options['pedo_transfer_formulation'] == "vg":
+    if modeling_options["pedo_transfer_formulation"] == "vg":
+        theta_at_tlp = compute_theta_at_given_p_soil(
+            psi_target=np.abs(tlp),
+            theta_res=soil_parameters["residual_capacity_vg"],
+            theta_sat=soil_parameters["saturation_capacity_vg"],
+            alpha_vg=soil_parameters["alpha_vg"],
+            n_vg=soil_parameters["n_vg"],
+        )
 
-        theta_at_tlp = compute_theta_at_given_p_soil(psi_target= np.abs(tlp),
-                                                     theta_res = soil_parameters['residual_capacity_vg'],
-                                                     theta_sat = soil_parameters['saturation_capacity_vg'],
-                                                     alpha_vg = soil_parameters['alpha_vg'],
-                                                     n_vg = soil_parameters['n_vg']
-                                                     )
-
-        theta_at_p50 = compute_theta_at_given_p_soil(psi_target= np.abs(vegetation_parameters['p50_vc_leaf']),
-                                                     theta_res = soil_parameters['residual_capacity_vg'],
-                                                     theta_sat = soil_parameters['saturation_capacity_vg'],
-                                                     alpha_vg = soil_parameters['alpha_vg'],
-                                                     n_vg = soil_parameters['n_vg']
-                                                     )
+        theta_at_p50 = compute_theta_at_given_p_soil(
+            psi_target=np.abs(vegetation_parameters["p50_vc_leaf"]),
+            theta_res=soil_parameters["residual_capacity_vg"],
+            theta_sat=soil_parameters["saturation_capacity_vg"],
+            alpha_vg=soil_parameters["alpha_vg"],
+            n_vg=soil_parameters["n_vg"],
+        )
 
         # Compute TAW @Tlp @P12 & @P50 (Diagnoostic)
-        vegetation_parameters['taw_at_tlp'] = np.sum(soil_parameters['v_field_capacity'] - convert_f_cm3_to_v_mm(x = theta_at_tlp,
-                                                                                                                 rock_fragment_content = soil_parameters['rock_fragment_content'],
-                                                                                                                 layer_thickness = soil_parameters['layer_thickness']
-                                                                                                                 )
-                                                     )
+        vegetation_parameters["taw_at_tlp"] = np.sum(
+            soil_parameters["v_field_capacity"]
+            - convert_f_cm3_to_v_mm(
+                x=theta_at_tlp,
+                rock_fragment_content=soil_parameters["rock_fragment_content"],
+                layer_thickness=soil_parameters["layer_thickness"],
+            )
+        )
 
-        vegetation_parameters['taw_at_p50'] = np.sum(soil_parameters['v_field_capacity'] - convert_f_cm3_to_v_mm(x = theta_at_p50,
-                                                                                                                 rock_fragment_content = soil_parameters['rock_fragment_content'],
-                                                                                                                 layer_thickness = soil_parameters['layer_thickness']
-                                                                                                                 )
-                                                     )
+        vegetation_parameters["taw_at_p50"] = np.sum(
+            soil_parameters["v_field_capacity"]
+            - convert_f_cm3_to_v_mm(
+                x=theta_at_p50,
+                rock_fragment_content=soil_parameters["rock_fragment_content"],
+                layer_thickness=soil_parameters["layer_thickness"],
+            )
+        )
 
-
-        print(f"Available water capacity @Tlp (VG):{vegetation_parameters['taw_at_tlp']} mm")
-        print(f"Available water capacity @P50 (VG):{vegetation_parameters['taw_at_p50']} mm")
+        print(
+            f"Available water capacity @Tlp (VG):{vegetation_parameters['taw_at_tlp']} mm"
+        )
+        print(
+            f"Available water capacity @P50 (VG):{vegetation_parameters['taw_at_p50']} mm"
+        )
 
     # Pedotransfer function == Campbell
-    elif modeling_options['pedo_transfer_formulation'] == "campbell":
-        theta_at_tlp = compute_theta_at_given_p_soil_camp(psi_target = tlp,
-                                                          theta_sat = soil_parameters['saturation_capacity_campbell'],
-                                                          psie = soil_parameters["psie"],
-                                                          b_camp = soil_parameters['b_campbell']
-                                                          )
+    elif modeling_options["pedo_transfer_formulation"] == "campbell":
+        theta_at_tlp = compute_theta_at_given_p_soil_camp(
+            psi_target=tlp,
+            theta_sat=soil_parameters["saturation_capacity_campbell"],
+            psie=soil_parameters["psie"],
+            b_camp=soil_parameters["b_campbell"],
+        )
 
-        theta_at_p50 = compute_theta_at_given_p_soil_camp(psi_target = vegetation_parameters['p50_vc_leaf'],
-                                                          theta_sat = soil_parameters['saturation_capacity_campbell'],
-                                                          psie = soil_parameters["psie"],
-                                                          b_camp = soil_parameters['b_campbell']
-                                                          )
+        theta_at_p50 = compute_theta_at_given_p_soil_camp(
+            psi_target=vegetation_parameters["p50_vc_leaf"],
+            theta_sat=soil_parameters["saturation_capacity_campbell"],
+            psie=soil_parameters["psie"],
+            b_camp=soil_parameters["b_campbell"],
+        )
 
         # Compute TAW @Tlp @P12 & @P50 (Diagnoostic)
-        vegetation_parameters['taw_at_tlp'] = np.sum(soil_parameters['v_field_capacity'] - convert_f_cm3_to_v_mm(x = theta_at_tlp,
-                                                                                                                 rock_fragment_content = soil_parameters['rock_fragment_content'],
-                                                                                                                 layer_thickness = soil_parameters['layer_thickness']
-                                                                                                                 )
-                                                     )
+        vegetation_parameters["taw_at_tlp"] = np.sum(
+            soil_parameters["v_field_capacity"]
+            - convert_f_cm3_to_v_mm(
+                x=theta_at_tlp,
+                rock_fragment_content=soil_parameters["rock_fragment_content"],
+                layer_thickness=soil_parameters["layer_thickness"],
+            )
+        )
 
-        vegetation_parameters['taw_at_p50'] = np.sum(soil_parameters['v_field_capacity'] - convert_f_cm3_to_v_mm(x = theta_at_p50,
-                                                                                                                 rock_fragment_content = soil_parameters['rock_fragment_content'],
-                                                                                                                 layer_thickness = soil_parameters['layer_thickness']
-                                                                                                                 )
-                                                     )
+        vegetation_parameters["taw_at_p50"] = np.sum(
+            soil_parameters["v_field_capacity"]
+            - convert_f_cm3_to_v_mm(
+                x=theta_at_p50,
+                rock_fragment_content=soil_parameters["rock_fragment_content"],
+                layer_thickness=soil_parameters["layer_thickness"],
+            )
+        )
 
-
-        print(f"Available water capacity @Tlp (Campbell):{vegetation_parameters['taw_at_tlp']} mm")
-        print(f"Available water capacity @P50 (Campbell):{vegetation_parameters['taw_at_p50']} mm")
+        print(
+            f"Available water capacity @Tlp (Campbell):{vegetation_parameters['taw_at_tlp']} mm"
+        )
+        print(
+            f"Available water capacity @P50 (Campbell):{vegetation_parameters['taw_at_p50']} mm"
+        )
 
     else:
-        raise ValueError(
-            "pedo_transfer_formulation is missing"
-        )
+        raise ValueError("pedo_transfer_formulation is missing")
 
     # Determine root lenght (La gardner cowan)
 
     # I am assumming that this is the LAI growth rate per day
-    rai = vegetation_parameters['lai_max'] * vegetation_parameters['froottoleaf']
+    rai = vegetation_parameters["lai_max"] * vegetation_parameters["froottoleaf"]
 
-    vegetation_parameters['la'] = (rai * vegetation_parameters['root_distribution'])/(2 * math.pi * vegetation_parameters['rootradius'])
-    vegetation_parameters['lv'] = vegetation_parameters['la']/(soil_parameters['layer_thickness'] * (1 - (soil_parameters['rock_fragment_content']/100)) )
-
+    vegetation_parameters["la"] = (
+        rai * vegetation_parameters["root_distribution"]
+    ) / (2 * math.pi * vegetation_parameters["rootradius"])
+    vegetation_parameters["lv"] = vegetation_parameters["la"] / (
+        soil_parameters["layer_thickness"]
+        * (1 - (soil_parameters["rock_fragment_content"] / 100))
+    )
 
     # Calculate the different conductance of the plant from k_PlantInit
-    conductances = distribute_conductances(k_plant_init=vegetation_parameters['k_plantinit'],
-                                          ri = vegetation_parameters['root_distribution'],
-                                          frac_leaf_sym = vegetation_parameters['frac_leaf_sym'],
-                                          )
-
+    conductances = distribute_conductances(
+        k_plant_init=vegetation_parameters["k_plantinit"],
+        ri=vegetation_parameters["root_distribution"],
+        frac_leaf_sym=vegetation_parameters["frac_leaf_sym"],
+    )
 
     # I am assumming that this is the Maximum conductance from trunk apoplasm to
     # the leaf apoplasm KSApo−LApo,max
-    vegetation_parameters['k_slapo_init'] = conductances['k_slapo_init']
+    vegetation_parameters["k_slapo_init"] = conductances["k_slapo_init"]
 
     # I am assumming that this is the Maximum conductance from the root surface
     # to the stem apoplasm
-    vegetation_parameters['k_rsapo_init'] = conductances['k_rsapo_init']
+    vegetation_parameters["k_rsapo_init"] = conductances["k_rsapo_init"]
 
     # I am assumming that this is the Conductance from the leaf apoplasm to leaf
     # symplasm
-    vegetation_parameters['k_lsym_init'] = conductances['k_lsym_init']
+    vegetation_parameters["k_lsym_init"] = conductances["k_lsym_init"]
 
     # Add Hydaulic conductance of the plant from soil to leaves
-    vegetation_parameters["k_plant_init"] = conductances['k_plant_init']
+    vegetation_parameters["k_plant_init"] = conductances["k_plant_init"]
 
     # Add Volume of tissue of the stem (includes the root, trunk and branches)
     # Original line is adding it twice. not added
-    #TTT$vol_Stem = TTT$vol_Stem
-    #vegetation_parameters['vol_stem'] = vegetation_parameters['vol_stem']
+    # TTT$vol_Stem = TTT$vol_Stem
+    # vegetation_parameters['vol_stem'] = vegetation_parameters['vol_stem']
 
     return vegetation_parameters
