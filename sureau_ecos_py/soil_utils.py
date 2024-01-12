@@ -114,7 +114,7 @@ def compute_theta_at_given_p_soil(
         1 + (alpha_vg * psi_target * 10000) ** n_vg
     ) ** (1 - 1 / n_vg)
 
-# %% ../nbs/01_soil_utils.ipynb 13
+# %% ../nbs/01_soil_utils.ipynb 14
 def compute_theta_at_given_p_soil_camp(
     theta_sat: float,  # Unknown parameter definition
     psi_target: float,  # Unknown parameter definition
@@ -142,7 +142,7 @@ def compute_theta_at_given_p_soil_camp(
 
     return theta_sat * (psi_target / psie) ** (1 / b_camp)
 
-# %% ../nbs/01_soil_utils.ipynb 16
+# %% ../nbs/01_soil_utils.ipynb 18
 # This class was created for validating the input dataframe
 # If the data don't follow the structure specified the function will fail
 class SoilFile(pa.SchemaModel):

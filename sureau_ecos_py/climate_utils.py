@@ -48,7 +48,7 @@ def compute_vpd_from_t_rh(
 
     return vpd
 
-# %% ../nbs/00_climate_utils.ipynb 8
+# %% ../nbs/00_climate_utils.ipynb 9
 def compute_etp_pt(
     tmoy: float,  # Mean temperature over the considered time step (degrees Celsius)
     net_radiation: float,  # Cumulative Net radiation over the considered  time sep  (MJ.m2)
@@ -88,7 +88,7 @@ def compute_etp_pt(
 
     return etp
 
-# %% ../nbs/00_climate_utils.ipynb 13
+# %% ../nbs/00_climate_utils.ipynb 15
 def compute_etp_pm(
     tmoy: float,  # Mean temperature over the considered time step (degrees Celsius)
     net_radiation: float,  # Cumulative Net radiation over the considered  time sep (MJ.m2)
@@ -131,7 +131,7 @@ def compute_etp_pm(
     # Return E
     return (n1 + n2) / (d)
 
-# %% ../nbs/00_climate_utils.ipynb 16
+# %% ../nbs/00_climate_utils.ipynb 18
 def calculate_radiation_diurnal_pattern(
     time_of_the_day: List[
         int
@@ -150,7 +150,7 @@ def calculate_radiation_diurnal_pattern(
 
     return prop / 3600.0
 
-# %% ../nbs/00_climate_utils.ipynb 18
+# %% ../nbs/00_climate_utils.ipynb 21
 def calculate_temperature_diurnal_pattern(
     time_of_the_day: List[
         int
@@ -191,7 +191,7 @@ def calculate_temperature_diurnal_pattern(
     # Return Temp
     return 0.5 * (tmin + tmax - (tmax - tmin) * ct)
 
-# %% ../nbs/00_climate_utils.ipynb 19
+# %% ../nbs/00_climate_utils.ipynb 22
 def calculate_rh_diurnal_pattern(
     temperature: float,  # Unknown parameter definition
     rhmin: float,  # Unknown parameter definition
@@ -204,7 +204,7 @@ def calculate_rh_diurnal_pattern(
     # calculate rh diurnal pattern ----------------------------------------------
     return rhmax + ((temperature - tmin) / (tmax - tmin)) * (rhmin - rhmax)
 
-# %% ../nbs/00_climate_utils.ipynb 20
+# %% ../nbs/00_climate_utils.ipynb 23
 def ppfd_umol_to_rg_watt(
     ppfd: float,  # Photosynthetic photon flux density (umol.m-2.s-1)
     j_to_mol: float = 4.6,  # Conversion factor
@@ -216,7 +216,7 @@ def ppfd_umol_to_rg_watt(
     rg = ppfd / frac_par / j_to_mol
     return rg
 
-# %% ../nbs/00_climate_utils.ipynb 21
+# %% ../nbs/00_climate_utils.ipynb 24
 def rg_watt_to_ppfd_umol(
     rg: float,  # Global radiation (W/m2)
     j_to_mol: float = 4.6,  # Conversion factor
@@ -228,7 +228,7 @@ def rg_watt_to_ppfd_umol(
 
     return rg * frac_par * j_to_mol
 
-# %% ../nbs/00_climate_utils.ipynb 22
+# %% ../nbs/00_climate_utils.ipynb 25
 def rg_convertions(
     rg_watts: float = None,  # instantaneous radiation (watt)
     rg_mj: float = None,  # instantaneous radiation (in Mega Jule?)
@@ -260,7 +260,7 @@ def rg_convertions(
     else:
         print("No conversions performed")
 
-# %% ../nbs/00_climate_utils.ipynb 27
+# %% ../nbs/00_climate_utils.ipynb 31
 def declination(doy: int):  # julian day (day of the year)
     "Calculate declination of sun (radians ? ) for a given julian day (DOY)"
 
