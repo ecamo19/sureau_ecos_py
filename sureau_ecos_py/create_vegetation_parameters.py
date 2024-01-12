@@ -28,7 +28,7 @@ from .create_stand_parameters import create_stand_parameters
 def create_vegetation_parameters(
     stand_parameters: Dict,  # Dictionary created using the `create_stand_parameters` function
     soil_parameters: Dict,  # Dictionary created using the `create_soil_parameters` function
-    file_path: Path = None,  # Path to a csv file containing lai_max, latitude and longitude values i.e path/to/parameter_values.csv
+    file_path: Path = None,  # Path to a csv file trait parameters. Check `read_vegetation_file` for more information i.e path/to/parameter_values.csv
     list_of_parameters: List = None,  # A list containing the necessary input parameters instead of reading them in file. Will only be used if 'file_path' arguement is not provided
     modeling_options: Dict = None,  # Dictionary created using the `create_modeling_options` function
     sep: str = ";",  # CSV file separator can be ',' or ';'
