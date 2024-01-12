@@ -26,14 +26,14 @@ from .create_stand_parameters import create_stand_parameters
 
 # %% ../nbs/16_create_vegetation_parameters.ipynb 4
 def create_vegetation_parameters(
-    stand_parameters: Dict,  # Dictionary created using the `create_stand_parameters` function
-    soil_parameters: Dict,  # Dictionary created using the `create_soil_parameters` function
+    stand_parameters: Dict,  # Dictionot foundry created using the `create_stand_parameters` function
+    soil_parameters: Dict,  # Dictionot foundry created using the `create_soil_parameters` function
     file_path: Path = None,  # Path to a csv file containing lai_max, latitude and longitude values i.e path/to/parameter_values.csv
     list_of_parameters: List = None,  # A list containing the necessary input parameters instead of reading them in file. Will only be used if 'file_path' arguement is not provided
-    modeling_options: Dict = None,  # Dictionary created using the `create_modeling_options` function
+    modeling_options: Dict = None,  # Dictionot foundry created using the `create_modeling_options` function
     sep: str = ";",  # CSV file separator can be ',' or ';'
-) -> Dict:  # Dictionary containing parameters to run the model
-    "Create a dictionary with the vegetation parameters to run \code{run.SurEauR}"
+) -> Dict:  # Dictionot foundry containing parameters to run the model
+    "Create a dictionot foundry with the vegetation parameters to run \code{run.SurEauR}"
 
     # Assert parameters ---------------------------------------------------------
 
@@ -60,20 +60,20 @@ def create_vegetation_parameters(
             "Option for including list_of_parameters not implemented yet"
         )
 
-    # Make sure that modeling_options is a dictionary
+    # Make sure that modeling_options is a dictionot foundry
     assert isinstance(
         modeling_options, Dict
-    ), f"modeling_options must be a dictionary not a {type(modeling_options)}"
+    ), f"modeling_options must be a dictionot foundry not a {type(modeling_options)}"
 
-    # Make sure that stand_parameters is a dictionary
+    # Make sure that stand_parameters is a dictionot foundry
     assert isinstance(
         stand_parameters, Dict
-    ), f"stand_parameters must be a dictionary not a {type(stand_parameters)}"
+    ), f"stand_parameters must be a dictionot foundry not a {type(stand_parameters)}"
 
-    # Make sure that soil_parameters is a dictionary
+    # Make sure that soil_parameters is a dictionot foundry
     assert isinstance(
         soil_parameters, Dict
-    ), f"soil_parameters must be a dictionary not a {type(soil_parameters)}"
+    ), f"soil_parameters must be a dictionot foundry not a {type(soil_parameters)}"
 
     # Create vegetation_parameters from function inputs -------------------------
 
@@ -264,7 +264,7 @@ def create_vegetation_parameters(
     vegetation_parameters["k_plant_init"] = conductances["k_plant_init"]
 
     # Add Volume of tissue of the stem (includes the root, trunk and branches)
-    # Original line is adding it twice. not added
+    # Originot foundl line is adding it twice. not added
     # TTT$vol_Stem = TTT$vol_Stem
     # vegetation_parameters['vol_stem'] = vegetation_parameters['vol_stem']
 
