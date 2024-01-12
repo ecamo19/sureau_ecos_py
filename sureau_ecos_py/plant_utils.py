@@ -87,7 +87,7 @@ def compute_turgor_from_psi(
 
     return turgor_array
 
-# %% ../nbs/02_plant_utils.ipynb 10
+# %% ../nbs/02_plant_utils.ipynb 11
 # Osmotic potential
 def osmo_comp(
     pi_ft: float,  # Osmotic potential at full turgor (MPa)
@@ -96,7 +96,7 @@ def osmo_comp(
     "Compute osmotic potential"
     return pi_ft / (1 - r_stemp)
 
-# %% ../nbs/02_plant_utils.ipynb 11
+# %% ../nbs/02_plant_utils.ipynb 12
 def psi_total_symp_comp(
     pi_ft: float,  # Osmotic potential at full turgor (MPa)
     e_symp: float,  # Modulus of elastoicoty of the Symplasm (MPa/%)
@@ -109,7 +109,7 @@ def psi_total_symp_comp(
 
     return turgor + osmo
 
-# %% ../nbs/02_plant_utils.ipynb 12
+# %% ../nbs/02_plant_utils.ipynb 13
 def stomatal_regulation_turgor(
     turgor_pressure: float,  # Turgor pressure
     max_turgor_pressure: float,  # Maximum turgor pressure,
@@ -135,7 +135,7 @@ def stomatal_regulation_turgor(
 
     return stomatal_reg_array
 
-# %% ../nbs/02_plant_utils.ipynb 14
+# %% ../nbs/02_plant_utils.ipynb 16
 def plc_comp(
     p_min: float,  # Unknown parameter definition
     slope: float,  # Unknown parameter definition
@@ -145,7 +145,7 @@ def plc_comp(
 
     return 100 / (1 + np.exp(slope / 25 * (p_min - p50)))
 
-# %% ../nbs/02_plant_utils.ipynb 15
+# %% ../nbs/02_plant_utils.ipynb 17
 def plc_prime_comp(
     plc: float,  # Computed using the `plc_comp` function
     slope: float,  # Unknown parameter definition
@@ -154,7 +154,7 @@ def plc_prime_comp(
 
     return -slope / 25 * plc / 100 * (1 - plc / 100)
 
-# %% ../nbs/02_plant_utils.ipynb 16
+# %% ../nbs/02_plant_utils.ipynb 18
 def gs_curve(
     x: float,  # Unknown parameter definition
     slope_gs: float,  # Unknown parameter definition
@@ -235,7 +235,7 @@ def gs_curve(
 
     return regul_fact * gs_max
 
-# %% ../nbs/02_plant_utils.ipynb 17
+# %% ../nbs/02_plant_utils.ipynb 19
 def compute_gmin(
     leaf_temp: float,  # Temperature of the leaf (degC)
     gmin_20: float,  # leaf conductance at 20 degC
@@ -264,7 +264,7 @@ def compute_gmin(
         gmin = gmin_20
         return gmin
 
-# %% ../nbs/02_plant_utils.ipynb 18
+# %% ../nbs/02_plant_utils.ipynb 20
 def compute_emin(
     gmin: float,  # minimum conductance
     vpd: float,  # Vapor Pressure Deficit  (kPa)
@@ -277,7 +277,7 @@ def compute_emin(
     gmin_tot = 1 / (1 / gmin + 1 / g_bl + 1 / g_crown)
     return gmin_tot * (vpd / air_pressure)
 
-# %% ../nbs/02_plant_utils.ipynb 19
+# %% ../nbs/02_plant_utils.ipynb 21
 def compute_dfmc(
     vpd: float,  # Vapor pressure deficit (kPA)
     fm0=5.43,  # Minimum fuel moisture content (% dry weight)
@@ -287,7 +287,7 @@ def compute_dfmc(
     "Compute dead fuel moisture content from VPD following De Dios et al. (2015)"
     return fm0 + fm1 * np.exp(-m * vpd)
 
-# %% ../nbs/02_plant_utils.ipynb 20
+# %% ../nbs/02_plant_utils.ipynb 22
 def distribute_conductances(
     k_plant_init: float,  # Conductance of the plant from root to leaf
     ri: float,  # Root distribution within the soil layers.
@@ -317,7 +317,7 @@ def distribute_conductances(
 
     return collections.defaultdict(list, dictionary)
 
-# %% ../nbs/02_plant_utils.ipynb 22
+# %% ../nbs/02_plant_utils.ipynb 25
 def compute_g_crown(
     g_crown0: float,  # Unknown parameter definition
     wind_speed: float,  # Unknown parameter definition
@@ -329,7 +329,7 @@ def compute_g_crown(
 
     return g_crown0 * wind_speed**0.6
 
-# %% ../nbs/02_plant_utils.ipynb 23
+# %% ../nbs/02_plant_utils.ipynb 26
 def convert_flux_from_mmolm2s_to_mm(
     x: float,  # The amount of water in mm (L.m-2soil)
     time_step: float,  # Time step (in hours)
@@ -338,7 +338,7 @@ def convert_flux_from_mmolm2s_to_mm(
     "Convert an instantaneous flux in mmol.m-2Leaf.s-1 to a amount in mm (L.m2soil) over a defined time period"
     return x * (lai * time_step * 3600 * 18) / 10**6
 
-# %% ../nbs/02_plant_utils.ipynb 24
+# %% ../nbs/02_plant_utils.ipynb 27
 def convert_flux_from_mm_to_mmolm2s(
     x: float,  # The amount of water in mm (L.m-2soil)
     time_step: float,  # Time step (in hours)
@@ -351,7 +351,7 @@ def convert_flux_from_mm_to_mmolm2s(
     else:
         return 0
 
-# %% ../nbs/02_plant_utils.ipynb 25
+# %% ../nbs/02_plant_utils.ipynb 28
 def calculate_ebound_mm_granier(
     etp: float,  # Unknown parameter definition
     lai: float,  # Leaf area index of the stand (m2leaf.m-2soil)
@@ -365,7 +365,7 @@ def calculate_ebound_mm_granier(
     # Example of np.maximum: np.maximum(5, [1,2,6]) == array([5, 5, 6])
     return np.maximum(0, etp * (a * lai**2 + b * lai + c))
 
-# %% ../nbs/02_plant_utils.ipynb 26
+# %% ../nbs/02_plant_utils.ipynb 29
 def calculate_ebound_granier(
     etp: float,  # Unknown parameter definition
     lai: float,  # Leaf area index of the stand (m2leaf.m-2soil)
@@ -379,7 +379,7 @@ def calculate_ebound_granier(
         x=ebound_mm, time_step=time_step, lai=lai
     )
 
-# %% ../nbs/02_plant_utils.ipynb 28
+# %% ../nbs/02_plant_utils.ipynb 32
 def convert_f_cm3_to_v_mm(
     x: float,  # Soil value to be converted (in m3.m-3)
     rock_fragment_content: float,  # Rock fragment content of the soil layer (%)
@@ -388,7 +388,7 @@ def convert_f_cm3_to_v_mm(
     "Convert soil parameter from from cm3.cm-3 to mm according to thickness and rock fragment content"
     return x * (1 - (rock_fragment_content / 100)) * layer_thickness * 1000
 
-# %% ../nbs/02_plant_utils.ipynb 29
+# %% ../nbs/02_plant_utils.ipynb 33
 def compute_tleaf(
     t_air: float,  # Air temperature (degC)
     par: float,  # Unknown parameter definition
@@ -657,19 +657,31 @@ def compute_tleaf(
 
     return vecres
 
-# %% ../nbs/02_plant_utils.ipynb 31
+# %% ../nbs/02_plant_utils.ipynb 36
 class VegetationFile(pa.SchemaModel):
+<<<<<<< HEAD
     "Schema for validating the input vegetation parameter file. The CSV spreadsheet must contain at least the following traits:"
+=======
+    "Schema for validating the input CSV spreadsheet with trait parameters."
+>>>>>>> main
 
     # setting commomn params for WB_veg (regardless of the options) -------------
     apofrac_leaf: Series[float] = pa.Field(
         description="Apoplasmic Fraction (Unitless) in leaves", coerce=True
     )
     apofrac_stem: Series[float] = pa.Field(
+<<<<<<< HEAD
         description="No definition found", coerce=True
     )
     betarootprofile: Series[float] = pa.Field(
         description="parameter for the distribution of roots in the soil (unitless??)",
+=======
+        description="Stem apoplasmic fraction of the wood water volume",
+        coerce=True,
+    )
+    betarootprofile: Series[float] = pa.Field(
+        description="Parameter for the distribution of roots in the soil (unitless??)",
+>>>>>>> main
         coerce=True,
     )
     canopystorageparam: Series[float] = pa.Field(
@@ -677,15 +689,23 @@ class VegetationFile(pa.SchemaModel):
         coerce=True,
     )
     c_lapoinit: Series[float] = pa.Field(
+<<<<<<< HEAD
         description="No definition found", coerce=True
     )
     c_sapoinit: Series[float] = pa.Field(
         description="No definition found", coerce=True
+=======
+        description="Capacitance of the leaf apoplasm", coerce=True
+    )
+    c_sapoinit: Series[float] = pa.Field(
+        description="Capacitance of the stem apoplasm", coerce=True
+>>>>>>> main
     )
     epsilonsym_leaf: Series[float] = pa.Field(
         description="Modulus of elasticity (MPa) in leaves", coerce=True
     )
     epsilonsym_stem: Series[float] = pa.Field(
+<<<<<<< HEAD
         description="No definition found", coerce=True
     )
     foliage: Series[str] = pa.Field(
@@ -693,6 +713,15 @@ class VegetationFile(pa.SchemaModel):
     )
     froottoleaf: Series[float] = pa.Field(
         description="root to leaf ratio (unitless??)", coerce=True
+=======
+        description="Modulus of elasticity of the stem symplasm", coerce=True
+    )
+    foliage: Series[str] = pa.Field(
+        isin=["evergreen", "deciduous", "forced"], description="Vegetation type"
+    )
+    froottoleaf: Series[float] = pa.Field(
+        description="Root to leaf ratio (unitless??)", coerce=True
+>>>>>>> main
     )
     ftrbtoleaf: Series[float] = pa.Field(
         description="No definition found", coerce=True
@@ -702,7 +731,11 @@ class VegetationFile(pa.SchemaModel):
         coerce=True,
     )
     gmin_s: Series[float] = pa.Field(
+<<<<<<< HEAD
         description="conductance (gmin) of the stem (same as k_plant??)",
+=======
+        description="Conductance (gmin) of the stem (same as k_plant??)",
+>>>>>>> main
         coerce=True,
     )
     k_ssyminit: Series[float] = pa.Field(
@@ -729,10 +762,19 @@ class VegetationFile(pa.SchemaModel):
         coerce=True,
     )
     p50_vc_stem: Series[float] = pa.Field(
+<<<<<<< HEAD
         description="No definition found", coerce=True
     )
     pifullturgor_stem: Series[float] = pa.Field(
         description="No definition found", coerce=True
+=======
+        description="Water potential causing 50 % loss of stem hydraulic conductance",
+        coerce=True,
+    )
+    pifullturgor_stem: Series[float] = pa.Field(
+        description="Osmotic potential at full turgor of the stem symplasm",
+        coerce=True,
+>>>>>>> main
     )
     pifullturgor_leaf: Series[float] = pa.Field(
         description="Osmotic Potentia (MPa) at full turgor in leaves",
@@ -750,20 +792,34 @@ class VegetationFile(pa.SchemaModel):
         description="radius of roots (m)", coerce=True
     )
     symfrac_stem: Series[float] = pa.Field(
+<<<<<<< HEAD
         description="No definition found", coerce=True
+=======
+        description="Stem symplasmic fraction of the wood water volume",
+        coerce=True,
+>>>>>>> main
     )
     slope_vc_leaf: Series[float] = pa.Field(
         description="Slope (%/MPa) of the vulnerability curve", coerce=True
     )
     slope_vc_stem: Series[float] = pa.Field(
+<<<<<<< HEAD
         description="No definition found", coerce=True
+=======
+        description="Slope of rate of stem embolism spread at ψ50,S", coerce=True
+>>>>>>> main
     )
     tphase_gmin: Series[float] = pa.Field(
         description="Temperature for phase transition (degC) of minimum conductance",
         coerce=True,
     )
     vol_stem: Series[float] = pa.Field(
+<<<<<<< HEAD
         description="No definition found", coerce=True
+=======
+        description="Volume of tissue of the stem (includes the root, trunk and branches)",
+        coerce=True,
+>>>>>>> main
     )
 
 
