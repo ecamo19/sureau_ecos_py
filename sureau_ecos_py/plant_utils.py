@@ -666,7 +666,8 @@ class VegetationFile(pa.SchemaModel):
         description="Apoplasmic Fraction (Unitless) in leaves", coerce=True
     )
     apofrac_stem: Series[float] = pa.Field(
-        description="Stem apoplasmic fraction of the wood water volume", coerce=True
+        description="Stem apoplasmic fraction of the wood water volume",
+        coerce=True,
     )
     betarootprofile: Series[float] = pa.Field(
         description="Parameter for the distribution of roots in the soil (unitless??)",
@@ -729,10 +730,12 @@ class VegetationFile(pa.SchemaModel):
         coerce=True,
     )
     p50_vc_stem: Series[float] = pa.Field(
-        description="Water potential causing 50 % loss of stem hydraulic conductance", coerce=True
+        description="Water potential causing 50 % loss of stem hydraulic conductance",
+        coerce=True,
     )
     pifullturgor_stem: Series[float] = pa.Field(
-        description="Osmotic potential at full turgor of the stem symplasm", coerce=True
+        description="Osmotic potential at full turgor of the stem symplasm",
+        coerce=True,
     )
     pifullturgor_leaf: Series[float] = pa.Field(
         description="Osmotic Potentia (MPa) at full turgor in leaves",
@@ -750,7 +753,8 @@ class VegetationFile(pa.SchemaModel):
         description="radius of roots (m)", coerce=True
     )
     symfrac_stem: Series[float] = pa.Field(
-        description="Stem symplasmic fraction of the wood water volume", coerce=True
+        description="Stem symplasmic fraction of the wood water volume",
+        coerce=True,
     )
     slope_vc_leaf: Series[float] = pa.Field(
         description="Slope (%/MPa) of the vulnerability curve", coerce=True
@@ -763,7 +767,8 @@ class VegetationFile(pa.SchemaModel):
         coerce=True,
     )
     vol_stem: Series[float] = pa.Field(
-        description="Volume of tissue of the stem (includes the root, trunk and branches)", coerce=True
+        description="Volume of tissue of the stem (includes the root, trunk and branches)",
+        coerce=True,
     )
 
 
