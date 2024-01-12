@@ -657,19 +657,19 @@ def compute_tleaf(
 
     return vecres
 
-# %% ../nbs/02_plant_utils.ipynb 36
+# %% ../nbs/02_plant_utils.ipynb 37
 class VegetationFile(pa.SchemaModel):
-    "Schema for validating the input vegetation parameter file. The CSV spreadsheet must contain at least the following traits:"
+    "Schema for validating the input CSV spreadsheet with trait parameters."
 
     # setting commomn params for WB_veg (regardless of the options) -------------
     apofrac_leaf: Series[float] = pa.Field(
         description="Apoplasmic Fraction (Unitless) in leaves", coerce=True
     )
     apofrac_stem: Series[float] = pa.Field(
-        description="No definition found", coerce=True
+        description="Stem apoplasmic fraction of the wood water volume", coerce=True
     )
     betarootprofile: Series[float] = pa.Field(
-        description="parameter for the distribution of roots in the soil (unitless??)",
+        description="Parameter for the distribution of roots in the soil (unitless??)",
         coerce=True,
     )
     canopystorageparam: Series[float] = pa.Field(
@@ -677,22 +677,22 @@ class VegetationFile(pa.SchemaModel):
         coerce=True,
     )
     c_lapoinit: Series[float] = pa.Field(
-        description="No definition found", coerce=True
+        description="Capacitance of the leaf apoplasm", coerce=True
     )
     c_sapoinit: Series[float] = pa.Field(
-        description="No definition found", coerce=True
+        description="Capacitance of the stem apoplasm", coerce=True
     )
     epsilonsym_leaf: Series[float] = pa.Field(
         description="Modulus of elasticity (MPa) in leaves", coerce=True
     )
     epsilonsym_stem: Series[float] = pa.Field(
-        description="No definition found", coerce=True
+        description="Modulus of elasticity of the stem symplasm", coerce=True
     )
     foliage: Series[str] = pa.Field(
-        isin=["evergreen", "deciduous", "forced"], description=""
+        isin=["evergreen", "deciduous", "forced"], description="Vegetation type"
     )
     froottoleaf: Series[float] = pa.Field(
-        description="root to leaf ratio (unitless??)", coerce=True
+        description="Root to leaf ratio (unitless??)", coerce=True
     )
     ftrbtoleaf: Series[float] = pa.Field(
         description="No definition found", coerce=True
@@ -702,7 +702,7 @@ class VegetationFile(pa.SchemaModel):
         coerce=True,
     )
     gmin_s: Series[float] = pa.Field(
-        description="conductance (gmin) of the stem (same as k_plant??)",
+        description="Conductance (gmin) of the stem (same as k_plant??)",
         coerce=True,
     )
     k_ssyminit: Series[float] = pa.Field(
@@ -729,10 +729,10 @@ class VegetationFile(pa.SchemaModel):
         coerce=True,
     )
     p50_vc_stem: Series[float] = pa.Field(
-        description="No definition found", coerce=True
+        description="Water potential causing 50 % loss of stem hydraulic conductance", coerce=True
     )
     pifullturgor_stem: Series[float] = pa.Field(
-        description="No definition found", coerce=True
+        description="Osmotic potential at full turgor of the stem symplasm", coerce=True
     )
     pifullturgor_leaf: Series[float] = pa.Field(
         description="Osmotic Potentia (MPa) at full turgor in leaves",
@@ -750,20 +750,20 @@ class VegetationFile(pa.SchemaModel):
         description="radius of roots (m)", coerce=True
     )
     symfrac_stem: Series[float] = pa.Field(
-        description="No definition found", coerce=True
+        description="Stem symplasmic fraction of the wood water volume", coerce=True
     )
     slope_vc_leaf: Series[float] = pa.Field(
         description="Slope (%/MPa) of the vulnerability curve", coerce=True
     )
     slope_vc_stem: Series[float] = pa.Field(
-        description="No definition found", coerce=True
+        description="Slope of rate of stem embolism spread at ψ50,S", coerce=True
     )
     tphase_gmin: Series[float] = pa.Field(
         description="Temperature for phase transition (degC) of minimum conductance",
         coerce=True,
     )
     vol_stem: Series[float] = pa.Field(
-        description="No definition found", coerce=True
+        description="Volume of tissue of the stem (includes the root, trunk and branches)", coerce=True
     )
 
 
