@@ -166,11 +166,11 @@ def gs_curve(
     turgor_pressure_at_gs_max: float,  # Unknown parameter definition
     gs_max: float,  # Unknown parameter definition
     transpiration_model: str = ["jarvis", "granier"],  # Transpiration model type
-    stomatal_reg_formulation: str = [
+    stomatal_reg_formulation: str = [  # Type of regulation to be used for stomatal response to leaf symplasmic water potential.
         "sigmoid",
         "piecewise_linear",
         "turgor",
-    ], # Type of regulation to be used for stomatal response to leaf symplasmic water potential, either sigmoid, piecewise_linear or Turgor
+    ],
 ) -> float:
     "To obtain plots of the gs regulation curve"
 
