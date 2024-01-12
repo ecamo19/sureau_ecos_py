@@ -1,0 +1,2518 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="AUTHORS: Julien Ruffault (julien.ruff@gmail.com), Nicolas Martin-StPaul (nicolas.martin@inrae.fr)">
+
+<title>sureau-ecos-py - Plant utils functions</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="sureau-ecos-py - Plant utils functions">
+<meta property="og:description" content="AUTHORS: Julien Ruffault (julien.ruff@gmail.com), Nicolas Martin-StPaul (nicolas.martin@inrae.fr)">
+<meta property="og:site-name" content="sureau-ecos-py">
+<meta name="twitter:title" content="sureau-ecos-py - Plant utils functions">
+<meta name="twitter:description" content="AUTHORS: Julien Ruffault (julien.ruff@gmail.com), Nicolas Martin-StPaul (nicolas.martin@inrae.fr)">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">sureau-ecos-py</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./plant_utils.html">Plant utils functions</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">sureau_ecos_py</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./climate_utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Climate utils functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./soil_utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Soil utils functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./plant_utils.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Plant utils functions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./create_modeling_options.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Create modeling options</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./create_climate_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Create climate data</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./create_simulation_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Create simulation parameters</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./create_soil_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Create soil parameters</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./create_stand_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Create stand parameters</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./create_vegetation_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Create vegetation parameters</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#rs_comp" id="toc-rs_comp" class="nav-link active" data-scroll-target="#rs_comp">rs_comp</a></li>
+  <li><a href="#turgor_comp" id="toc-turgor_comp" class="nav-link" data-scroll-target="#turgor_comp">turgor_comp</a></li>
+  <li><a href="#compute_turgor_from_psi" id="toc-compute_turgor_from_psi" class="nav-link" data-scroll-target="#compute_turgor_from_psi">compute_turgor_from_psi</a></li>
+  <li><a href="#osmo_comp" id="toc-osmo_comp" class="nav-link" data-scroll-target="#osmo_comp">osmo_comp</a></li>
+  <li><a href="#psi_total_symp_comp" id="toc-psi_total_symp_comp" class="nav-link" data-scroll-target="#psi_total_symp_comp">psi_total_symp_comp</a></li>
+  <li><a href="#stomatal_regulation_turgor" id="toc-stomatal_regulation_turgor" class="nav-link" data-scroll-target="#stomatal_regulation_turgor">stomatal_regulation_turgor</a></li>
+  <li><a href="#plc_comp" id="toc-plc_comp" class="nav-link" data-scroll-target="#plc_comp">plc_comp</a></li>
+  <li><a href="#plc_prime_comp" id="toc-plc_prime_comp" class="nav-link" data-scroll-target="#plc_prime_comp">plc_prime_comp</a></li>
+  <li><a href="#gs_curve" id="toc-gs_curve" class="nav-link" data-scroll-target="#gs_curve">gs_curve</a></li>
+  <li><a href="#compute_gmin" id="toc-compute_gmin" class="nav-link" data-scroll-target="#compute_gmin">compute_gmin</a></li>
+  <li><a href="#compute_emin" id="toc-compute_emin" class="nav-link" data-scroll-target="#compute_emin">compute_emin</a></li>
+  <li><a href="#compute_dfmc" id="toc-compute_dfmc" class="nav-link" data-scroll-target="#compute_dfmc">compute_dfmc</a></li>
+  <li><a href="#distribute_conductances" id="toc-distribute_conductances" class="nav-link" data-scroll-target="#distribute_conductances">distribute_conductances</a></li>
+  <li><a href="#compute_g_crown" id="toc-compute_g_crown" class="nav-link" data-scroll-target="#compute_g_crown">compute_g_crown</a></li>
+  <li><a href="#convert_flux_from_mmolm2s_to_mm" id="toc-convert_flux_from_mmolm2s_to_mm" class="nav-link" data-scroll-target="#convert_flux_from_mmolm2s_to_mm">convert_flux_from_mmolm2s_to_mm</a></li>
+  <li><a href="#convert_flux_from_mm_to_mmolm2s" id="toc-convert_flux_from_mm_to_mmolm2s" class="nav-link" data-scroll-target="#convert_flux_from_mm_to_mmolm2s">convert_flux_from_mm_to_mmolm2s</a></li>
+  <li><a href="#calculate_ebound_mm_granier" id="toc-calculate_ebound_mm_granier" class="nav-link" data-scroll-target="#calculate_ebound_mm_granier">calculate_ebound_mm_granier</a></li>
+  <li><a href="#calculate_ebound_granier" id="toc-calculate_ebound_granier" class="nav-link" data-scroll-target="#calculate_ebound_granier">calculate_ebound_granier</a></li>
+  <li><a href="#convert_f_cm3_to_v_mm" id="toc-convert_f_cm3_to_v_mm" class="nav-link" data-scroll-target="#convert_f_cm3_to_v_mm">convert_f_cm3_to_v_mm</a></li>
+  <li><a href="#compute_tleaf" id="toc-compute_tleaf" class="nav-link" data-scroll-target="#compute_tleaf">compute_tleaf</a></li>
+  <li><a href="#read_vegetation_file" id="toc-read_vegetation_file" class="nav-link" data-scroll-target="#read_vegetation_file">read_vegetation_file</a></li>
+  <li><a href="#vegetationfile" id="toc-vegetationfile" class="nav-link" data-scroll-target="#vegetationfile">VegetationFile</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/ecamo19/sureau_ecos_py/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Plant utils functions</h1>
+</div>
+
+<div>
+  <div class="description">
+    AUTHORS: <strong>Julien Ruffault (julien.ruff@gmail.com), Nicolas Martin-StPaul (nicolas.martin@inrae.fr)</strong>
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L24" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="rs_comp" class="level3">
+<h3 class="anchored" data-anchor-id="rs_comp">rs_comp</h3>
+<blockquote class="blockquote">
+<pre><code> rs_comp (pi_ft:float, e_symp:float, p_min:float)</code></pre>
+</blockquote>
+<p>Compute Rs from pmin (resolution from Bartlet et al 2012 EcolLett and email Herve Cochard 19/06/2015)</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pi_ft</td>
+<td>float</td>
+<td>Osmotic potential at full turgor (MPa)</td>
+</tr>
+<tr class="even">
+<td>e_symp</td>
+<td>float</td>
+<td>Modulus of elastoicoty of the Symplasm (MPa/%)</td>
+</tr>
+<tr class="odd">
+<td>p_min</td>
+<td>float</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L40" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="turgor_comp" class="level3">
+<h3 class="anchored" data-anchor-id="turgor_comp">turgor_comp</h3>
+<blockquote class="blockquote">
+<pre><code> turgor_comp (pi_ft:float, e_symp:float, r_stemp:float)</code></pre>
+</blockquote>
+<p>Turgor pressure</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pi_ft</td>
+<td>float</td>
+<td>Osmotic potential at full turgor (MPa)</td>
+</tr>
+<tr class="even">
+<td>e_symp</td>
+<td>float</td>
+<td>Modulus of elastoicoty of the Symplasm (MPa/%)</td>
+</tr>
+<tr class="odd">
+<td>r_stemp</td>
+<td>float</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L49" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="compute_turgor_from_psi" class="level3">
+<h3 class="anchored" data-anchor-id="compute_turgor_from_psi">compute_turgor_from_psi</h3>
+<blockquote class="blockquote">
+<pre><code> compute_turgor_from_psi (pi_ft:float, e_symp:float, psi:List)</code></pre>
+</blockquote>
+<p>Computes Turgor pressure from Pressure-Volume curves parameters and water potential</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pi_ft</td>
+<td>float</td>
+<td>Osmotic potential at full turgor (MPa)</td>
+</tr>
+<tr class="even">
+<td>e_symp</td>
+<td>float</td>
+<td>Modulus of elastoicoty of the Symplasm (MPa/%)</td>
+</tr>
+<tr class="odd">
+<td>psi</td>
+<td>typing.List</td>
+<td>List of Water potential of the organ (MPa)</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>array</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<section id="example-compute-turgor" class="level4">
+<h4 class="anchored" data-anchor-id="example-compute-turgor"><strong>Example: Compute turgor</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>compute_turgor_from_psi(pi_ft<span class="op">=</span><span class="dv">2</span>, e_symp<span class="op">=</span><span class="dv">3</span>, psi<span class="op">=</span>[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>array([0., 0., 0.])</code></pre>
+</div>
+</div>
+<section id="error-function-only-return-zeros" class="level5">
+<h5 class="anchored" data-anchor-id="error-function-only-return-zeros">Error: Function only return zeros</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> each_psi <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">10</span>):</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(compute_turgor_from_psi(pi_ft<span class="op">=</span><span class="dv">2</span>, e_symp<span class="op">=</span><span class="dv">3</span>, psi<span class="op">=</span>[each_psi]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[0.]
+[0.]
+[0.]
+[0.]
+[0.]
+[0.]
+[0.]
+[0.]
+[0.]</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L92" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+</section>
+</section>
+<section id="osmo_comp" class="level3">
+<h3 class="anchored" data-anchor-id="osmo_comp">osmo_comp</h3>
+<blockquote class="blockquote">
+<pre><code> osmo_comp (pi_ft:float, r_stemp:float)</code></pre>
+</blockquote>
+<p>Compute osmotic potential</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pi_ft</td>
+<td>float</td>
+<td>Osmotic potential at full turgor (MPa)</td>
+</tr>
+<tr class="even">
+<td>r_stemp</td>
+<td>float</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L100" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="psi_total_symp_comp" class="level3">
+<h3 class="anchored" data-anchor-id="psi_total_symp_comp">psi_total_symp_comp</h3>
+<blockquote class="blockquote">
+<pre><code> psi_total_symp_comp (pi_ft:float, e_symp:float, r_stemp:float)</code></pre>
+</blockquote>
+<p>Compute Total potential</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pi_ft</td>
+<td>float</td>
+<td>Osmotic potential at full turgor (MPa)</td>
+</tr>
+<tr class="even">
+<td>e_symp</td>
+<td>float</td>
+<td>Modulus of elastoicoty of the Symplasm (MPa/%)</td>
+</tr>
+<tr class="odd">
+<td>r_stemp</td>
+<td>float</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L113" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="stomatal_regulation_turgor" class="level3">
+<h3 class="anchored" data-anchor-id="stomatal_regulation_turgor">stomatal_regulation_turgor</h3>
+<blockquote class="blockquote">
+<pre><code> stomatal_regulation_turgor (turgor_pressure:float,
+                             max_turgor_pressure:float, e_max:float,
+                             e_cuti:float)</code></pre>
+</blockquote>
+<p>This function computes stomatal regulation if stomatal closure is limited (linearly) by turgor pressure</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>turgor_pressure</td>
+<td>float</td>
+<td>Turgor pressure</td>
+</tr>
+<tr class="even">
+<td>max_turgor_pressure</td>
+<td>float</td>
+<td>Maximum turgor pressure,</td>
+</tr>
+<tr class="odd">
+<td>e_max</td>
+<td>float</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td>e_cuti</td>
+<td>float</td>
+<td>Residual Transpiration</td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>array</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<section id="example-compute-stomatal-regulation" class="level4">
+<h4 class="anchored" data-anchor-id="example-compute-stomatal-regulation"><strong>Example: Compute Stomatal Regulation</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>stomatal_regulation_turgor(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    turgor_pressure<span class="op">=</span><span class="dv">1</span>, max_turgor_pressure<span class="op">=</span><span class="dv">2</span>, e_max<span class="op">=</span><span class="dv">3</span>, e_cuti<span class="op">=</span><span class="dv">4</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>array([1.5, 3. ])</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L139" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+</section>
+<section id="plc_comp" class="level3">
+<h3 class="anchored" data-anchor-id="plc_comp">plc_comp</h3>
+<blockquote class="blockquote">
+<pre><code> plc_comp (p_min:float, slope:float, p50:float)</code></pre>
+</blockquote>
+<p>Compute Percentage loss of conductivity</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>p_min</td>
+<td>float</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td>slope</td>
+<td>float</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="odd">
+<td>p50</td>
+<td>float</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L149" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="plc_prime_comp" class="level3">
+<h3 class="anchored" data-anchor-id="plc_prime_comp">plc_prime_comp</h3>
+<blockquote class="blockquote">
+<pre><code> plc_prime_comp (plc:float, slope:float)</code></pre>
+</blockquote>
+<p>This function computes PLC Prime from PLC current value</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>plc</td>
+<td>float</td>
+<td>Computed using the <a href="https://ecamo19.github.io/sureau_ecos_py/plant_utils.html#plc_comp"><code>plc_comp</code></a> function</td>
+</tr>
+<tr class="even">
+<td>slope</td>
+<td>float</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L158" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="gs_curve" class="level3">
+<h3 class="anchored" data-anchor-id="gs_curve">gs_curve</h3>
+<blockquote class="blockquote">
+<pre><code> gs_curve (x:float, slope_gs:float, p50_gs:float, psi_start_closing:float,
+           psi_close:float, pi_ft:float, e_symp:float,
+           turgor_pressure_at_gs_max:float, gs_max:float,
+           transpiration_model:str=['jarvis', 'granier'],
+           stomatal_reg_formulation:str=['sigmoid', 'piecewise_linear',
+           'turgor'])</code></pre>
+</blockquote>
+<p>To obtain plots of the gs regulation curve</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>x</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td>slope_gs</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="odd">
+<td>p50_gs</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td>psi_start_closing</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="odd">
+<td>psi_close</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td>pi_ft</td>
+<td>float</td>
+<td></td>
+<td>Osmotic potential at full turgor (MPa)</td>
+</tr>
+<tr class="odd">
+<td>e_symp</td>
+<td>float</td>
+<td></td>
+<td>Modulus of elastoicoty of the Symplasm (MPa/%)</td>
+</tr>
+<tr class="even">
+<td>turgor_pressure_at_gs_max</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="odd">
+<td>gs_max</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td>transpiration_model</td>
+<td>str</td>
+<td>[‘jarvis’, ‘granier’]</td>
+<td>Transpiration model type</td>
+</tr>
+<tr class="odd">
+<td>stomatal_reg_formulation</td>
+<td>str</td>
+<td>[‘sigmoid’, ‘piecewise_linear’, ‘turgor’]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+<td><strong>type of regulation to be used for stomatal response to leaf symplasmic water potential, either <code>sigmoid</code> or <code>piecewise_linear</code></strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L239" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="compute_gmin" class="level3">
+<h3 class="anchored" data-anchor-id="compute_gmin">compute_gmin</h3>
+<blockquote class="blockquote">
+<pre><code> compute_gmin (leaf_temp:float, gmin_20:float, t_phase:float, q10_1:float,
+               q10_2:float, gmin_temp_off=False)</code></pre>
+</blockquote>
+<p>Calculate minimum conductance (gmin) following Cochard et al.&nbsp;(2019)</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>leaf_temp</td>
+<td>float</td>
+<td></td>
+<td>Temperature of the leaf (degC)</td>
+</tr>
+<tr class="even">
+<td>gmin_20</td>
+<td>float</td>
+<td></td>
+<td>leaf conductance at 20 degC</td>
+</tr>
+<tr class="odd">
+<td>t_phase</td>
+<td>float</td>
+<td></td>
+<td>Temperature for phase transition of gmin</td>
+</tr>
+<tr class="even">
+<td>q10_1</td>
+<td>float</td>
+<td></td>
+<td>Q10 values for g_min= f(T) below T_phase</td>
+</tr>
+<tr class="odd">
+<td>q10_2</td>
+<td>float</td>
+<td></td>
+<td>Q10 values for g_cuti = f(T) above T_phase</td>
+</tr>
+<tr class="even">
+<td>gmin_temp_off</td>
+<td>bool</td>
+<td>False</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L268" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="compute_emin" class="level3">
+<h3 class="anchored" data-anchor-id="compute_emin">compute_emin</h3>
+<blockquote class="blockquote">
+<pre><code> compute_emin (gmin:float, vpd:float, g_bl:float, g_crown:float,
+               air_pressure:float=101.3)</code></pre>
+</blockquote>
+<p>Calculate minimum transpiration (emin)</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gmin</td>
+<td>float</td>
+<td></td>
+<td>minimum conductance</td>
+</tr>
+<tr class="even">
+<td>vpd</td>
+<td>float</td>
+<td></td>
+<td>Vapor Pressure Deficit (kPa)</td>
+</tr>
+<tr class="odd">
+<td>g_bl</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td>g_crown</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition. Use <a href="https://ecamo19.github.io/sureau_ecos_py/plant_utils.html#compute_g_crown"><code>compute_g_crown</code></a></td>
+</tr>
+<tr class="odd">
+<td>air_pressure</td>
+<td>float</td>
+<td>101.3</td>
+<td>Surface air pressure (kPa)</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L281" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="compute_dfmc" class="level3">
+<h3 class="anchored" data-anchor-id="compute_dfmc">compute_dfmc</h3>
+<blockquote class="blockquote">
+<pre><code> compute_dfmc (vpd:float, fm0=5.43, fm1=52.91, m=0.64)</code></pre>
+</blockquote>
+<p>Compute dead fuel moisture content from VPD following De Dios et al.&nbsp;(2015)</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>vpd</td>
+<td>float</td>
+<td></td>
+<td>Vapor pressure deficit (kPA)</td>
+</tr>
+<tr class="even">
+<td>fm0</td>
+<td>float</td>
+<td>5.43</td>
+<td>Minimum fuel moisture content (% dry weight)</td>
+</tr>
+<tr class="odd">
+<td>fm1</td>
+<td>float</td>
+<td>52.91</td>
+<td>Maximum fuel moisture content (% dry weight)</td>
+</tr>
+<tr class="even">
+<td>m</td>
+<td>float</td>
+<td>0.64</td>
+<td>Rate of decay</td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+<td><strong>Fuel moisture content (% dry weight)</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L291" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="distribute_conductances" class="level3">
+<h3 class="anchored" data-anchor-id="distribute_conductances">distribute_conductances</h3>
+<blockquote class="blockquote">
+<pre><code> distribute_conductances (k_plant_init:float, ri:float,
+                          frac_leaf_sym:float=0.4)</code></pre>
+</blockquote>
+<p>Calcultate hydraulic conductances in the different portions of the plant (trunk, leaf and root) according to predetermined rules</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>k_plant_init</td>
+<td>float</td>
+<td></td>
+<td>Conductance of the plant from root to leaf</td>
+</tr>
+<tr class="even">
+<td>ri</td>
+<td>float</td>
+<td></td>
+<td>Root distribution within the soil layers.</td>
+</tr>
+<tr class="odd">
+<td>frac_leaf_sym</td>
+<td>float</td>
+<td>0.4</td>
+<td>Proportion of k_plant_init assigned to the leaf (apoplasm to symplasm pathway)</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>typing.Dict</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<section id="example-distribute-conductances" class="level4">
+<h4 class="anchored" data-anchor-id="example-distribute-conductances"><strong>Example: Distribute conductances</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>distribute_conductances(k_plant_init<span class="op">=</span><span class="dv">1</span>, ri<span class="op">=</span><span class="dv">2</span>, frac_leaf_sym<span class="op">=</span><span class="fl">0.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>defaultdict(list,
+            {'k_slapo_init': 5.0,
+             'k_lsym_init': 2.5,
+             'k_rsapo_init': 5.0,
+             'k_plant_init': 1})</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L321" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+</section>
+<section id="compute_g_crown" class="level3">
+<h3 class="anchored" data-anchor-id="compute_g_crown">compute_g_crown</h3>
+<blockquote class="blockquote">
+<pre><code> compute_g_crown (g_crown0:float, wind_speed:float)</code></pre>
+</blockquote>
+<p>Calcultate g_crown</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>g_crown0</td>
+<td>float</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td>wind_speed</td>
+<td>float</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L333" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="convert_flux_from_mmolm2s_to_mm" class="level3">
+<h3 class="anchored" data-anchor-id="convert_flux_from_mmolm2s_to_mm">convert_flux_from_mmolm2s_to_mm</h3>
+<blockquote class="blockquote">
+<pre><code> convert_flux_from_mmolm2s_to_mm (x:float, time_step:float, lai:float)</code></pre>
+</blockquote>
+<p>Convert an instantaneous flux in mmol.m-2Leaf.s-1 to a amount in mm (L.m2soil) over a defined time period</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>x</td>
+<td>float</td>
+<td>The amount of water in mm (L.m-2soil)</td>
+</tr>
+<tr class="even">
+<td>time_step</td>
+<td>float</td>
+<td>Time step (in hours)</td>
+</tr>
+<tr class="odd">
+<td>lai</td>
+<td>float</td>
+<td>Leaf area index of the stand (m2leaf.m-2soil)</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L342" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="convert_flux_from_mm_to_mmolm2s" class="level3">
+<h3 class="anchored" data-anchor-id="convert_flux_from_mm_to_mmolm2s">convert_flux_from_mm_to_mmolm2s</h3>
+<blockquote class="blockquote">
+<pre><code> convert_flux_from_mm_to_mmolm2s (x:float, time_step:float, lai:float)</code></pre>
+</blockquote>
+<p>Convert flux in L.m-2soil to an instantaneous flux in mmol/m-2leaf.s-1 over a defined time period</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>x</td>
+<td>float</td>
+<td>The amount of water in mm (L.m-2soil)</td>
+</tr>
+<tr class="even">
+<td>time_step</td>
+<td>float</td>
+<td>Time step (in hours)</td>
+</tr>
+<tr class="odd">
+<td>lai</td>
+<td>float</td>
+<td>Leaf area index of the stand (m2leaf.m-2soil)</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L355" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="calculate_ebound_mm_granier" class="level3">
+<h3 class="anchored" data-anchor-id="calculate_ebound_mm_granier">calculate_ebound_mm_granier</h3>
+<blockquote class="blockquote">
+<pre><code> calculate_ebound_mm_granier (etp:float, lai:float, a:float=-0.006,
+                              b:float=0.134, c:float=0)</code></pre>
+</blockquote>
+<p>No description found in R source code</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>etp</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td>lai</td>
+<td>float</td>
+<td></td>
+<td>Leaf area index of the stand (m2leaf.m-2soil)</td>
+</tr>
+<tr class="odd">
+<td>a</td>
+<td>float</td>
+<td>-0.006</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td>b</td>
+<td>float</td>
+<td>0.134</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="odd">
+<td>c</td>
+<td>float</td>
+<td>0</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L369" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="calculate_ebound_granier" class="level3">
+<h3 class="anchored" data-anchor-id="calculate_ebound_granier">calculate_ebound_granier</h3>
+<blockquote class="blockquote">
+<pre><code> calculate_ebound_granier (etp:float, lai:float, time_step:float)</code></pre>
+</blockquote>
+<p>No description found in R source code</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>etp</td>
+<td>float</td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td>lai</td>
+<td>float</td>
+<td>Leaf area index of the stand (m2leaf.m-2soil)</td>
+</tr>
+<tr class="odd">
+<td>time_step</td>
+<td>float</td>
+<td>Time step (in hours)</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<section id="example-calculate-ebound" class="level4">
+<h4 class="anchored" data-anchor-id="example-calculate-ebound"><strong>Example: Calculate ebound</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>calculate_ebound_granier(etp<span class="op">=</span><span class="dv">1</span>, lai<span class="op">=</span><span class="dv">2</span>, time_step<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>0.6275720164609054</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L383" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+</section>
+<section id="convert_f_cm3_to_v_mm" class="level3">
+<h3 class="anchored" data-anchor-id="convert_f_cm3_to_v_mm">convert_f_cm3_to_v_mm</h3>
+<blockquote class="blockquote">
+<pre><code> convert_f_cm3_to_v_mm (x:float, rock_fragment_content:float,
+                        layer_thickness:float)</code></pre>
+</blockquote>
+<p>Convert soil parameter from from cm3.cm-3 to mm according to thickness and rock fragment content</p>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 38%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>x</td>
+<td>float</td>
+<td>Soil value to be converted (in m3.m-3)</td>
+</tr>
+<tr class="even">
+<td>rock_fragment_content</td>
+<td>float</td>
+<td>Rock fragment content of the soil layer (%)</td>
+</tr>
+<tr class="odd">
+<td>layer_thickness</td>
+<td>float</td>
+<td>Thickness of the soil layer (in m)</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td><strong>y soil parameter in mm</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L392" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="compute_tleaf" class="level3">
+<h3 class="anchored" data-anchor-id="compute_tleaf">compute_tleaf</h3>
+<blockquote class="blockquote">
+<pre><code> compute_tleaf (t_air:float, par:float, potential_par:float,
+                wind_speed:float, relative_humidity:int, gs:float,
+                g_cuti:float, e_inst:float, psi_leaf:float,
+                leaf_size:float=50, leaf_angle:int=45,
+                turn_off_eb:bool=False, transpiration_model:str=['jarvis',
+                'granier'])</code></pre>
+</blockquote>
+<p>Compute leaf temperature and Vapour Pressure deficit</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>t_air</td>
+<td>float</td>
+<td></td>
+<td>Air temperature (degC)</td>
+</tr>
+<tr class="even">
+<td>par</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="odd">
+<td>potential_par</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition. Calculated using <code>potential_par</code> function?</td>
+</tr>
+<tr class="even">
+<td>wind_speed</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition (m/s)</td>
+</tr>
+<tr class="odd">
+<td>relative_humidity</td>
+<td>int</td>
+<td></td>
+<td>Air relative_humidity(%)</td>
+</tr>
+<tr class="even">
+<td>gs</td>
+<td>float</td>
+<td></td>
+<td>Stomatal conductance</td>
+</tr>
+<tr class="odd">
+<td>g_cuti</td>
+<td>float</td>
+<td></td>
+<td>leaf conductance</td>
+</tr>
+<tr class="even">
+<td>e_inst</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="odd">
+<td>psi_leaf</td>
+<td>float</td>
+<td></td>
+<td>Unknown parameter definition</td>
+</tr>
+<tr class="even">
+<td>leaf_size</td>
+<td>float</td>
+<td>50</td>
+<td>Characteristic dimension from vegetation params in mm i.e.&nbsp;1 (pine needle) to 3000 (banana leaf)</td>
+</tr>
+<tr class="odd">
+<td>leaf_angle</td>
+<td>int</td>
+<td>45</td>
+<td>Leaf angle (depuis le plan horizontal : 0-90 deg)</td>
+</tr>
+<tr class="even">
+<td>turn_off_eb</td>
+<td>bool</td>
+<td>False</td>
+<td>Unknown parameter definition. Tleaf Energy balance?</td>
+</tr>
+<tr class="odd">
+<td>transpiration_model</td>
+<td>str</td>
+<td>[‘jarvis’, ‘granier’]</td>
+<td>Transpiration model type</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>typing.Dict</strong></td>
+<td></td>
+<td><strong>Dictionary with parameters</strong></td>
+</tr>
+</tbody>
+</table>
+<section id="example-compute-tleaf" class="level4">
+<h4 class="anchored" data-anchor-id="example-compute-tleaf"><strong>Example: Compute tleaf</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>compute_tleaf(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    t_air<span class="op">=</span><span class="dv">60</span>,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    par<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    potential_par<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    wind_speed<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    relative_humidity<span class="op">=</span><span class="dv">60</span>,</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    gs<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    g_cuti<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    e_inst<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>    psi_leaf<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    leaf_size<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    leaf_angle<span class="op">=</span><span class="dv">45</span>,</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    turn_off_eb<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>    transpiration_model<span class="op">=</span><span class="st">"jarvis"</span>,</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>defaultdict(list,
+            {'t_leaf': 60.394042704329365,
+             'g_bl': 3076.697970227172,
+             'vpd_leaf': 8.880103411681098,
+             'vpd_air': 7.978058190496631,
+             'delta_t': 0.39404270432936683})</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L775" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+</section>
+<section id="read_vegetation_file" class="level3">
+<h3 class="anchored" data-anchor-id="read_vegetation_file">read_vegetation_file</h3>
+<blockquote class="blockquote">
+<pre><code> read_vegetation_file (file_path:pathlib.Path, modeling_options:Dict,
+                       sep:str=';')</code></pre>
+</blockquote>
+<p>Function for reading a data frame containing information about vegetation characteristics</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>file_path</td>
+<td>Path</td>
+<td></td>
+<td>Path to a csv file containing parameter values i.e path/to/file_name.csv</td>
+</tr>
+<tr class="even">
+<td>modeling_options</td>
+<td>typing.Dict</td>
+<td></td>
+<td>Dictionary created using the <a href="https://ecamo19.github.io/sureau_ecos_py/create_modeling_options.html#create_modeling_options"><code>create_modeling_options</code></a> function</td>
+</tr>
+<tr class="odd">
+<td>sep</td>
+<td>str</td>
+<td>;</td>
+<td>CSV file separator can be ‘,’ or ‘;’</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>typing.Dict</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/ecamo19/sureau_ecos_py/blob/main/sureau_ecos_py/plant_utils.py#L661" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="vegetationfile" class="level3">
+<h3 class="anchored" data-anchor-id="vegetationfile">VegetationFile</h3>
+<blockquote class="blockquote">
+<pre><code> VegetationFile (*args, **kwargs)</code></pre>
+</blockquote>
+<p>Schema for validating the input CSV spreadsheet with trait parameters.</p>
+<p><strong>List of traits required:</strong></p>
+
+<table>
+<tbody><tr>
+<td>
+<strong>term_in_code</strong>
+</td>
+<td>
+<strong>term_in_paper</strong>
+</td>
+<td>
+<strong>Definition</strong>
+</td>
+<td>
+<strong>Units</strong>
+</td>
+</tr>
+<tr>
+<td>
+P50_VC_Leaf
+</td>
+<td>
+ψ50,L
+</td>
+<td>
+Water potential causing 50% Cavitation in the vulnerability curve
+</td>
+<td>
+MPa
+</td>
+</tr>
+<tr>
+<td>
+slope_VC_Leaf
+</td>
+<td>
+slopeL
+</td>
+<td>
+Slope of rate of leaf embolism spread at ψ50,L
+</td>
+<td>
+%/MPa
+</td>
+</tr>
+<tr>
+<td>
+epsilonSym_Leaf
+</td>
+<td>
+εL
+</td>
+<td>
+Modulus of elasticity of the leaf symplasm
+</td>
+<td>
+MPa
+</td>
+</tr>
+<tr>
+<td>
+PiFullTurgor_Leaf
+</td>
+<td>
+π0L
+</td>
+<td>
+Osmotic potential at full turgor of the leaf symplasm
+</td>
+<td>
+MPa
+</td>
+</tr>
+<tr>
+<td>
+apoFrac_Leaf
+</td>
+<td>
+αLApo
+</td>
+<td>
+Apoplasmic Fraction in leaves/Leaf apoplasmic fraction
+</td>
+<td>
+Unitless
+</td>
+</tr>
+<tr>
+<td>
+LDMC
+</td>
+<td>
+LDMC
+</td>
+<td>
+Leaf dry matter content (dry mass over saturated mass)
+</td>
+<td>
+mgMS/g??
+</td>
+</tr>
+<tr>
+<td>
+LMA
+</td>
+<td>
+LMA
+</td>
+<td>
+Leaf mass per area
+</td>
+<td>
+g/m2leaf
+</td>
+</tr>
+<tr>
+<td>
+K
+</td>
+<td>
+k
+</td>
+<td>
+Light extinction coefficient of the vegetation layer
+</td>
+<td>
+unitless
+</td>
+</tr>
+<tr>
+<td>
+k_PlantInit
+</td>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+Hydaulic conductance of the plant from soil to leaves
+</td>
+<td>
+mmol/MPa/s/m2leaf?
+</td>
+</tr>
+<tr>
+<td>
+gmin20
+</td>
+<td>
+gcuti20
+</td>
+<td>
+Minimum conductance (gmin) at the reference temperature.
+</td>
+<td>
+mmol/m2leaf/s-1
+</td>
+</tr>
+<tr>
+<td>
+TPhase_gmin
+</td>
+<td>
+TPhase
+</td>
+<td>
+Temperature for phase transition of minimum conductance/Temperature for transition phase of gcuti
+</td>
+<td>
+degC
+</td>
+</tr>
+<tr>
+<td>
+Q10_1_gmin
+</td>
+<td>
+Q10a
+</td>
+<td>
+Q10 value for gmin = f(T) &lt;= Tphase_gmin/ Temperature dependance of gcuti when T ≤ TPhase
+</td>
+<td>
+unitless
+</td>
+</tr>
+<tr>
+<td>
+Q10_2_gmin
+</td>
+<td>
+Q10b
+</td>
+<td>
+Q10 value for gmin = f(T) &gt; Tphase_gmin/ Temperature dependance of gcuti when T &gt; TPhase
+</td>
+<td>
+unitless
+</td>
+</tr>
+<tr>
+<td>
+gmin_S
+</td>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+conductance (gmin) of the stem
+</td>
+<td>
+Unitless??
+</td>
+</tr>
+<tr>
+<td>
+canopyStorageParam
+</td>
+<td>
+cws
+</td>
+<td>
+Depth of water that can be retained by leaves and trunks per unit of leaf area index (used to compute the canopy water storage capacity as a function of LAI
+</td>
+<td>
+l/m2leaf
+</td>
+</tr>
+<tr>
+<td>
+rootRadius
+</td>
+<td>
+dR
+</td>
+<td>
+radius of roots
+</td>
+<td>
+meters
+</td>
+</tr>
+<tr>
+<td>
+fRootToLeaf
+</td>
+<td>
+RaLa
+</td>
+<td>
+Root-to-leaf area ratio
+</td>
+<td>
+unitless
+</td>
+</tr>
+<tr>
+<td>
+betaRootProfile
+</td>
+<td>
+β
+</td>
+<td>
+parameter for the distribution of roots in the soil
+</td>
+<td>
+unitless
+</td>
+</tr>
+<tr>
+<td>
+PiFullTurgor_Stem
+</td>
+<td>
+π0S
+</td>
+<td>
+Osmotic potential at full turgor of the stem symplasm
+</td>
+<td>
+MPa
+</td>
+</tr>
+<tr>
+<td>
+epsilonSym_Stem
+</td>
+<td>
+εS
+</td>
+<td>
+Modulus of elasticity of the stem symplasm
+</td>
+<td>
+MPa
+</td>
+</tr>
+<tr>
+<td>
+apoFrac_Stem
+</td>
+<td>
+αSApo
+</td>
+<td>
+Stem apoplasmic fraction of the wood water volume
+</td>
+<td>
+Unitless
+</td>
+</tr>
+<tr>
+<td>
+symFrac_Stem
+</td>
+<td>
+αSSym
+</td>
+<td>
+Stem symplasmic fraction of the wood water volume
+</td>
+<td>
+Unitless
+</td>
+</tr>
+<tr>
+<td>
+vol_Stem
+</td>
+<td>
+VS
+</td>
+<td>
+Volume of tissue of the stem (includes the root, trunk and branches)
+</td>
+<td>
+L m−2 soil
+</td>
+</tr>
+<tr>
+<td>
+fTRBToLeaf
+</td>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+Definition <strong>not found</strong>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+C_LApoInit
+</td>
+<td>
+CLApo
+</td>
+<td>
+Capacitance of the leaf apoplasm
+</td>
+<td>
+mmol m−2 leaf MPa−1
+</td>
+</tr>
+<tr>
+<td>
+C_SApoInit
+</td>
+<td>
+CSApo
+</td>
+<td>
+Capacitance of the stem apoplasm
+</td>
+<td>
+mmol m−2 leaf MPa−1
+</td>
+</tr>
+<tr>
+<td>
+P50_VC_Stem
+</td>
+<td>
+ψ50,S
+</td>
+<td>
+Water potential causing 50 % loss of stem hydraulic conductance
+</td>
+<td>
+MPa
+</td>
+</tr>
+<tr>
+<td>
+slope_VC_Stem
+</td>
+<td>
+slopeS
+</td>
+<td>
+Slope of rate of stem embolism spread at ψ50,S
+</td>
+<td>
+% MPa−1
+</td>
+</tr>
+<tr>
+<td>
+k_SSymInit
+</td>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+Definition <strong>not found</strong>
+</td>
+<td>
+<strong>not found</strong>
+</td>
+</tr>
+<tr>
+<td>
+foliage
+</td>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+Definition <strong>not found</strong>
+</td>
+<td>
+Not applicable
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+t0
+</td>
+<td>
+Initial date of the forcing period for leaf phenology
+</td>
+<td>
+DOY
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+TD
+</td>
+<td>
+Minimum temperature to start cumulating temperature for budburst
+</td>
+<td>
+◦C
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+F∗
+</td>
+<td>
+Amount of forcing temperature to reach budburst
+</td>
+<td>
+◦C
+</td>
+</tr>
+<tr>
+<td>
+RAI
+</td>
+<td>
+RLAI
+</td>
+<td>
+LAI growth rate per day
+</td>
+<td>
+LAI d−1
+</td>
+</tr>
+<tr>
+<td>
+k_RSApoInit
+</td>
+<td>
+KR-SApo,max
+</td>
+<td>
+Maximum conductance from the root surface to the stem apoplasm
+</td>
+<td>
+mmol m−2 leaf s −1 MPa−1
+</td>
+</tr>
+<tr>
+<td>
+k_SLApoInit
+</td>
+<td>
+KSApo−LApo,max
+</td>
+<td>
+Maximum conductance from trunk apoplasm to the leaf apoplasm
+</td>
+<td>
+mmol m−2 leaf s −1 MPa−1
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+KSSym
+</td>
+<td>
+Conductance from the stem apoplasm to stem symplasm
+</td>
+<td>
+mmol m−2 leaf s −1 MPa−1
+</td>
+</tr>
+<tr>
+<td>
+k_LSymInit
+</td>
+<td>
+KLSym
+</td>
+<td>
+Conductance from the leaf apoplasm to leaf symplasm
+</td>
+<td>
+mmol m−2 leaf s −1 MPa−1
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+Succulence
+</td>
+<td>
+Leaf succulence (water content per unit of leaf area)
+</td>
+<td>
+g m−2 leaf
+</td>
+</tr>
+<tr>
+<td>
+P50_gs
+</td>
+<td>
+ψgs50
+</td>
+<td>
+Water potential causing 50 % stomatal closure
+</td>
+<td>
+MPa
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+slopegs
+</td>
+<td>
+Rate of decrease in stomatal conductance at ψgs,50
+</td>
+<td>
+% MPa−1
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+gstom_min
+</td>
+<td>
+Minimum stomatal conductance
+</td>
+<td>
+mmol m−2 leaf s −1
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+gstom_max
+</td>
+<td>
+Maximum stomatal conductance
+</td>
+<td>
+mmol m−2 leaf s −1
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+δ
+</td>
+<td>
+Response of gstom to light
+</td>
+<td>
+unitless
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+Toptim
+</td>
+<td>
+Temperature at maximal stomatal conductance
+</td>
+<td>
+◦C
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+Tsens
+</td>
+<td>
+Stomatal sensitivity to temperature
+</td>
+<td>
+◦C
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+θs
+</td>
+<td>
+Soil water content at saturation
+</td>
+<td>
+unitless
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+θr
+</td>
+<td>
+Residual soil water content
+</td>
+<td>
+unitless
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+α
+</td>
+<td>
+Inverse of the air entry potential
+</td>
+<td>
+1/MPa
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+n
+</td>
+<td>
+Pore size distribution index
+</td>
+<td>
+unitless
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+I
+</td>
+<td>
+Shape parameter for the Van Genuchten equation
+</td>
+<td>
+unitless
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+ksat
+</td>
+<td>
+Soil hydraulic conductivity at saturation
+</td>
+<td>
+mmol m−1 soil s −1 MPa−1
+</td>
+</tr>
+<tr>
+<td>
+<strong>not found</strong>
+</td>
+<td>
+gsoil0
+</td>
+<td>
+Reference soil conductance to water vapor
+</td>
+<td>
+mmol m−2 soil s −1
+</td>
+</tr>
+
+</tbody></table>
+<section id="example-read-vegetation-csv-file" class="level4">
+<h4 class="anchored" data-anchor-id="example-read-vegetation-csv-file"><strong>Example: Read vegetation CSV file</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>modeling_options_dict <span class="op">=</span> create_modeling_options(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    time_step_for_evapo<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    reset_swc<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    avoid_water_soil_transfer<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    constant_climate<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    defoliation<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    soil_evapo<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    threshold_mortality<span class="op">=</span><span class="dv">51</span>,</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    etp_formulation<span class="op">=</span><span class="st">"pt"</span>,</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    rn_formulation<span class="op">=</span><span class="st">"linear"</span>,</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>    comp_options_for_evapo<span class="op">=</span><span class="st">"custom"</span>,</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>    stomatal_reg_formulation<span class="op">=</span><span class="st">"turgor"</span>,</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>    transpiration_model<span class="op">=</span><span class="st">"jarvis"</span>,</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>    numerical_scheme<span class="op">=</span><span class="st">"implicit"</span>,</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>    pedo_transfer_formulation<span class="op">=</span><span class="st">"vg"</span>,</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>read_vegetation_file(</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    file_path<span class="op">=</span><span class="st">"./sample_data/vegetation_example_wide.csv"</span>,</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    modeling_options<span class="op">=</span>modeling_options_dict,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    sep<span class="op">=</span><span class="st">","</span>,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>frac_leaf_sym' set to 0.4</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_37992/2639462457.py:235: UserWarning: Foliage evergreen has no params
+  warnings.warn("Foliage evergreen has no params")</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>defaultdict(list,
+            {'c_lapoinit': 1e-05,
+             'c_sapoinit': 2e-05,
+             'fcrit': 450,
+             'foliage': 'evergreen',
+             'jarvis_par': 0.006,
+             'k': 0.5,
+             'k_plantinit': 0.62,
+             'k_ssyminit': 0.26,
+             'ldmc': 570,
+             'lma': 106,
+             'p12_gs': -2.07,
+             'p50_vc_leaf': -3.4,
+             'p50_vc_stem': -3.4,
+             'p88_gs': -2.62,
+             'pt_coeff': 1.14,
+             'pifullturgor_leaf': -2.1,
+             'pifullturgor_stem': -2.1,
+             'psi_close': -2,
+             'psi_start_closing': -0.5,
+             'q10_1_gmin': 1.2,
+             'q10_2_gmin': 4.8,
+             'tphase_gmin': 37.5,
+             'tbase': 3,
+             'tgs_optim': 25,
+             'tgs_sens': 17,
+             'apofrac_leaf': 0.4,
+             'apofrac_stem': 0.4,
+             'betarootprofile': 0.97,
+             'canopystorageparam': 1.5,
+             'daystart': 55,
+             'epsilonsym_leaf': 10,
+             'epsilonsym_stem': 10,
+             'froottoleaf': 1,
+             'ftrbtoleaf': 0.8,
+             'g_crown0': 45,
+             'gmin20': 4,
+             'gmin_s': 3,
+             'gs_max': 200,
+             'gs_night': 20,
+             'nbdaylai': 21,
+             'rootradius': 0.0002,
+             'slope_vc_leaf': 60,
+             'slope_vc_stem': 60,
+             'symfrac_stem': 0.2,
+             'turgor_pressure_at_gs_max': 2,
+             'vol_stem': 40,
+             'frac_leaf_sym': 0.4})</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
