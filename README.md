@@ -19,8 +19,8 @@ pip install sureau_ecos_py
 ``` mermaid
     %%{init:{'themeVariables': {'primaryBorderColor': '#00758f'}}}%%
     flowchart TD;
-
         compute_theta_at_given_p_soil_camp-->create_vegetation_parameters;
+        create_stand_parameters-->create_vegetation_parameters;
         create_modeling_options-->create_vegetation_parameters;
         convert_f_to_v-->create_soil_paramters;
         convert_f_to_v-->create_vegetation_parameters;
