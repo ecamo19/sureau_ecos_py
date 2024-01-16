@@ -110,4 +110,5 @@ d = { 'settings': { 'branch': 'main',
                                            'sureau_ecos_py.soil_utils.compute_theta_at_given_p_soil_camp': ( 'soil_utils.html#compute_theta_at_given_p_soil_camp',
                                                                                                              'sureau_ecos_py/soil_utils.py'),
                                            'sureau_ecos_py.soil_utils.read_soil_file': ( 'soil_utils.html#read_soil_file',
-                                                                                         'sureau_ecos_py/soil_utils.py')}}}
+                                                                                         'sureau_ecos_py/soil_utils.py')},
+            'sureau_ecos_py.wb_clim': {'sureau_ecos_py.wb_clim.new_wb_clim': ('wg_clim.html#new_wb_clim', 'sureau_ecos_py/wb_clim.py')}}}
