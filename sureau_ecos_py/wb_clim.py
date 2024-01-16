@@ -65,18 +65,35 @@ def new_wb_clim(
 
     # Add Temperature from previous and next days
 
+    # cas normal
+    print(row_index)
 
+    #if the row_index is not the first nor the last
+    if row_index != 0 and row_index != climate_data.shape[0]:
+        wb_clim_dict['Tair_min_prev'] = climate_data.loc[row_index - 1]['Tair_min']
+        wb_clim_dict['Tair_min_next'] = climate_data.loc[row_index + 1]['Tair_min']
+        wb_clim_dict['Tair_max_prev'] = climate_data.loc[row_index - 1]['Tair_max']
 
+        return wb_clim_dict
 
+    # si premier jour de le la simu
 
-    return wb_clim_dict
+    # if the row_index is the first
+    elif row_index == 0:
+        print('Firts day of the simulation, previous Tair is the same as the current')
 
+        wb_clim_dict['Tair_min_prev'] = climate_data.loc[row_index]['Tair_min']
+        wb_clim_dict['Tair_min_next'] = climate_data.loc[row_index + 1]['Tair_min']
+        wb_clim_dict['Tair_max_prev'] = climate_data.loc[row_index]['Tair_max']
 
+        return wb_clim_dict
 
-    #print(index)
+    elif row_index == climate_data.shape[0]:
+        print('Last day of the simulation, next Tair is the same as the current')
 
-    #return wb_clim_dict
+        wb_clim_dict['Tair_min_prev'] = climate_data.loc[row_index - 1]['Tair_min']
+        wb_clim_dict['Tair_min_next'] = climate_data.loc[row_index]['Tair_min']
+        wb_clim_dict['Tair_max_prev'] = climate_data.loc[row_index - 1]['Tair_max']
 
-
-
+        return wb_clim_dict
 
