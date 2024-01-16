@@ -7,15 +7,22 @@ __all__ = ['new_wb_clim']
 import collections
 from typing import Dict
 from pandera.typing import DataFrame
-from .create_stand_parameters import create_stand_parameters
+from .climate_utils import compute_vpd_from_t_rh
+
+from sureau_ecos_py.create_simulation_parameters import (
+    create_simulation_parameters,
+)
+
 from .create_climate_data import create_climate_data
+from .create_modeling_options import create_modeling_options
+
 
 
 # %% ../nbs/17_wg_clim.ipynb 4
 def new_wb_clim(
     climate_data:DataFrame, # Dataframe created using the `create_climate_data` function
     year:int, # Year, __No definition found__
-    doy:int # Day of the year, __No definition found__
+    day_of_year:int # Day of the year, __No definition found__
 
 
 ) -> Dict:  # Dictionary containing parameters to run the model
@@ -30,21 +37,45 @@ def new_wb_clim(
 
     # Day of year
     assert isinstance(
-        doy, int
-    ) and 368 >= doy >= 1, "doy must be a integer value between 1-365"
+        day_of_year, int
+    ) and 367 >= day_of_year >= 1, "day_of_year must be a integer value between 1-365"
 
     # Create wb_clim dictionary -------------------------------------------------
-    wb_clim_dict = collections.defaultdict(list)
 
-    # Add parameters ------------------------------------------------------------
-    wb_clim_dict['year'] = year
-    wb_clim_dict['doy'] = doy
+    # Check that year and day_of_year are present inside the dataframe
+    if year in climate_data['year'].values and day_of_year in climate_data['day_of_year'].values:
+
+        # Get row index in climate frame based on year and doy
+        row_index = climate_data[(climate_data['year'] == year) & (climate_data['day_of_year'] == day_of_year)].index[0]
+
+        # Transfrom row to a dictionary with params
+        wb_clim_dict = collections.defaultdict(list, dict(climate_data.loc[row_index]))
+
+    else:
+        raise ValueError(
+            f"year:{year} and/or day_of_year:{day_of_year} not found in climate dataframe"
+        )
+
+    # Add parameters to dictionary ----------------------------------------------
+    wb_clim_dict['net_radiation'] = float("NAN")
+    wb_clim_dict['etp'] = float("NAN")
+    wb_clim_dict['vpd'] = compute_vpd_from_t_rh(relative_humidity = wb_clim_dict['RHair_mean'],
+                                                temperature= wb_clim_dict['Tair_mean']
+                                                )
+
+    # Add Temperature from previous and next days
+
+
+
+
 
     return wb_clim_dict
 
 
 
+    #print(index)
 
+    #return wb_clim_dict
 
 
 
