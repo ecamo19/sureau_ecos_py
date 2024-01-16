@@ -194,6 +194,8 @@ def create_climate_data(
         )
 
         # Start index values at 1 not 0
-        constant_climate_data.index = np.arange(1, len(constant_climate_data) + 1)
+        constant_climate_data.index = np.arange(
+            1, len(constant_climate_data) + 1
+        )
 
         return constant_climate_data
