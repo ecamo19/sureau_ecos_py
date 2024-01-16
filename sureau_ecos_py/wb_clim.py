@@ -38,7 +38,7 @@ def new_wb_clim(
     # Day of year
     assert isinstance(
         day_of_year, int
-    ) and 367 >= day_of_year >= 1, "day_of_year must be a integer value between 1-365"
+    ) and 366 >= day_of_year >= 1, "day_of_year must be a integer value between 1-365"
 
     # Create wb_clim dictionary -------------------------------------------------
 
@@ -66,9 +66,8 @@ def new_wb_clim(
     # Add Temperature from previous and next days
 
     # cas normal
-    print(row_index)
 
-    #if the row_index is not the first nor the last
+    # if the row_index is not the first nor the last
     if row_index != 0 and row_index != climate_data.shape[0]:
         wb_clim_dict['Tair_min_prev'] = climate_data.loc[row_index - 1]['Tair_min']
         wb_clim_dict['Tair_min_next'] = climate_data.loc[row_index + 1]['Tair_min']
@@ -89,11 +88,16 @@ def new_wb_clim(
         return wb_clim_dict
 
     elif row_index == climate_data.shape[0]:
-        print('Last day of the simulation, next Tair is the same as the current')
+        print('Last day of the simulation, next Tair_min_next is the same as the Tair_min')
 
         wb_clim_dict['Tair_min_prev'] = climate_data.loc[row_index - 1]['Tair_min']
         wb_clim_dict['Tair_min_next'] = climate_data.loc[row_index]['Tair_min']
         wb_clim_dict['Tair_max_prev'] = climate_data.loc[row_index - 1]['Tair_max']
 
         return wb_clim_dict
+
+    else:
+        raise ValueError(
+            "Error setting previous and following temperature conditions"
+        )
 
