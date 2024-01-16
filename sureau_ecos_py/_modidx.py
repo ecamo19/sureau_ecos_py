@@ -111,4 +111,6 @@ d = { 'settings': { 'branch': 'main',
                                                                                                              'sureau_ecos_py/soil_utils.py'),
                                            'sureau_ecos_py.soil_utils.read_soil_file': ( 'soil_utils.html#read_soil_file',
                                                                                          'sureau_ecos_py/soil_utils.py')},
-            'sureau_ecos_py.wb_clim': {'sureau_ecos_py.wb_clim.new_wb_clim': ('wg_clim.html#new_wb_clim', 'sureau_ecos_py/wb_clim.py')}}}
+            'sureau_ecos_py.wb_clim': { 'sureau_ecos_py.wb_clim.new_wb_clim': ('wg_clim.html#new_wb_clim', 'sureau_ecos_py/wb_clim.py'),
+                                        'sureau_ecos_py.wb_clim.new_wb_clim_hour': ( 'wg_clim.html#new_wb_clim_hour',
+                                                                                     'sureau_ecos_py/wb_clim.py')}}}
