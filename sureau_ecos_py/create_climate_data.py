@@ -134,8 +134,10 @@ def create_climate_data(
             f'{climate_data.shape[0]} days were selected in the input climate file, covering the period: {climate_data["year"].min()} - {climate_data["year"].max()}'
         )
 
-        # Return climate data with index values starting at 0
-        return climate_data.reset_index(drop=True)
+        # Start index values at 1 not 0
+        climate_data.index = np.arange(1, len(climate_data) + 1)
+
+        return climate_data
 
     if modeling_options["constant_climate"] is True:
         # Use a List Comprehension to create a sequence of dates with the format
@@ -191,5 +193,7 @@ def create_climate_data(
             f'{constant_climate_data.shape[0]} days of the period: {constant_climate_data["year"].min()} - {constant_climate_data["year"].max()} have the same climatic conditions'
         )
 
-        # Return climate data with index values starting at 0
-        return constant_climate_data.reset_index(drop=True)
+        # Start index values at 1 not 0
+        constant_climate_data.index = np.arange(1, len(constant_climate_data) + 1)
+
+        return constant_climate_data
