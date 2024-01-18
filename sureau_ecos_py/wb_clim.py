@@ -130,45 +130,37 @@ def new_wb_clim_hour(
     modeling_options: Dict,  # Dictionary created using the `create_modeling_options` function
     pt_coeff: float,  # An empirical constant accounting for the vapor pressure deficit and resistance values Typically, α is 1.26 for open bodies of water, but has a wide range of values from less than 1 (humid conditions) to almost 2 (arid conditions).
 ) -> Dict:  # Dictionary containing parameters to run the model
-
     "Create a list with interpolated climate data at the required time step"
 
     # Assert parameters ---------------------------------------------------------
 
     # wb_clim
-    assert (
-        isinstance(wb_clim, Dict)
+    assert isinstance(
+        wb_clim, Dict
     ), f"wb_clim must be a Dictionary not a {type(wb_clim)}"
 
     # wb_veg
-    assert (
-        isinstance(wb_veg, Dict)
+    assert isinstance(
+        wb_veg, Dict
     ), f"wb_veg must be a Dictionary not a {type(wb_veg)}"
 
     # modeling_options
-    assert (
-        isinstance(modeling_options, Dict)
+    assert isinstance(
+        modeling_options, Dict
     ), f"modeling_options must be a Dictionary not a {type(modeling_options)}"
 
     # Latitude and longitude
     assert (
-            isinstance(latitude, float) and isinstance(longitude, float)
-        ), "Missing latitude and/or longitude. Provide latitude and/or longitude as Coordinates points i.e. latitude = 41.40338, longitude = 2.17403"
+        isinstance(latitude, float) and isinstance(longitude, float)
+    ), "Missing latitude and/or longitude. Provide latitude and/or longitude as Coordinates points i.e. latitude = 41.40338, longitude = 2.17403"
 
     # pt_coeff
-    assert (
-            isinstance(pt_coeff, float)
-        ), f"pt_coeff must be a float i.e. 2.0001 not a {type(pt_coeff)}"
-
+    assert isinstance(
+        pt_coeff, float
+    ), f"pt_coeff must be a float i.e. 2.0001 not a {type(pt_coeff)}"
 
     # Create wb_clim_hour dictionary --------------------------------------------
     wb_clim_hour = collections.defaultdict(list)
 
-    if modeling_options['constant_climate'] == False:
+    if modeling_options["constant_climate"] == False:
         pass
-
-
-
-
-
-
