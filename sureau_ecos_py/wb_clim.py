@@ -7,7 +7,7 @@ __all__ = ['new_wb_clim', 'new_wb_clim_hour']
 import collections
 from typing import Dict
 from pandera.typing import DataFrame
-from .climate_utils import compute_vpd_from_t_rh
+from .climate_utils import compute_vpd_from_t_rh, day_length
 
 from sureau_ecos_py.create_simulation_parameters import (
     create_simulation_parameters,
@@ -163,4 +163,11 @@ def new_wb_clim_hour(
     wb_clim_hour = collections.defaultdict(list)
 
     if modeling_options["constant_climate"] is False:
+        # calculate sunrise, sunset and daylength (in seconds from midgnight)
+        # depends of DAY, latt and lon
         pass
+
+        # sunrise_sunset_daylen <- as.numeric(daylength(lat = lat, long = lon, jd = WBclim$DOY, 0)) * 3600 #
+
+        # sunrise_sunset_daylength_seconds = day_length(latitude = latitude,
+        #                                              day_of_year = wb_clim['day_of_year'])
