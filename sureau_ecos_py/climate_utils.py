@@ -298,12 +298,9 @@ def day_length(
     warnings.warn("Double check if this function works for Australia")
 
     # Latitude
-    assert isinstance(
-        latitude, float
-    ), "Missing latitude. Provide latitude as Coordinates points i.e. latitude = 41.40338"
-
-    if latitude > 90 or latitude < -90:
-        warnings.warn("latitude is usually between -90 and 90")
+    assert (
+        isinstance(latitude, float) and 95 >= latitude >= -95
+    ), "Provide latitude as coordinates points bewteen -90 and 90 i.e. latitude = 41.40338"
 
     # Day of year
     # Using np.testing instead of assert because parameters can be np.arrays OR
