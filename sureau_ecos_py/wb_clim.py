@@ -162,5 +162,5 @@ def new_wb_clim_hour(
     # Create wb_clim_hour dictionary --------------------------------------------
     wb_clim_hour = collections.defaultdict(list)
 
-    if modeling_options["constant_climate"] == False:
+    if modeling_options["constant_climate"] is False:
         pass
