@@ -3,13 +3,16 @@
 # %% auto 0
 __all__ = ['compute_vpd_from_t_rh', 'compute_etp_pt', 'compute_etp_pm', 'calculate_radiation_diurnal_pattern',
            'calculate_temperature_diurnal_pattern', 'calculate_rh_diurnal_pattern', 'ppfd_umol_to_rg_watt',
-           'rg_watt_to_ppfd_umol', 'rg_convertions', 'declination']
+           'rg_watt_to_ppfd_umol', 'rg_convertions', 'declination', 'day_length']
 
 # %% ../nbs/00_climate_utils.ipynb 3
+import warnings
+import operator
+import collections
 import numpy as np
-from numpy import exp
+from math import pi
 from typing import List
-from math import pi, cos, sin, atan
+from numpy import exp, cos, sin, arccos
 
 # %% ../nbs/00_climate_utils.ipynb 4
 def compute_vpd_from_t_rh(
@@ -261,7 +264,8 @@ def rg_convertions(
         print("No conversions performed")
 
 # %% ../nbs/00_climate_utils.ipynb 31
-def declination(doy: int):  # julian day (day of the year)
+def declination(day_of_year: int # julian day (day of the year)
+                )-> float:  # Earth declination at day_of_year
     "Calculate declination of sun (radians ? ) for a given julian day (DOY)"
 
     # Hervé's formula for solar declination
@@ -275,8 +279,102 @@ def declination(doy: int):  # julian day (day of the year)
 
     # date of spring
     c3 = 80
+    warnings.warn('date of spring set to {c3}. This might change for Australia')
 
-    x = c1 * sin((doy - c3) * c2)  # ;
+    x = c1 * sin((day_of_year - c3) * c2)  # ;
 
     # Return declination --------------------------------------------------------
     return atan(x / ((1 - x * x) ^ 0.5))
+
+# %% ../nbs/00_climate_utils.ipynb 33
+def day_length(
+    latitude: float,  # numeric value specifying the geographic latitude (in decimal degrees) of the location of interest
+    day_of_year:int, # numeric (usually integer) value or vector specifying the Julian day (day of the year), for which calculations should be done.
+    no_times_as_na:bool = False # parameter to determine whether for days without sunrise or sunset, na should be returned for Sunset and Sunrise. If left at FALSE, the function returns -99 and 99 for sunrise and sunset or polar nights and polar days, respectively
+
+    )-> np.array: # Day length in __Units not defined__
+    "Original function from chillR R package. This function computes sunrise time, sunset time and daylength for a particular location and day of the year (Julian day). This is done using equations by Spencer (1971) and Almorox et al. (2005)."
+
+    warnings.warn('Double check if this function works for Australia')
+
+    # Latitude
+    assert (
+            isinstance(latitude, float)
+        ), "Missing latitude. Provide latitude as Coordinates points i.e. latitude = 41.40338"
+
+    if latitude > 90 or latitude < -90:
+         warnings.warn('latitude is usually between -90 and 90')
+
+    # Day of year
+    # Using np.testing instead of assert because parameters can be np.arrays OR
+    # single values (i.e. 1). assert only works when params are always one type
+    # Solution from:
+    # https://stackoverflow.com/questions/45987962/why-arent-there-numpy-testing-assert-array-greater-assert-array-less-equal-as
+
+    np.testing.assert_array_compare(
+        operator.__gt__,
+        np.array(day_of_year),
+        0,
+        err_msg="\nday_of_year must be must be a integer value between 1-366\n",
+    )
+    np.testing.assert_array_less(
+        np.array(day_of_year),
+        367,
+        err_msg="\nError: day_of_year must be must be a integer value between 1-366\n"
+    )
+
+    # Define constants ----------------------------------------------------------
+    gamma = 2 * (pi/365) * ((day_of_year) - 1)
+    delta = (180/pi) * ((0.006918 - 0.399912 * cos(gamma) + 0.070257 * sin(gamma)) - (0.006758 * cos(2 * gamma) + 0.000907 * sin(2 * (gamma)) - 0.002697 * cos(3 * (gamma)) + 0.00148 * sin(3 * (gamma))))
+
+    cos_wo = (sin((-0.8333/360) * 2 * pi) - sin(latitude/360 * 2 * pi) * sin((delta/360) * 2 * pi))/(cos((latitude/360) * 2 * pi) * cos((delta/360) * 2 * pi))
+
+    # Step implemented in case day_of_year is a single value i.e. day_of_year = 80
+    if isinstance(cos_wo, float):
+
+        # Transform float into array
+        cos_wo = np.array([cos_wo])
+
+    # Calculate sunrise and sunset ----------------------------------------------
+
+    # Get the position of values between -1 and 1
+    # Note only day_of_year values from 77 to 80 and will return values
+    # between -1 and 1
+
+    normal_days = np.where((cos_wo >= -1) & (cos_wo <= 1))
+
+    # Initialize a numpy arrays
+
+    sunrise = np.full(len(cos_wo), -99, dtype = float)
+    sunset = np.full(len(cos_wo), -99, dtype = float)
+
+    # Add normal days to sunrise and sunset arrays
+    sunrise[normal_days] = 12 - arccos(cos_wo[normal_days])/(15/360 * 2 * pi)
+    sunset[normal_days] = 12 + arccos(cos_wo[normal_days])/(15/360 * 2 * pi)
+
+    # Calculate day length
+    day_length = sunset - sunrise
+
+    day_length[np.where(cos_wo > 1)] = 0
+    day_length[np.where(cos_wo < (-1))] = 24
+
+    # Replace values with 99
+    sunrise[np.where(day_length == 24)] = 99
+    sunset[np.where(day_length == 24)] = 99
+
+    # Replace 99 and -99 with na in sunrise and sunset arrays
+    if no_times_as_na is True:
+        sunrise = np.where((sunrise == -99) | (sunrise == 99), np.nan, sunrise)
+        sunset = np.where((sunset == -99) | (sunset == 99), np.nan, sunset)
+
+    # # Check the presence of nan
+    if any(np.isnan(sunrise)) or any(np.isnan(sunset)) or any(np.isnan(day_length)):
+        warnings.warn("nan found in sunrise, sunset or day_length")
+
+    # Return dictionary
+    return collections.defaultdict(list, {"sunrise":sunrise,
+                                          "sunset":sunset,
+                                          "day_length":day_length
+                                          })
+
+
