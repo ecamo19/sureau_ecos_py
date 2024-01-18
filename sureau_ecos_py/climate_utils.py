@@ -295,7 +295,7 @@ def day_length(
 ) -> Dict:  # Dictionary with three elements Sunrise, Sunset and Daylength. For days without sunrise (polar nights),sunset and sunrise become -99 and the daylength 0. For days without sunset, sunset and sunrise are 99 and daylength 24.
     "Original function from chillR R package. This function computes sunrise time, sunset time and daylength for a particular location and day of the year (Julian day). This is done using equations by Spencer (1971) and Almorox et al. (2005)."
 
-    warnings.warn("Double check if this function works for Australia")
+    warnings.warn("Double check day_length function works for Australia")
 
     # Latitude
     assert (

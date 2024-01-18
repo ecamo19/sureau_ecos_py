@@ -4,15 +4,15 @@
 __all__ = ['new_wb_clim', 'new_wb_clim_hour']
 
 # %% ../nbs/17_wg_clim.ipynb 3
+import warnings
 import collections
+import numpy as np
 from typing import Dict
 from pandera.typing import DataFrame
 from .climate_utils import compute_vpd_from_t_rh, day_length
-
 from sureau_ecos_py.create_simulation_parameters import (
     create_simulation_parameters,
 )
-
 from .create_climate_data import create_climate_data
 from .create_modeling_options import create_modeling_options
 
@@ -160,14 +160,64 @@ def new_wb_clim_hour(
     ), f"pt_coeff must be a float i.e. 2.0001 not a {type(pt_coeff)}"
 
     # Create wb_clim_hour dictionary --------------------------------------------
-    wb_clim_hour = collections.defaultdict(list)
+    # wb_clim_hour = collections.defaultdict(list)
 
     if modeling_options["constant_climate"] is False:
         # calculate sunrise, sunset and daylength (in seconds from midgnight)
         # depends of DAY, latt and lon
-        pass
-
         # sunrise_sunset_daylen <- as.numeric(daylength(lat = lat, long = lon, jd = WBclim$DOY, 0)) * 3600 #
 
-        # sunrise_sunset_daylength_seconds = day_length(latitude = latitude,
-        #                                              day_of_year = wb_clim['day_of_year'])
+        # Calculate day_length
+        sunrise_sunset_daylength_hours = day_length(
+            latitude=latitude, day_of_year=wb_clim["day_of_year"]
+        )
+
+        # Transform arrays to seconds
+        sunrise_sunset_daylength_seconds = collections.defaultdict(list)
+
+        for each_key, each_array in sunrise_sunset_daylength_hours.items():
+            # Convert only the values between 0 and 24 and leave 99 or -99
+            sunrise_sunset_daylength_seconds[each_key] = np.where(
+                ((each_array >= 0) & (each_array <= 24)),
+                each_array * 3600,
+                each_array,
+            )
+
+    else:
+        warnings.warn(
+            "Warning: constant_climate parameter set to True in modeling_options, using default parameters"
+        )
+
+        # Calculate day_length
+        sunrise_sunset_daylength_hours = day_length(
+            latitude=0.0, day_of_year=166
+        )
+
+        # Transform arrays to seconds
+        sunrise_sunset_daylength_seconds = collections.defaultdict(list)
+
+        for each_key, each_array in sunrise_sunset_daylength_hours.items():
+            # Convert only the values between 0 and 24 and leave 99 or -99
+            sunrise_sunset_daylength_seconds[each_key] = np.where(
+                ((each_array >= 0) & (each_array <= 24)),
+                each_array * 3600,
+                each_array,
+            )
+
+    # Set new values for days with day_length equal to 24 hours
+    if sunrise_sunset_daylength_seconds["day_length"] == 24 * 3600:
+        print("Days with no nights")
+        sunrise_sunset_daylength_seconds["sunrise"] = 0
+        sunrise_sunset_daylength_seconds["sunset"] = 24 * 3600
+        sunrise_sunset_daylength_seconds["day_length"] = 24 * 3600
+
+    # Set new values for days with day_length equal to 0 hours
+    if sunrise_sunset_daylength_seconds["day_length"] == 0:
+        print("Days with no daylight")
+        sunrise_sunset_daylength_seconds["sunrise"] = 12 * 3600
+        sunrise_sunset_daylength_seconds["sunset"] = 12 * 3600
+        sunrise_sunset_daylength_seconds["day_length"] = 0
+
+    return sunrise_sunset_daylength_seconds
+
+    # Radiation  --------------------------------------------------------------
