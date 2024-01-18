@@ -11,7 +11,7 @@ import operator
 import collections
 import numpy as np
 from math import pi
-from typing import List
+from typing import List, Dict
 from numpy import exp, cos, sin, arccos
 
 # %% ../nbs/00_climate_utils.ipynb 4
@@ -292,7 +292,7 @@ def day_length(
     latitude: float,  # numeric value specifying the geographic latitude (in decimal degrees) of the location of interest
     day_of_year: int,  # numeric (usually integer) value or vector specifying the Julian day (day of the year), for which calculations should be done.
     no_times_as_na: bool = False,  # parameter to determine whether for days without sunrise or sunset, na should be returned for Sunset and Sunrise. If left at FALSE, the function returns -99 and 99 for sunrise and sunset or polar nights and polar days, respectively
-) -> np.array:  # Day length in __Units not defined__
+) -> Dict:  # Dictionary with three elements Sunrise, Sunset and Daylength. For days without sunrise (polar nights),sunset and sunrise become -99 and the daylength 0. For days without sunset, sunset and sunrise are 99 and daylength 24.
     "Original function from chillR R package. This function computes sunrise time, sunset time and daylength for a particular location and day of the year (Julian day). This is done using equations by Spencer (1971) and Almorox et al. (2005)."
 
     warnings.warn("Double check if this function works for Australia")
