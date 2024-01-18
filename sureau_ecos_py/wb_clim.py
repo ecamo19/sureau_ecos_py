@@ -175,11 +175,13 @@ def new_wb_clim_hour(
         # Transform arrays to seconds
         sunrise_sunset_daylength_seconds = collections.defaultdict(list)
 
+        # Loop over the dictionary for getting each array
         for each_key, each_array in sunrise_sunset_daylength_hours.items():
-            # Convert only the values between 0 and 24 and leave 99 or -99
             sunrise_sunset_daylength_seconds[each_key] = np.where(
+                # Convert only the values between 0 and 24
                 ((each_array >= 0) & (each_array <= 24)),
                 each_array * 3600,
+                # leave 99 or -99
                 each_array,
             )
 
