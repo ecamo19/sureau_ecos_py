@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['compute_vpd_from_t_rh', 'compute_etp_pt', 'compute_etp_pm', 'calculate_radiation_diurnal_pattern',
            'calculate_temperature_diurnal_pattern', 'calculate_rh_diurnal_pattern', 'ppfd_umol_to_rg_watt',
-           'rg_watt_to_ppfd_umol', 'rg_convertions', 'declination', 'day_length']
+           'rg_watt_to_ppfd_umol', 'rg_conversions', 'declination', 'day_length']
 
 # %% ../nbs/00_climate_utils.ipynb 3
 import warnings
@@ -224,43 +224,57 @@ def rg_watt_to_ppfd_umol(
     j_to_mol: float = 4.6,  # Conversion factor
     frac_par: float = 0.5,  # Function of solar rdiation that is photosynthetically active radiation (PAR)
 ) -> float:
-    "Convert rg (watt) to ppfd (umol)"
+    "Convert rg in watts to photosynthetic photon flux density (ppfd) in umol"
 
     # calculate Photosynthetic photon flux density (umol.m-2.s-1) ---------------
 
     return rg * frac_par * j_to_mol
 
 # %% ../nbs/00_climate_utils.ipynb 25
-def rg_convertions(
+def rg_conversions(
     rg_watts: float = None,  # instantaneous radiation (watt)
     rg_mj: float = None,  # instantaneous radiation (in Mega Jule?)
     nhours: float = None,  # Unknown parameter definition
+    selected_conversion:str = ["watts_to_mj", "mj_to_watts"] # String indicating to what units rg should be converted
 ) -> float:
     "Convert instantaneous radiation in watt to dialy cumulative radiation in MJ (MJ.day-1)"
 
-    if rg_watts is not None and rg_mj is None:
+    # Assert parameters ---------------------------------------------------------
+
+    # Make sure that resolution output only has three options
+    assert (
+        selected_conversion
+        in [
+            "watts_to_mj",
+            "mj_to_watts",
+            "mj_to_watts_hour"
+        ]
+    ), f'{selected_conversion} not a valid option for selected_conversion, select "watts_to_mj","mj_to_watts" or "mj_to_watts_hour"'
+
+    # Conversions ---------------------------------------------------------------
+    if selected_conversion == "watts_to_mj":
         print("Conversion of rg from watts to Mega Jules")
 
         # Conversion from watts to Mega Jules
         return rg_watts * 0.0864
 
-    if rg_mj is not None and rg_watts is None and nhours is None:
+    elif selected_conversion == "mj_to_watts":
         print("Conversion of rg from Mega Jules to Watts")
 
         # Conversion from Mega Jules to watts
         return rg_mj * (1 / 0.0864)
 
-    if rg_mj is not None and rg_watts is None and nhours is not None:
+    elif selected_conversion == "mj_to_watts_hour":
         print("Conversion of rg from Mega Jules to Watts/hour")
 
         # Conversion from Mega Jules to watts/hour
         return rg_mj * (10**6 / (nhours * 3600))
 
-    elif rg_mj is not None and rg_watts is not None:
-        return print("Select one conversion rg_mj or rg_watts")
-
     else:
-        print("No conversions performed")
+        raise ValueError(
+            "rg conversion failed"
+        )
+
 
 # %% ../nbs/00_climate_utils.ipynb 31
 def declination(
