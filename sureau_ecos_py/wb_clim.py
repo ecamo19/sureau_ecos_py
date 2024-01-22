@@ -13,7 +13,8 @@ from sureau_ecos_py.climate_utils import (
     compute_vpd_from_t_rh,
     day_length,
     calculate_radiation_diurnal_pattern
-
+    #rg_watt_to_ppfd_umol,
+    #rg_convertions
 )
 from sureau_ecos_py.create_simulation_parameters import (
     create_simulation_parameters,
@@ -53,17 +54,27 @@ def new_wb_clim(
     if (
         year in climate_data["year"].values
         and day_of_year in climate_data["day_of_year"].values
-    ):
-        # Get row index in climate frame based on year and doy
-        row_index = climate_data[
-            (climate_data["year"] == year)
-            & (climate_data["day_of_year"] == day_of_year)
-        ].index[0]
+        ):
 
-        # Transfrom row to a dictionary with params
-        wb_clim_dict = collections.defaultdict(
+        # Make sure there are no rows with the same date
+        if len(climate_data[(climate_data["year"] == year)
+                            & (climate_data["day_of_year"] == day_of_year)]) == 1:
+
+            # Get row index in climate frame based on year and doy
+            row_index = climate_data[
+                (climate_data["year"] == year)
+                & (climate_data["day_of_year"] == day_of_year)
+                ].index[0]
+
+            # Transfrom row to a dictionary with params
+            wb_clim_dict = collections.defaultdict(
             list, dict(climate_data.loc[row_index])
-        )
+            )
+
+        else:
+            raise ValueError(
+                "Erroneous climate data format : duplicated lines ?"
+            )
 
     else:
         raise ValueError(
@@ -73,10 +84,19 @@ def new_wb_clim(
     # Add parameters to dictionary ----------------------------------------------
     wb_clim_dict["net_radiation"] = float("NAN")
     wb_clim_dict["etp"] = float("NAN")
+
     wb_clim_dict["vpd"] = compute_vpd_from_t_rh(
         relative_humidity=wb_clim_dict["RHair_mean"],
         temperature=wb_clim_dict["Tair_mean"],
     )
+
+    # Rename parameters
+    wb_clim_dict['ppt'] = wb_clim_dict['PPT_sum']
+    wb_clim_dict['rg'] = wb_clim_dict['RG_sum']
+
+    # Delete old parameters
+    del wb_clim_dict['PPT_sum']
+    del wb_clim_dict['RG_sum']
 
     # Add Temperature from previous and next days -------------------------------
 
@@ -104,7 +124,7 @@ def new_wb_clim(
     # if the row_index is the first
     elif row_index == 1:
         print(
-            "Firts day of the simulation, previous Tair is the same as the current"
+            "Firts day of the simulation. Tair is the same as the current"
         )
 
         wb_clim_dict["Tair_min_prev"] = climate_data.loc[row_index]["Tair_min"]
@@ -117,7 +137,7 @@ def new_wb_clim(
 
     elif row_index == climate_data.shape[0]:
         print(
-            "Last day of the simulation, next Tair_min_next is the same as the Tair_min"
+            "Last day of the simulation. Tair_min_next is the same as the Tair_min"
         )
 
         wb_clim_dict["Tair_min_prev"] = climate_data.loc[row_index - 1][
@@ -132,10 +152,10 @@ def new_wb_clim(
 
     else:
         raise ValueError(
-            "Error setting previous and following temperature conditions"
+            "Error setting previous and next temperature conditions"
         )
 
-# %% ../nbs/17_wg_clim.ipynb 10
+# %% ../nbs/17_wg_clim.ipynb 11
 def new_wb_clim_hour(
     wb_clim: Dict,  # Dictionary created using the `new_wb_clim` function
     wb_veg: Dict,  # __No definition found__
@@ -173,23 +193,23 @@ def new_wb_clim_hour(
         pt_coeff, float
     ), f"pt_coeff must be a float i.e. 2.0001 not a {type(pt_coeff)}"
 
-    # Create wb_clim_hour dictionary --------------------------------------------
-    # wb_clim_hour = collections.defaultdict(list)
-
+    # Calculate day_lenght ------------------------------------------------------
     if modeling_options["constant_climate"] is False:
         # calculate sunrise, sunset and daylength (in seconds from midgnight)
         # depends of DAY, latt and lon
-        # sunrise_sunset_daylen <- as.numeric(daylength(lat = lat, long = lon, jd = WBclim$DOY, 0)) * 3600 #
+        # sunrise_sunset_daylen <- as.numeric(daylength(lat = lat, long = lon,
+        # jd = WBclim$DOY, 0)) * 3600 #
 
         # Calculate day_length
         sunrise_sunset_daylength_hours = day_length(
             latitude=latitude, day_of_year=wb_clim["day_of_year"]
         )
 
-        # Transform arrays to seconds
+        # Create empty dict
         sunrise_sunset_daylength_seconds = collections.defaultdict(list)
 
-        # Loop over the dictionary for getting each array
+        # Transform arrays to seconds: Loop over the dictionary for getting each
+        # array
         for each_key, each_array in sunrise_sunset_daylength_hours.items():
             sunrise_sunset_daylength_seconds[each_key] = np.where(
                 # Convert only the values between 0 and 24
@@ -209,9 +229,11 @@ def new_wb_clim_hour(
             latitude=0.0, day_of_year=166
         )
 
-        # Transform arrays to seconds
+        # Create empty dict
         sunrise_sunset_daylength_seconds = collections.defaultdict(list)
 
+        # Transform arrays to seconds: Loop over the dictionary for getting each
+        # array
         for each_key, each_array in sunrise_sunset_daylength_hours.items():
             # Convert only the values between 0 and 24 and leave 99 or -99
             sunrise_sunset_daylength_seconds[each_key] = np.where(
@@ -219,8 +241,6 @@ def new_wb_clim_hour(
                 each_array * 3600,
                 each_array,
             )
-    print(sunrise_sunset_daylength_seconds)
-    print(sunrise_sunset_daylength_hours)
 
     # Set new values for days with day_length equal to 24 hours -----------------
     if sunrise_sunset_daylength_seconds["day_length"] == 24 * 3600:
@@ -235,41 +255,74 @@ def new_wb_clim_hour(
         sunrise_sunset_daylength_seconds["sunrise"] = 12 * 3600
         sunrise_sunset_daylength_seconds["sunset"] = 12 * 3600
 
-        warnings.warn("day_length = 0, this might cause error in calculate_radiation_diurnal_pattern")
+        warnings.warn(
+            "day_length = 0, this might cause error in calculate_radiation_diurnal_pattern"
+        )
         sunrise_sunset_daylength_seconds["day_length"] = 0
 
     # Desegregation at the hourly time step -------------------------------------
-    time_hour = np.arange(0,24)
+    time_hour = np.arange(0, 24)
 
     # time relative to sunset (in seconds)
-    time_relative_to_sunset_sec = (time_hour * 3600) - sunrise_sunset_daylength_seconds['sunset']
+    warnings.warn(
+        "Comment in R code say time relative to sunset but sunrise parameter was used instead"
+    )
+    time_relative_to_sunset_sec = (
+        time_hour * 3600
+    ) - sunrise_sunset_daylength_seconds["sunrise"]
 
-    # Radiation  ----------------------------------------------------------------
+    # Calculate radiation  ------------------------------------------------------
     radiation = []
-    if sunrise_sunset_daylength_seconds['day_length'] == 0:
-        warnings.warn("day_length specified as 0.001 and not 0 for calculating radiation")
+
+    if sunrise_sunset_daylength_seconds["day_length"] == 0:
+        warnings.warn(
+            "day_length is 0 using 0.001 for calculating radiation instead"
+        )
 
         for each_time_step in time_relative_to_sunset_sec:
-            radiation.append(calculate_radiation_diurnal_pattern(time_of_the_day = each_time_step,
-                                                                 # 0.001 added to avoid division by 0
-                                                                 day_length = (sunrise_sunset_daylength_seconds['day_length'] + 0.001))
-                             )
+            radiation.append(
+                calculate_radiation_diurnal_pattern(
+                    time_of_the_day=each_time_step,
+                    # 0.001 added to avoid division by 0
+                    day_length=(0.001),
+                )
+            )
+        # Convert list to np.array
+        radiation = np.array(radiation)
 
+    elif sunrise_sunset_daylength_seconds["day_length"] > 0:
+        for each_time_step in time_relative_to_sunset_sec:
+            radiation.append(
+                calculate_radiation_diurnal_pattern(
+                    time_of_the_day=each_time_step,
+                    day_length=sunrise_sunset_daylength_seconds["day_length"],
+                )
+            )
         # Convert list to np.array
         radiation = np.array(radiation)
 
     else:
-        for each_time_step in time_relative_to_sunset_sec:
-            radiation.append(calculate_radiation_diurnal_pattern(time_of_the_day = each_time_step,
-                                                                 day_length = sunrise_sunset_daylength_seconds['day_length'] )
-                             )
-
-        # Flatten radiation. Step done because the list comprehension returns a
-        # list with several arrays
-        radiation = np.concatenate(radiation).ravel()
+        raise ValueError(
+            f"Is day_length:{sunrise_sunset_daylength_seconds['day_length']} negative?"
+        )
 
     # Set 0 radiation at night
-    #radiation[(time_relative_to_sunset_sec < 0) | ((time_hour * 3600) >= sunrise_sunset_daylength_seconds["sunset"])] = 0
+    radiation[
+        (time_relative_to_sunset_sec < 0)
+        | ((time_hour * 3600) >= sunrise_sunset_daylength_seconds["sunset"])
+    ] = 0
 
-    #return radiation
+    # Create wb_clim_hour dictionary --------------------------------------------
 
+    # Empty dict
+    wb_clim_hour = collections.defaultdict(list)
+
+    # Add parameters
+    wb_clim_hour["rg"] = wb_clim["rg"] * radiation * 3600
+    wb_clim_hour["rn"] = wb_clim["net_radiation"] * radiation * 3600
+    #wb_clim_hour["par"] = rg_watt_to_ppfd_umol(
+    #    rg_convertions(rg_mj=wb_clim_hour["rg"], nhours=1)
+    #)
+    # wb_clim_hour[''] =
+
+    return wb_clim_hour
