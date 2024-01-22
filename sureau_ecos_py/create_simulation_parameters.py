@@ -21,15 +21,21 @@ def create_simulation_parameters(
 ) -> Dict:
     "Create a dictionary with the simulation parameters to run SureauEcos. Can be used as an input in"
 
-    simulation_parameters = collections.defaultdict(list)
+    # Assert parameters ---------------------------------------------------------
 
-    assert isinstance(main_dir, str)
+    # Make sure output_path and main_dir are str
+    assert isinstance(
+        output_path, str
+    ),f"output_path must be a string not a {type(output_path)}"
+
+    assert isinstance(
+        main_dir, str
+    ), f"main_dir must be a string not a {type(main_dir)}"
+
     if not os.path.isdir(main_dir):
-        return (
+        raise ValueError(
             f"Directory: {main_dir}, does not exist, check presence or spelling"
         )
-
-    simulation_parameters["main_dir"] = main_dir
 
     # Make sure that resolution output only has three options
     assert (
@@ -41,8 +47,7 @@ def create_simulation_parameters(
         ]
     ), f'{resolution_output} not a valid option, select "subdaily", "daily" or "yearly"'
 
-    simulation_parameters["resolution_output"] = resolution_output
-
+    # Make sure that output_type only has four options
     assert (
         output_type
         in [
@@ -52,6 +57,22 @@ def create_simulation_parameters(
             "simple_yearly",
         ]
     ), f'{output_type} not a valid option, select  None, "simple_subdaily", "simple_daily" or "simple_yearly"'
+
+    # Compare end_year_simulation is larger than start_year_simulation
+    assert (
+        start_year_simulation <= end_year_simulation
+    ), f"start_year_simulation ({start_year_simulation}) is larger than end_year_simulation ({end_year_simulation})  "
+
+    # Create simulation paramters -----------------------------------------------
+    simulation_parameters = collections.defaultdict(list)
+
+    # Add parameters
+    simulation_parameters["main_dir"] = main_dir
+    simulation_parameters["resolution_output"] = resolution_output
+    simulation_parameters["start_year_simulation"] = start_year_simulation
+    simulation_parameters["end_year_simulation"] = end_year_simulation
+    simulation_parameters["output_path"] = output_path
+
 
     if output_type is None:
         if resolution_output == "subdaily":
@@ -65,29 +86,34 @@ def create_simulation_parameters(
     else:
         simulation_parameters["output_type"] = output_type
 
-    # Create directory for storing output
+    # Create folder for storing output ------------------------------------------
 
-    assert isinstance(output_path, str)
+    # Join path for storing output
     output_path = os.path.join(output_path, "sureau_output")
 
+    # New folder
     if not os.path.exists(output_path):
-        os.mkdir(output_path)
-        simulation_parameters["output_path"] = output_path
 
+        # Create folder
+        os.mkdir(output_path)
+        print("Directory for storing output created at {output_path}")
+
+    # Overwrite folder
     elif os.path.exists(output_path) and overwrite is True:
         shutil.rmtree(output_path)
         os.makedirs(output_path)
         simulation_parameters["output_path"] = output_path
+        print(f'Directory ({output_path}) for storing output overwritten')
 
+    # Errors
     elif os.path.exists(output_path) and overwrite is False:
-        return "file already exists and 'overwrite' option is set to False, change 'outputPath' or set 'overwrite' to True"
+        raise ValueError(
+            "File already exists and 'overwrite' option is set to False, change 'output_path' or set 'overwrite' to True"
+        )
 
-    # Compare end_year_simulation is larger than start_year_simulation
-    assert (
-        start_year_simulation <= end_year_simulation
-    ), "Make sure that `end_year_simulation` is larger than or equal `start_year_simulation`"
-
-    simulation_parameters["start_year_simulation"] = start_year_simulation
-    simulation_parameters["end_year_simulation"] = end_year_simulation
+    else:
+        raise ValueError(
+            "Error creating folder in simulation_parameters function"
+        )
 
     return simulation_parameters
