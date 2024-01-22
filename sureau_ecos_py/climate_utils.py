@@ -136,14 +136,13 @@ def compute_etp_pm(
 
 # %% ../nbs/00_climate_utils.ipynb 18
 def calculate_radiation_diurnal_pattern(
-    time_of_the_day: List[
-        int
-    ],  # a numeric value of vector indicating the time of the day (in seconds)
-    day_length: int,  # value indicating the duration of the day (in seconds)
+    time_of_the_day:int,  # a numeric value of vector indicating the time of the day (in seconds)
+    day_length: int,  # value indicating the duration of the day (in seconds). Calculated using the `day_length` function
 ) -> float:
     "Calculated diurnal pattern of temperature assuming a sinusoidal pattern with T = tmin at sunrise and T = (tmin + tmax)/2 at sunset. From sunset to sunrise follows a linear trend"
 
-    # calculate_radiation_diurnal_pattern ---------------------------------------
+
+    # Calculate_radiation_diurnal_pattern ---------------------------------------
 
     # sunrise
     ws = (day_length / 3600.0) * (pi / 24.0)
@@ -323,13 +322,12 @@ def day_length(
     # Define constants ----------------------------------------------------------
     gamma = 2 * (pi / 365) * ((day_of_year) - 1)
     delta = (180 / pi) * (
-        (0.006918 - 0.399912 * cos(gamma) + 0.070257 * sin(gamma))
-        - (
-            0.006758 * cos(2 * gamma)
+        0.006918 - 0.399912 * cos(gamma) + 0.070257 * sin(gamma)
+        - 0.006758 * cos(2 * gamma)
             + 0.000907 * sin(2 * (gamma))
             - 0.002697 * cos(3 * (gamma))
             + 0.00148 * sin(3 * (gamma))
-        )
+
     )
 
     cos_wo = (
@@ -337,7 +335,8 @@ def day_length(
         - sin(latitude / 360 * 2 * pi) * sin((delta / 360) * 2 * pi)
     ) / (cos((latitude / 360) * 2 * pi) * cos((delta / 360) * 2 * pi))
 
-    # Step implemented in case day_of_year is a single value i.e. day_of_year = 80
+    # Step implemented in case day_of_year is a single value i.e.
+    # day_of_year = 80
     if isinstance(cos_wo, float):
         # Transform float into array
         cos_wo = np.array([cos_wo])
