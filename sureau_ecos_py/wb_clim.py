@@ -9,7 +9,12 @@ import collections
 import numpy as np
 from typing import Dict
 from pandera.typing import DataFrame
-from .climate_utils import compute_vpd_from_t_rh, day_length
+from sureau_ecos_py.climate_utils import (
+    compute_vpd_from_t_rh,
+    day_length,
+    calculate_radiation_diurnal_pattern
+
+)
 from sureau_ecos_py.create_simulation_parameters import (
     create_simulation_parameters,
 )
@@ -35,6 +40,12 @@ def new_wb_clim(
     assert (
         isinstance(day_of_year, int) and 366 >= day_of_year >= 1
     ), "day_of_year must be a integer value between 1-366"
+
+
+    # Assert row index start at 1 and not at 0
+    assert(
+        np.array(climate_data.index)[0] != 0
+    ), 'First row index is 0 and should be 1. Fix before proceeding'
 
     # Create wb_clim dictionary -------------------------------------------------
 
@@ -67,12 +78,15 @@ def new_wb_clim(
         temperature=wb_clim_dict["Tair_mean"],
     )
 
-    # Add Temperature from previous and next days
+    # Add Temperature from previous and next days -------------------------------
+
+    # Adding warning in case there row index start a 0 and not 1
+
 
     # cas normal
 
     # if the row_index is not the first nor the last
-    if row_index != 0 and row_index != climate_data.shape[0]:
+    if row_index != 1 and row_index != climate_data.shape[0]:
         wb_clim_dict["Tair_min_prev"] = climate_data.loc[row_index - 1][
             "Tair_min"
         ]
@@ -88,7 +102,7 @@ def new_wb_clim(
     # si premier jour de le la simu
 
     # if the row_index is the first
-    elif row_index == 0:
+    elif row_index == 1:
         print(
             "Firts day of the simulation, previous Tair is the same as the current"
         )
@@ -205,21 +219,57 @@ def new_wb_clim_hour(
                 each_array * 3600,
                 each_array,
             )
+    print(sunrise_sunset_daylength_seconds)
+    print(sunrise_sunset_daylength_hours)
 
-    # Set new values for days with day_length equal to 24 hours
+    # Set new values for days with day_length equal to 24 hours -----------------
     if sunrise_sunset_daylength_seconds["day_length"] == 24 * 3600:
         print("Days with no nights")
         sunrise_sunset_daylength_seconds["sunrise"] = 0
         sunrise_sunset_daylength_seconds["sunset"] = 24 * 3600
         sunrise_sunset_daylength_seconds["day_length"] = 24 * 3600
 
-    # Set new values for days with day_length equal to 0 hours
+    # Set new values for days with day_length equal to 0 hours ------------------
     if sunrise_sunset_daylength_seconds["day_length"] == 0:
         print("Days with no daylight")
         sunrise_sunset_daylength_seconds["sunrise"] = 12 * 3600
         sunrise_sunset_daylength_seconds["sunset"] = 12 * 3600
+
+        warnings.warn("day_length = 0, this might cause error in calculate_radiation_diurnal_pattern")
         sunrise_sunset_daylength_seconds["day_length"] = 0
 
-    return sunrise_sunset_daylength_seconds
+    # Desegregation at the hourly time step -------------------------------------
+    time_hour = np.arange(0,24)
 
-    # Radiation  --------------------------------------------------------------
+    # time relative to sunset (in seconds)
+    time_relative_to_sunset_sec = (time_hour * 3600) - sunrise_sunset_daylength_seconds['sunset']
+
+    # Radiation  ----------------------------------------------------------------
+    radiation = []
+    if sunrise_sunset_daylength_seconds['day_length'] == 0:
+        warnings.warn("day_length specified as 0.001 and not 0 for calculating radiation")
+
+        for each_time_step in time_relative_to_sunset_sec:
+            radiation.append(calculate_radiation_diurnal_pattern(time_of_the_day = each_time_step,
+                                                                 # 0.001 added to avoid division by 0
+                                                                 day_length = (sunrise_sunset_daylength_seconds['day_length'] + 0.001))
+                             )
+
+        # Convert list to np.array
+        radiation = np.array(radiation)
+
+    else:
+        for each_time_step in time_relative_to_sunset_sec:
+            radiation.append(calculate_radiation_diurnal_pattern(time_of_the_day = each_time_step,
+                                                                 day_length = sunrise_sunset_daylength_seconds['day_length'] )
+                             )
+
+        # Flatten radiation. Step done because the list comprehension returns a
+        # list with several arrays
+        radiation = np.concatenate(radiation).ravel()
+
+    # Set 0 radiation at night
+    #radiation[(time_relative_to_sunset_sec < 0) | ((time_hour * 3600) >= sunrise_sunset_daylength_seconds["sunset"])] = 0
+
+    #return radiation
+
