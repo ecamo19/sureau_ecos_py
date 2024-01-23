@@ -2,8 +2,8 @@
 
 # %% auto 0
 __all__ = ['compute_vpd_from_t_rh', 'compute_etp_pt', 'compute_etp_pm', 'calculate_radiation_diurnal_pattern',
-           'calculate_temperature_diurnal_pattern', 'calculate_rh_diurnal_pattern', 'ppfd_umol_to_rg_watt',
-           'rg_watt_to_ppfd_umol', 'rg_conversions', 'declination', 'day_length']
+           'calculate_temperature_diurnal_pattern', 'calculate_rh_diurnal_pattern', 'rg_watt_ppfd_umol_conversions',
+           'rg_units_conversion', 'declination', 'potential_par', 'day_length']
 
 # %% ../nbs/00_climate_utils.ipynb 3
 import warnings
@@ -12,7 +12,7 @@ import collections
 import numpy as np
 from math import pi
 from typing import List, Dict
-from numpy import exp, cos, sin, arccos
+from numpy import exp, cos, sin, arccos, arctan
 
 # %% ../nbs/00_climate_utils.ipynb 4
 def compute_vpd_from_t_rh(
@@ -207,41 +207,74 @@ def calculate_rh_diurnal_pattern(
     return rhmax + ((temperature - tmin) / (tmax - tmin)) * (rhmin - rhmax)
 
 # %% ../nbs/00_climate_utils.ipynb 23
-def ppfd_umol_to_rg_watt(
-    ppfd: float,  # Photosynthetic photon flux density (umol.m-2.s-1)
+def rg_watt_ppfd_umol_conversions(
+    ppfd: float = None,  # Photosynthetic photon flux density (umol.m-2.s-1)
+    rg: float = None,  # Global radiation (W/m2)
     j_to_mol: float = 4.6,  # Conversion factor
     frac_par: float = 0.5,  # Function of solar rdiation that is photosynthetically active radiation (PAR)
+    selected_conversion:str = ["rg_watts_to_ppfd_umol", "ppfd_umol_to_rg_watts"] # String indicating to what units rg should be converted
 ) -> float:
-    "Convert ppfd (umol) to rg (watt)"
 
-    # calculate Global radiation (rg)(W/m2) -------------------------------------
-    rg = ppfd / frac_par / j_to_mol
-    return rg
-
-# %% ../nbs/00_climate_utils.ipynb 24
-def rg_watt_to_ppfd_umol(
-    rg: float,  # Global radiation (W/m2)
-    j_to_mol: float = 4.6,  # Conversion factor
-    frac_par: float = 0.5,  # Function of solar rdiation that is photosynthetically active radiation (PAR)
-) -> float:
-    "Convert rg in watts to photosynthetic photon flux density (ppfd) in umol"
-
-    # calculate Photosynthetic photon flux density (umol.m-2.s-1) ---------------
-
-    return rg * frac_par * j_to_mol
-
-# %% ../nbs/00_climate_utils.ipynb 25
-def rg_conversions(
-    rg_watts: float = None,  # instantaneous radiation (watt)
-    rg_mj: float = None,  # instantaneous radiation (in Mega Jule?)
-    nhours: float = None,  # Unknown parameter definition
-    selected_conversion:str = ["watts_to_mj", "mj_to_watts"] # String indicating to what units rg should be converted
-) -> float:
-    "Convert instantaneous radiation in watt to dialy cumulative radiation in MJ (MJ.day-1)"
+    "Convert Global Radiation (rg) in watts to Photosynthetic Photon Flux Density (ppfd) in umol and viceversa"
 
     # Assert parameters ---------------------------------------------------------
 
-    # Make sure that resolution output only has three options
+    # Make sure that selected_conversion only has three options
+    assert (
+        selected_conversion
+        in [
+            "ppfd_umol_to_rg_watts",
+            "rg_watts_to_ppfd_umol"
+        ]
+    ), f'{selected_conversion} not a valid option for selected_conversion, select "ppfd_umol_to_rg_watts" or "rg_watts_to_ppfd_umol"'
+
+
+    # Make sure the necessary parameters for a given conversion are provided
+    if selected_conversion == "ppfd_umol_to_rg_watts":
+        assert (isinstance(ppfd, float) | isinstance(ppfd, int)),'ppfd missing. Parameter must be a float or integer value'
+
+    elif selected_conversion == "rg_watts_to_ppfd_umol":
+        assert (isinstance(rg, float) | isinstance(rg, int) ),'rg missing. Parameter must be a float or integer value'
+
+
+    # Warn in case j_to_mol or frac_par are not provided
+    if j_to_mol is 4.6:
+        warnings.warn("Using j_to_mol default value of 4.6")
+
+    if frac_par is None:
+        warnings.warn("Using frac_par default value of 0.5")
+
+    # Conversions ---------------------------------------------------------------
+
+    # Calculate rg from ppfd (rg)(W/m2)
+    if selected_conversion == "ppfd_umol_to_rg_watts":
+        print("Conversion of ppfd to rg")
+        return ppfd / frac_par / j_to_mol
+
+    # Calculate ppfd (umol.m-2.s-1) from rg
+    elif selected_conversion == "rg_watts_to_ppfd_umol":
+        print("Conversion of rg to ppfd")
+        return rg * frac_par * j_to_mol
+
+    else:
+        raise ValueError(
+            "Conversion failed"
+        )
+
+
+# %% ../nbs/00_climate_utils.ipynb 27
+def rg_units_conversion(
+    rg_watts: float = None,  # instantaneous radiation (watt)
+    rg_mj: float = None,  # instantaneous radiation (in Mega Jule?)
+    nhours: float = None,  # Unknown parameter definition
+    selected_conversion:str = ["watts_to_mj", "mj_to_watts", "mj_to_watts_hour"] # String indicating to what units rg should be converted
+) -> float:
+
+    "Convert instantaneous radiation in watt to dialy cumulative radiation in MJ (MJ.day-1) and viceversa"
+
+    # Assert parameters ---------------------------------------------------------
+
+    # Make sure that selected_conversion only has three options
     assert (
         selected_conversion
         in [
@@ -250,6 +283,24 @@ def rg_conversions(
             "mj_to_watts_hour"
         ]
     ), f'{selected_conversion} not a valid option for selected_conversion, select "watts_to_mj","mj_to_watts" or "mj_to_watts_hour"'
+
+
+    # Make sure the necessary parameters for a given conversion are provided
+    if selected_conversion == "watts_to_mj":
+        assert (isinstance(rg_watts, float) |
+                isinstance(rg_watts, int)),'rg_watts missing. Parameter must be a float or integer value'
+
+    elif selected_conversion == "mj_to_watts":
+        assert (isinstance(rg_mj, float) |
+                isinstance(rg_mj, int)),'rg_mj missing. Parameter must be a float or integer value'
+
+
+    elif selected_conversion == "mj_to_watts_hour":
+        assert (isinstance(rg_mj, float) |
+                isinstance(rg_mj, int)),'rg_mj missing. Parameter must be a float or integer value'
+
+        assert (isinstance(nhours, float) |
+                isinstance(nhours, int)),'nhours missing. Parameter must be a float or integer value'
 
     # Conversions ---------------------------------------------------------------
     if selected_conversion == "watts_to_mj":
@@ -272,13 +323,14 @@ def rg_conversions(
 
     else:
         raise ValueError(
-            "rg conversion failed"
+            "rg units conversion failed"
         )
 
 
-# %% ../nbs/00_climate_utils.ipynb 31
+# %% ../nbs/00_climate_utils.ipynb 32
 def declination(
     day_of_year: int,  # julian day (day of the year)
+    day_of_spring:int = 80 # Julian day representing the first day of spring
 ) -> float:  # Earth declination at day_of_year
     "Calculate declination of sun (radians ? ) for a given julian day (DOY)"
 
@@ -286,33 +338,72 @@ def declination(
 
     # Sin(23.5*pi/180), 23.5 = Earth declination
 
+    # Assert parameters ---------------------------------------------------------
+
+    # Day of year
+    # Using np.testing instead of assert because parameters can be np.arrays OR
+    # single values (i.e. 1). assert only works when params are always one type
+    # Solution from:
+    # https://stackoverflow.com/questions/45987962/why-arent-there-numpy-testing-assert-array-greater-assert-array-less-equal-as
+
+    np.testing.assert_array_compare(
+        operator.__gt__,
+        np.array(day_of_year),
+        0,
+        err_msg="\nday_of_year must be must be a integer value between 1-366\n",
+    )
+
+    np.testing.assert_array_less(
+        np.array(day_of_year),
+        367,
+        err_msg="\nError: day_of_year must be must be a integer value between 1-366\n",
+    )
+
+    # date_of_spring
+    assert isinstance(day_of_spring, int), 'day_of_spring must be must be a integer value i.e. 80, 90, 1'
+
     # Constans ------------------------------------------------------------------
+
     c1 = 0.398749068925246
 
     c2 = 2 * 3.1416 / 365
 
     # date of spring
-    c3 = 80
-    warnings.warn("date of spring set to {c3}. This might change for Australia")
+    day_of_spring_c3 = day_of_spring
+    warnings.warn(f"date of spring set to {day_of_spring_c3}. This might change for Australia")
 
-    x = c1 * sin((day_of_year - c3) * c2)  # ;
+    x = c1 * sin((day_of_year - day_of_spring_c3) * c2)
 
     # Return declination --------------------------------------------------------
-    return atan(x / ((1 - x * x) ^ 0.5))
+    return arctan(x / ((1 - x * x) ** 0.5))
 
-# %% ../nbs/00_climate_utils.ipynb 33
-def day_length(
-    latitude: float,  # numeric value specifying the geographic latitude (in decimal degrees) of the location of interest
-    day_of_year: int,  # numeric (usually integer) value or vector specifying the Julian day (day of the year), for which calculations should be done.
-    no_times_as_na: bool = False,  # parameter to determine whether for days without sunrise or sunset, na should be returned for Sunset and Sunrise. If left at FALSE, the function returns -99 and 99 for sunrise and sunset or polar nights and polar days, respectively
-) -> Dict:  # Dictionary with three elements Sunrise, Sunset and Daylength. For days without sunrise (polar nights),sunset and sunrise become -99 and the daylength 0. For days without sunset, sunset and sunrise are 99 and daylength 24.
-    "Original function from chillR R package. This function computes sunrise time, sunset time and daylength for a particular location and day of the year (Julian day). This is done using equations by Spencer (1971) and Almorox et al. (2005)."
+# %% ../nbs/00_climate_utils.ipynb 36
+def potential_par(time_of_day: float, # Array containing the time of the day (in hours) for which potential par should be calculated
+                  latitude: float,  # Numeric value specifying the geographic latitude (in decimal degrees) of the location of interest
+                  day_of_year: int,  # Julian day (day of the year)
+)-> np.array: # Potential Photosynthetic Active Radiation (PAR) for each time_of_day at given latitude and given day_of_year
+    "Determine potential for a given place and date /used to determine cloud cover return potential par in W.m2"
 
-    warnings.warn("Double check day_length function works for Australia")
+    # Assert parameters ---------------------------------------------------------
+
+    # time_of_day
+    np.testing.assert_array_compare(
+        operator.__ge__,
+        np.array(time_of_day),
+        0,
+        err_msg="\ntime_of_day must be must equal or greater than 0\n",
+    )
+
+    np.testing.assert_array_less(
+        np.array(time_of_day),
+        25,
+        err_msg="\nError: time_of_day must be must be equal or lower than 24\n",
+    )
 
     # Latitude
+    # Latitude
     assert (
-        isinstance(latitude, float) and 95 >= latitude >= -95
+        isinstance(latitude, float) | isinstance(latitude, int) and 95 >= latitude >= -95
     ), "Provide latitude as coordinates points bewteen -90 and 90 i.e. latitude = 41.40338"
 
     # Day of year
@@ -327,6 +418,90 @@ def day_length(
         0,
         err_msg="\nday_of_year must be must be a integer value between 1-366\n",
     )
+
+    np.testing.assert_array_less(
+        np.array(day_of_year),
+        367,
+        err_msg="\nError: day_of_year must be must be a integer value between 1-366\n",
+    )
+
+
+    # Calculate declination -----------------------------------------------------
+    decl = declination(day_of_year = day_of_year,
+                       day_of_spring = 80)
+
+    # Define constants ----------------------------------------------------------
+    diffuse_fraction = 0.1
+    solar_constant = 2084
+    attenuation_coef = -0.174353387144778
+
+    pn = -cos(latitude * 3.1416 / 180)
+
+    pz = sin(latitude * 3.1416 / 180)
+
+    h_rad = (time_of_day - 6) * 3.1416 / 12
+
+    se = cos(h_rad) * cos(decl)
+    sn = -pz * sin(h_rad) * cos(decl) - pn * sin(decl)
+    sz = -pn * sin(h_rad) * cos(decl) + pz * sin(decl)
+
+    alt = arctan(sz / ((se * se + sn * sn) ** 0.5))
+    azi = 3.1416 + arctan(se / sn)
+
+    # Calculate potential par ---------------------------------------------------
+
+    # Step implemented in case azi is a single value i.e. azi = 39
+    if isinstance(azi, float):
+        # Transform float into array
+        azi = np.array([azi])
+
+    azi[sn > 0] = azi[sn > 0] + 3.1416
+
+    pfd = solar_constant * exp(attenuation_coef / sin(alt))
+
+    # Step implemented in case pfd is a single value i.e. pdf = 41
+    if isinstance(pfd, float):
+        # Transform float into array
+        pfd = np.array([pfd])
+
+    pfd[alt < 0] = 0
+
+    dpfd = diffuse_fraction * pfd
+    dpfd[alt<0] = 0
+
+    return dpfd + pfd * sin(alt)
+
+
+
+# %% ../nbs/00_climate_utils.ipynb 40
+def day_length(
+    latitude: float,  # numeric value specifying the geographic latitude (in decimal degrees) of the location of interest
+    day_of_year: int,  # numeric (usually integer) value or vector specifying the Julian day (day of the year), for which calculations should be done.
+    no_times_as_na: bool = False,  # parameter to determine whether for days without sunrise or sunset, na should be returned for Sunset and Sunrise. If left at FALSE, the function returns -99 and 99 for sunrise and sunset or polar nights and polar days, respectively
+) -> Dict:  # Dictionary with three elements Sunrise, Sunset and Daylength. For days without sunrise (polar nights),sunset and sunrise become -99 and the daylength 0. For days without sunset, sunset and sunrise are 99 and daylength 24.
+    "Original function from chillR R package. This function computes sunrise time, sunset time and daylength for a particular location and day of the year (Julian day). This is done using equations by Spencer (1971) and Almorox et al. (2005)."
+
+    warnings.warn("Double check day_length function works for Australia")
+
+    # Assert parameters ---------------------------------------------------------
+    # Latitude
+    assert (
+        isinstance(latitude, float) | isinstance(latitude, int) and 95 >= latitude >= -95
+    ), "Provide latitude as coordinates points bewteen -90 and 90 i.e. latitude = 41.40338"
+
+    # Day of year
+    # Using np.testing instead of assert because parameters can be np.arrays OR
+    # single values (i.e. 1). assert only works when params are always one type
+    # Solution from:
+    # https://stackoverflow.com/questions/45987962/why-arent-there-numpy-testing-assert-array-greater-assert-array-less-equal-as
+
+    np.testing.assert_array_compare(
+        operator.__gt__,
+        np.array(day_of_year),
+        0,
+        err_msg="\nday_of_year must be must be a integer value between 1-366\n",
+    )
+
     np.testing.assert_array_less(
         np.array(day_of_year),
         367,
