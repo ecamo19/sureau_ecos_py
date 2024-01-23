@@ -237,10 +237,10 @@ def rg_watt_ppfd_umol_conversions(
         ), "rg missing. Parameter must be a float or integer value"
 
     # Warn in case j_to_mol or frac_par are not provided
-    if j_to_mol is 4.6:
+    if j_to_mol == 4.6:
         warnings.warn("Using j_to_mol default value of 4.6")
 
-    if frac_par is None:
+    if frac_par == 0.5:
         warnings.warn("Using frac_par default value of 0.5")
 
     # Conversions ---------------------------------------------------------------
