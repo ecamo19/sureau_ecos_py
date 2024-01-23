@@ -136,11 +136,10 @@ def compute_etp_pm(
 
 # %% ../nbs/00_climate_utils.ipynb 18
 def calculate_radiation_diurnal_pattern(
-    time_of_the_day:int,  # a numeric value of vector indicating the time of the day (in seconds)
+    time_of_the_day: int,  # a numeric value of vector indicating the time of the day (in seconds)
     day_length: int,  # value indicating the duration of the day (in seconds). Calculated using the `day_length` function
 ) -> float:
     "Calculated diurnal pattern of temperature assuming a sinusoidal pattern with T = tmin at sunrise and T = (tmin + tmax)/2 at sunset. From sunset to sunrise follows a linear trend"
-
 
     # Calculate_radiation_diurnal_pattern ---------------------------------------
 
@@ -212,30 +211,30 @@ def rg_watt_ppfd_umol_conversions(
     rg: float = None,  # Global radiation (W/m2)
     j_to_mol: float = 4.6,  # Conversion factor
     frac_par: float = 0.5,  # Function of solar rdiation that is photosynthetically active radiation (PAR)
-    selected_conversion:str = ["rg_watts_to_ppfd_umol", "ppfd_umol_to_rg_watts"] # String indicating to what units rg should be converted
+    selected_conversion: str = [
+        "rg_watts_to_ppfd_umol",
+        "ppfd_umol_to_rg_watts",
+    ],  # String indicating to what units rg should be converted
 ) -> float:
-
     "Convert Global Radiation (rg) in watts to Photosynthetic Photon Flux Density (ppfd) in umol and viceversa"
 
     # Assert parameters ---------------------------------------------------------
 
     # Make sure that selected_conversion only has three options
     assert (
-        selected_conversion
-        in [
-            "ppfd_umol_to_rg_watts",
-            "rg_watts_to_ppfd_umol"
-        ]
+        selected_conversion in ["ppfd_umol_to_rg_watts", "rg_watts_to_ppfd_umol"]
     ), f'{selected_conversion} not a valid option for selected_conversion, select "ppfd_umol_to_rg_watts" or "rg_watts_to_ppfd_umol"'
-
 
     # Make sure the necessary parameters for a given conversion are provided
     if selected_conversion == "ppfd_umol_to_rg_watts":
-        assert (isinstance(ppfd, float) | isinstance(ppfd, int)),'ppfd missing. Parameter must be a float or integer value'
+        assert isinstance(ppfd, float) | isinstance(
+            ppfd, int
+        ), "ppfd missing. Parameter must be a float or integer value"
 
     elif selected_conversion == "rg_watts_to_ppfd_umol":
-        assert (isinstance(rg, float) | isinstance(rg, int) ),'rg missing. Parameter must be a float or integer value'
-
+        assert isinstance(rg, float) | isinstance(
+            rg, int
+        ), "rg missing. Parameter must be a float or integer value"
 
     # Warn in case j_to_mol or frac_par are not provided
     if j_to_mol is 4.6:
@@ -257,50 +256,47 @@ def rg_watt_ppfd_umol_conversions(
         return rg * frac_par * j_to_mol
 
     else:
-        raise ValueError(
-            "Conversion failed"
-        )
-
+        raise ValueError("Conversion failed")
 
 # %% ../nbs/00_climate_utils.ipynb 27
 def rg_units_conversion(
     rg_watts: float = None,  # instantaneous radiation (watt)
     rg_mj: float = None,  # instantaneous radiation (in Mega Jule?)
     nhours: float = None,  # Unknown parameter definition
-    selected_conversion:str = ["watts_to_mj", "mj_to_watts", "mj_to_watts_hour"] # String indicating to what units rg should be converted
+    selected_conversion: str = [
+        "watts_to_mj",
+        "mj_to_watts",
+        "mj_to_watts_hour",
+    ],  # String indicating to what units rg should be converted
 ) -> float:
-
     "Convert instantaneous radiation in watt to dialy cumulative radiation in MJ (MJ.day-1) and viceversa"
 
     # Assert parameters ---------------------------------------------------------
 
     # Make sure that selected_conversion only has three options
     assert (
-        selected_conversion
-        in [
-            "watts_to_mj",
-            "mj_to_watts",
-            "mj_to_watts_hour"
-        ]
+        selected_conversion in ["watts_to_mj", "mj_to_watts", "mj_to_watts_hour"]
     ), f'{selected_conversion} not a valid option for selected_conversion, select "watts_to_mj","mj_to_watts" or "mj_to_watts_hour"'
-
 
     # Make sure the necessary parameters for a given conversion are provided
     if selected_conversion == "watts_to_mj":
-        assert (isinstance(rg_watts, float) |
-                isinstance(rg_watts, int)),'rg_watts missing. Parameter must be a float or integer value'
+        assert isinstance(rg_watts, float) | isinstance(
+            rg_watts, int
+        ), "rg_watts missing. Parameter must be a float or integer value"
 
     elif selected_conversion == "mj_to_watts":
-        assert (isinstance(rg_mj, float) |
-                isinstance(rg_mj, int)),'rg_mj missing. Parameter must be a float or integer value'
-
+        assert isinstance(rg_mj, float) | isinstance(
+            rg_mj, int
+        ), "rg_mj missing. Parameter must be a float or integer value"
 
     elif selected_conversion == "mj_to_watts_hour":
-        assert (isinstance(rg_mj, float) |
-                isinstance(rg_mj, int)),'rg_mj missing. Parameter must be a float or integer value'
+        assert isinstance(rg_mj, float) | isinstance(
+            rg_mj, int
+        ), "rg_mj missing. Parameter must be a float or integer value"
 
-        assert (isinstance(nhours, float) |
-                isinstance(nhours, int)),'nhours missing. Parameter must be a float or integer value'
+        assert isinstance(nhours, float) | isinstance(
+            nhours, int
+        ), "nhours missing. Parameter must be a float or integer value"
 
     # Conversions ---------------------------------------------------------------
     if selected_conversion == "watts_to_mj":
@@ -322,15 +318,12 @@ def rg_units_conversion(
         return rg_mj * (10**6 / (nhours * 3600))
 
     else:
-        raise ValueError(
-            "rg units conversion failed"
-        )
-
+        raise ValueError("rg units conversion failed")
 
 # %% ../nbs/00_climate_utils.ipynb 32
 def declination(
     day_of_year: int,  # julian day (day of the year)
-    day_of_spring:int = 80 # Julian day representing the first day of spring
+    day_of_spring: int = 80,  # Julian day representing the first day of spring
 ) -> float:  # Earth declination at day_of_year
     "Calculate declination of sun (radians ? ) for a given julian day (DOY)"
 
@@ -360,7 +353,9 @@ def declination(
     )
 
     # date_of_spring
-    assert isinstance(day_of_spring, int), 'day_of_spring must be must be a integer value i.e. 80, 90, 1'
+    assert isinstance(
+        day_of_spring, int
+    ), "day_of_spring must be must be a integer value i.e. 80, 90, 1"
 
     # Constans ------------------------------------------------------------------
 
@@ -370,7 +365,9 @@ def declination(
 
     # date of spring
     day_of_spring_c3 = day_of_spring
-    warnings.warn(f"date of spring set to {day_of_spring_c3}. This might change for Australia")
+    warnings.warn(
+        f"date of spring set to {day_of_spring_c3}. This might change for Australia"
+    )
 
     x = c1 * sin((day_of_year - day_of_spring_c3) * c2)
 
@@ -378,10 +375,11 @@ def declination(
     return arctan(x / ((1 - x * x) ** 0.5))
 
 # %% ../nbs/00_climate_utils.ipynb 36
-def potential_par(time_of_day: float, # Array containing the time of the day (in hours) for which potential par should be calculated
-                  latitude: float,  # Numeric value specifying the geographic latitude (in decimal degrees) of the location of interest
-                  day_of_year: int,  # Julian day (day of the year)
-)-> np.array: # Potential Photosynthetic Active Radiation (PAR) for each time_of_day at given latitude and given day_of_year
+def potential_par(
+    time_of_day: float,  # Array containing the time of the day (in hours) for which potential par should be calculated
+    latitude: float,  # Numeric value specifying the geographic latitude (in decimal degrees) of the location of interest
+    day_of_year: int,  # Julian day (day of the year)
+) -> np.array:  # Potential Photosynthetic Active Radiation (PAR) for each time_of_day at given latitude and given day_of_year
     "Determine potential for a given place and date /used to determine cloud cover return potential par in W.m2"
 
     # Assert parameters ---------------------------------------------------------
@@ -403,7 +401,8 @@ def potential_par(time_of_day: float, # Array containing the time of the day (in
     # Latitude
     # Latitude
     assert (
-        isinstance(latitude, float) | isinstance(latitude, int) and 95 >= latitude >= -95
+        isinstance(latitude, float) | isinstance(latitude, int)
+        and 95 >= latitude >= -95
     ), "Provide latitude as coordinates points bewteen -90 and 90 i.e. latitude = 41.40338"
 
     # Day of year
@@ -425,10 +424,8 @@ def potential_par(time_of_day: float, # Array containing the time of the day (in
         err_msg="\nError: day_of_year must be must be a integer value between 1-366\n",
     )
 
-
     # Calculate declination -----------------------------------------------------
-    decl = declination(day_of_year = day_of_year,
-                       day_of_spring = 80)
+    decl = declination(day_of_year=day_of_year, day_of_spring=80)
 
     # Define constants ----------------------------------------------------------
     diffuse_fraction = 0.1
@@ -467,11 +464,9 @@ def potential_par(time_of_day: float, # Array containing the time of the day (in
     pfd[alt < 0] = 0
 
     dpfd = diffuse_fraction * pfd
-    dpfd[alt<0] = 0
+    dpfd[alt < 0] = 0
 
     return dpfd + pfd * sin(alt)
-
-
 
 # %% ../nbs/00_climate_utils.ipynb 40
 def day_length(
@@ -486,7 +481,8 @@ def day_length(
     # Assert parameters ---------------------------------------------------------
     # Latitude
     assert (
-        isinstance(latitude, float) | isinstance(latitude, int) and 95 >= latitude >= -95
+        isinstance(latitude, float) | isinstance(latitude, int)
+        and 95 >= latitude >= -95
     ), "Provide latitude as coordinates points bewteen -90 and 90 i.e. latitude = 41.40338"
 
     # Day of year
@@ -511,12 +507,13 @@ def day_length(
     # Define constants ----------------------------------------------------------
     gamma = 2 * (pi / 365) * ((day_of_year) - 1)
     delta = (180 / pi) * (
-        0.006918 - 0.399912 * cos(gamma) + 0.070257 * sin(gamma)
+        0.006918
+        - 0.399912 * cos(gamma)
+        + 0.070257 * sin(gamma)
         - 0.006758 * cos(2 * gamma)
-            + 0.000907 * sin(2 * (gamma))
-            - 0.002697 * cos(3 * (gamma))
-            + 0.00148 * sin(3 * (gamma))
-
+        + 0.000907 * sin(2 * (gamma))
+        - 0.002697 * cos(3 * (gamma))
+        + 0.00148 * sin(3 * (gamma))
     )
 
     cos_wo = (

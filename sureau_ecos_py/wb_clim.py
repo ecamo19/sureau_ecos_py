@@ -12,9 +12,9 @@ from pandera.typing import DataFrame
 from sureau_ecos_py.climate_utils import (
     compute_vpd_from_t_rh,
     day_length,
-    calculate_radiation_diurnal_pattern
-    #rg_watt_to_ppfd_umol,
-    #rg_convertions
+    calculate_radiation_diurnal_pattern,
+    # rg_watt_to_ppfd_umol,
+    # rg_convertions
 )
 from sureau_ecos_py.create_simulation_parameters import (
     create_simulation_parameters,
@@ -42,11 +42,10 @@ def new_wb_clim(
         isinstance(day_of_year, int) and 366 >= day_of_year >= 1
     ), "day_of_year must be a integer value between 1-366"
 
-
     # Assert row index start at 1 and not at 0
-    assert(
+    assert (
         np.array(climate_data.index)[0] != 0
-    ), 'First row index is 0 and should be 1. Fix before proceeding'
+    ), "First row index is 0 and should be 1. Fix before proceeding"
 
     # Create wb_clim dictionary -------------------------------------------------
 
@@ -54,21 +53,26 @@ def new_wb_clim(
     if (
         year in climate_data["year"].values
         and day_of_year in climate_data["day_of_year"].values
-        ):
-
+    ):
         # Make sure there are no rows with the same date
-        if len(climate_data[(climate_data["year"] == year)
-                            & (climate_data["day_of_year"] == day_of_year)]) == 1:
-
+        if (
+            len(
+                climate_data[
+                    (climate_data["year"] == year)
+                    & (climate_data["day_of_year"] == day_of_year)
+                ]
+            )
+            == 1
+        ):
             # Get row index in climate frame based on year and doy
             row_index = climate_data[
                 (climate_data["year"] == year)
                 & (climate_data["day_of_year"] == day_of_year)
-                ].index[0]
+            ].index[0]
 
             # Transfrom row to a dictionary with params
             wb_clim_dict = collections.defaultdict(
-            list, dict(climate_data.loc[row_index])
+                list, dict(climate_data.loc[row_index])
             )
 
         else:
@@ -91,17 +95,16 @@ def new_wb_clim(
     )
 
     # Rename parameters
-    wb_clim_dict['ppt'] = wb_clim_dict['PPT_sum']
-    wb_clim_dict['rg'] = wb_clim_dict['RG_sum']
+    wb_clim_dict["ppt"] = wb_clim_dict["PPT_sum"]
+    wb_clim_dict["rg"] = wb_clim_dict["RG_sum"]
 
     # Delete old parameters
-    del wb_clim_dict['PPT_sum']
-    del wb_clim_dict['RG_sum']
+    del wb_clim_dict["PPT_sum"]
+    del wb_clim_dict["RG_sum"]
 
     # Add Temperature from previous and next days -------------------------------
 
     # Adding warning in case there row index start a 0 and not 1
-
 
     # cas normal
 
@@ -123,9 +126,7 @@ def new_wb_clim(
 
     # if the row_index is the first
     elif row_index == 1:
-        print(
-            "Firts day of the simulation. Tair is the same as the current"
-        )
+        print("Firts day of the simulation. Tair is the same as the current")
 
         wb_clim_dict["Tair_min_prev"] = climate_data.loc[row_index]["Tair_min"]
         wb_clim_dict["Tair_min_next"] = climate_data.loc[row_index + 1][
@@ -320,9 +321,9 @@ def new_wb_clim_hour(
     # Add parameters
     wb_clim_hour["rg"] = wb_clim["rg"] * radiation * 3600
     wb_clim_hour["rn"] = wb_clim["net_radiation"] * radiation * 3600
-    #wb_clim_hour["par"] = rg_watt_to_ppfd_umol(
+    # wb_clim_hour["par"] = rg_watt_to_ppfd_umol(
     #    rg_convertions(rg_mj=wb_clim_hour["rg"], nhours=1)
-    #)
+    # )
     # wb_clim_hour[''] =
 
     return wb_clim_hour

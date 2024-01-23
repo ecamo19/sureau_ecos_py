@@ -26,7 +26,7 @@ def create_simulation_parameters(
     # Make sure output_path and main_dir are str
     assert isinstance(
         output_path, str
-    ),f"output_path must be a string not a {type(output_path)}"
+    ), f"output_path must be a string not a {type(output_path)}"
 
     assert isinstance(
         main_dir, str
@@ -73,7 +73,6 @@ def create_simulation_parameters(
     simulation_parameters["end_year_simulation"] = end_year_simulation
     simulation_parameters["output_path"] = output_path
 
-
     if output_type is None:
         if resolution_output == "subdaily":
             simulation_parameters["output_type"] = "simple_subdaily"
@@ -93,7 +92,6 @@ def create_simulation_parameters(
 
     # New folder
     if not os.path.exists(output_path):
-
         # Create folder
         os.mkdir(output_path)
         print("Directory for storing output created at {output_path}")
@@ -103,7 +101,7 @@ def create_simulation_parameters(
         shutil.rmtree(output_path)
         os.makedirs(output_path)
         simulation_parameters["output_path"] = output_path
-        print(f'Directory ({output_path}) for storing output overwritten')
+        print(f"Directory ({output_path}) for storing output overwritten")
 
     # Errors
     elif os.path.exists(output_path) and overwrite is False:
