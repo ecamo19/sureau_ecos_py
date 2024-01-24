@@ -48,18 +48,18 @@ def compute_vpd_from_t_rh(
     # temperature
     np.testing.assert_array_compare(
         operator.__gt__,
-        np.array(relative_humidity),
+        np.array(temperature),
         -100,
         err_msg="\ntemperature must be must be value between -100 and 100\n",
     )
 
     np.testing.assert_array_less(
-        np.array(relative_humidity),
+        np.array(temperature),
         101,
         err_msg="\ntemperature must be must be value between -100 and 100\n",
     )
 
-    # Constants -----------------------------------------------------------------
+    # Define Constants ----------------------------------------------------------
 
     # molar weight dry air (g/mol)
     mass = 28.966
@@ -76,10 +76,11 @@ def compute_vpd_from_t_rh(
     # D_air not used in this function??
     #d_air = ((air_pressure) / (rgz * (temp_kelvin))) * mass
 
-    # Compute VPD -------------------------------------------------------------
     es = 6.108 * exp(17.27 * temperature / (237.2 + temperature)) * 100
 
     ea = relative_humidity * es / 100
+
+    # Compute VPD ---------------------------------------------------------------
 
     vpd = (es - ea) / 1000
 
