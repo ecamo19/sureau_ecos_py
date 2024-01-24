@@ -450,13 +450,11 @@ def rg_watt_ppfd_umol_conversions(
     # Make sure the necessary parameters for a given conversion are provided
     if selected_conversion == "ppfd_umol_to_rg_watts":
         assert isinstance(ppfd, float) | isinstance(
-            ppfd, int
-        ), "ppfd missing. Parameter must be a float or integer value"
+            ppfd, int) | isinstance(ppfd, np.ndarray), "ppfd missing. Parameter must be a float or integer value"
 
     elif selected_conversion == "rg_watts_to_ppfd_umol":
         assert isinstance(rg, float) | isinstance(
-            rg, int
-        ), "rg missing. Parameter must be a float or integer value"
+            rg, int) | isinstance(rg, np.ndarray), "rg missing. Parameter must be a float or integer value"
 
     # Warn in case j_to_mol or frac_par are not provided
     if j_to_mol == 4.6:

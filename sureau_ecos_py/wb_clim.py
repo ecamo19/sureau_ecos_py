@@ -324,7 +324,7 @@ def new_wb_clim_hour(
     wb_clim_hour["rn"] = wb_clim["net_radiation"] * radiation * 3600
 
     wb_clim_hour["par"] = rg_watt_ppfd_umol_conversions(
-        rg = rg_units_conversion(rg_mj =1, #wb_clim_hour["rg"],
+        rg = rg_units_conversion(rg_mj = wb_clim_hour["rg"],
                                  nhours=1,
                                  selected_conversion="mj_to_watts_hour"),
 
