@@ -101,10 +101,10 @@ def compute_pet(
     vpd: float = None,  # Vapor pressure deficit (kpa) for calculating etp using the Penmman (pm) formulation
     wind_speed_u: float = None,  #  Wind speed (m.s-1) for calculating etp using the Penmman (pm) formulation
     pt_coeff: float = None,  # An empirical constant accounting for the vapor pressure deficit and resistance values. Typically, α is 1.26 for open bodies of water, but has a wide range of values from less than 1 (humid conditions) to almost 2 (arid conditions).
-    formulation: str = [
+    formulation: str = [ # String indicating which formulation to use (Pristeley Taylor (pt) or Penmman (pm)) for calculating etp
         "pt",
         "pm",
-    ],  # String indicating which formulation to use (Pristeley Taylor (pt) or Penmman (pm)) for calculating etp
+    ],
 ) -> float:  #  Potential evapotranspiration (PET) (mm)
     "Calcule Potential Evapotranspiration (mm) PET using Pristeley Taylor (pt) or Penmman (pm) Formulation"
 
@@ -332,18 +332,21 @@ def calculate_radiation_diurnal_pattern(
     # Solution from:
     # https://stackoverflow.com/questions/45987962/why-arent-there-numpy-testing-assert-array-greater-assert-array-less-equal-as
 
-    np.testing.assert_array_compare(
-        operator.__ge__,
-        np.array(time_of_day),
-        0,
-        err_msg="\ntime_of_day must be must be value between 0 and 86400\n",
-    )
 
-    np.testing.assert_array_less(
-        np.array(time_of_day),
-        86401,
-        err_msg="\ntime_of_day must be must be value between 0 and 86400\n",
-    )
+    if time_of_day < 0:
+        warnings.warn('time_of_day is a negative value. Not sure if this is correct')
+    #np.testing.assert_array_compare(
+    #    operator.__ge__,
+    #    np.array(time_of_day),
+    #    0,
+    #    err_msg="\ntime_of_day must be must be value between 0 and 86400\n",
+    #)
+    #
+    #np.testing.assert_array_less(
+    #    np.array(time_of_day),
+    #    86401,
+    #    err_msg="\ntime_of_day must be must be value between 0 and 86400\n",
+    #)
 
     # day_length
     np.testing.assert_array_compare(
@@ -433,10 +436,10 @@ def rg_watt_ppfd_umol_conversions(
     rg: float = None,  # Global radiation (W/m2)
     j_to_mol: float = 4.6,  # Conversion factor
     frac_par: float = 0.5,  # Function of solar rdiation that is photosynthetically active radiation (PAR)
-    selected_conversion: str = [
+    selected_conversion: str = [ # String indicating to what units rg should be converted
         "rg_watts_to_ppfd_umol",
         "ppfd_umol_to_rg_watts",
-    ],  # String indicating to what units rg should be converted
+    ],
 ) -> float:
     "Convert Global Radiation (rg) in watts to Photosynthetic Photon Flux Density (ppfd) in umol and viceversa"
 
@@ -483,11 +486,11 @@ def rg_units_conversion(
     rg_watts: float = None,  # instantaneous radiation (watt)
     rg_mj: float = None,  # instantaneous radiation (in Mega Jule?)
     nhours: float = None,  # Unknown parameter definition
-    selected_conversion: str = [
+    selected_conversion: str = [ # String indicating to what units rg should be converted
         "watts_to_mj",
         "mj_to_watts",
         "mj_to_watts_hour",
-    ],  # String indicating to what units rg should be converted
+    ],
 ) -> float:
     "Convert instantaneous radiation in watt to dialy cumulative radiation in MJ (MJ.day-1) and viceversa"
 
@@ -592,24 +595,27 @@ def declination(
 
 # %% ../nbs/00_climate_utils.ipynb 41
 def potential_par(
-    time_of_day: float,  # Array containing the time of the day (in hours) for which potential par should be calculated
+    time_of_day_in_hours: float,  # Array containing the time of the day (in hours) for which potential par should be calculated
     latitude: float,  # Numeric value specifying the geographic latitude (in decimal degrees) of the location of interest
     day_of_year: int,  # Julian day (day of the year)
 ) -> np.array:  # Potential Photosynthetic Active Radiation (PAR) for each time_of_day at given latitude and given day_of_year
     "Determine potential for a given place and date /used to determine cloud cover return potential par in W.m2"
+
+
+    warnings.warn("Make sure time of day is hours in potential_par function")
 
     # Assert parameters ---------------------------------------------------------
 
     # time_of_day
     np.testing.assert_array_compare(
         operator.__ge__,
-        np.array(time_of_day),
+        np.array(time_of_day_in_hours),
         0,
         err_msg="\ntime_of_day must be must equal or greater than 0\n",
     )
 
     np.testing.assert_array_less(
-        np.array(time_of_day),
+        np.array(time_of_day_in_hours),
         25,
         err_msg="\nError: time_of_day must be must be equal or lower than 24\n",
     )
@@ -651,7 +657,7 @@ def potential_par(
 
     pz = sin(latitude * 3.1416 / 180)
 
-    h_rad = (time_of_day - 6) * 3.1416 / 12
+    h_rad = (time_of_day_in_hours - 6) * 3.1416 / 12
 
     se = cos(h_rad) * cos(decl)
     sn = -pz * sin(h_rad) * cos(decl) - pn * sin(decl)

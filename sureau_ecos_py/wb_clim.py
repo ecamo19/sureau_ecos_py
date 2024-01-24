@@ -266,7 +266,7 @@ def new_wb_clim_hour(
 
     # time relative to sunset (in seconds)
     warnings.warn(
-        "Comment in R code say time relative to sunset but sunrise parameter was used instead"
+        "Issue #3 in gitlab not solved. Comment in R code say time relative to sunset but sunrise parameter was used instead."
     )
     time_relative_to_sunset_sec = (
         time_hour * 3600
@@ -323,14 +323,14 @@ def new_wb_clim_hour(
 
     wb_clim_hour["rn"] = wb_clim["net_radiation"] * radiation * 3600
 
-    wb_clim_hour["par"] = rg_watt_ppfd_umol_conversions(
-        rg = rg_units_conversion(rg_mj = wb_clim_hour["rg"],
-                                 nhours=1,
-                                 selected_conversion="mj_to_watts_hour"),
+    #wb_clim_hour["par"] = rg_watt_ppfd_umol_conversions(
+    #    rg = rg_units_conversion(rg_mj = wb_clim_hour["rg"],
+    #                             nhours=1,
+    #                             selected_conversion="mj_to_watts_hour"),
 
-         selected_conversion = "rg_watts_to_ppfd_umol"
+    #     selected_conversion = "rg_watts_to_ppfd_umol"
 
-         )
+    #     )
     # wb_clim_hour[''] =
 
     return wb_clim_hour
