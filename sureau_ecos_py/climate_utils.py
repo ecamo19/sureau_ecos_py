@@ -336,13 +336,13 @@ def calculate_radiation_diurnal_pattern(
         operator.__ge__,
         np.array(time_of_day),
         0,
-        err_msg="\nrelative_humidity must be must be a integer value between 0-100\n",
+        err_msg="\ntime_of_day must be must be value between 0 and 86400\n",
     )
 
     np.testing.assert_array_less(
         np.array(time_of_day),
-        86400,
-        err_msg="\nrelative_humidity must be must be a integer value between 0-100\n",
+        86401,
+        err_msg="\ntime_of_day must be must be value between 0 and 86400\n",
     )
 
     # day_length
