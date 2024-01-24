@@ -10,11 +10,12 @@ import numpy as np
 from typing import Dict
 from pandera.typing import DataFrame
 from sureau_ecos_py.climate_utils import (
-    compute_vpd_from_t_rh,
     day_length,
-    calculate_radiation_diurnal_pattern,
+    potential_par,
+    rg_units_conversion,
+    compute_vpd_from_t_rh,
     rg_watt_ppfd_umol_conversions,
-    rg_units_conversion
+    calculate_radiation_diurnal_pattern,
 )
 from sureau_ecos_py.create_simulation_parameters import (
     create_simulation_parameters,
@@ -222,7 +223,7 @@ def new_wb_clim_hour(
 
     else:
         warnings.warn(
-            "Warning: constant_climate parameter set to True in modeling_options, using default parameters"
+            "Warning: Parameter constant_climate in modeling_options set to True, using default parameters"
         )
 
         # Calculate day_length
@@ -288,30 +289,32 @@ def new_wb_clim_hour(
                     day_length=(0.001),
                 )
             )
-        # Convert list to np.array
-        radiation = np.array(radiation)
+
 
     elif sunrise_sunset_daylength_seconds["day_length"] > 0:
         for each_time_step in time_relative_to_sunset_sec:
+
             radiation.append(
                 calculate_radiation_diurnal_pattern(
                     time_of_day=each_time_step,
                     day_length=sunrise_sunset_daylength_seconds["day_length"],
                 )
             )
-        # Convert list to np.array
-        radiation = np.array(radiation)
 
     else:
         raise ValueError(
             f"Is day_length:{sunrise_sunset_daylength_seconds['day_length']} negative?"
         )
 
+    # Convert flatten np.array
+    radiation = np.array(radiation).flatten()
+
     # Set 0 radiation at night
     radiation[
         (time_relative_to_sunset_sec < 0)
         | ((time_hour * 3600) >= sunrise_sunset_daylength_seconds["sunset"])
     ] = 0
+
 
     # Create wb_clim_hour dictionary --------------------------------------------
 
@@ -323,14 +326,17 @@ def new_wb_clim_hour(
 
     wb_clim_hour["rn"] = wb_clim["net_radiation"] * radiation * 3600
 
-    #wb_clim_hour["par"] = rg_watt_ppfd_umol_conversions(
-    #    rg = rg_units_conversion(rg_mj = wb_clim_hour["rg"],
-    #                             nhours=1,
-    #                             selected_conversion="mj_to_watts_hour"),
+    # Get Photosyntetic Photon Flux Density (aka PAR) from rg
+    wb_clim_hour["par"] = rg_watt_ppfd_umol_conversions(
+        rg = rg_units_conversion(rg_mj = wb_clim_hour["rg"],
+                                 nhours=1,
+                                 selected_conversion="mj_to_watts_hour"),
+         selected_conversion = "rg_watts_to_ppfd_umol"
+         )
 
-    #     selected_conversion = "rg_watts_to_ppfd_umol"
-
-    #     )
-    # wb_clim_hour[''] =
+    # Potential par
+    wb_clim_hour['potential_par'] = potential_par(time_of_day_in_hours=time_hour,
+                                                  latitude=latitude,
+                                                  day_of_year=wb_clim["day_of_year"])
 
     return wb_clim_hour
