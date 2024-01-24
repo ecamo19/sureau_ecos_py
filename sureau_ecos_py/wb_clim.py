@@ -283,7 +283,7 @@ def new_wb_clim_hour(
         for each_time_step in time_relative_to_sunset_sec:
             radiation.append(
                 calculate_radiation_diurnal_pattern(
-                    time_of_the_day=each_time_step,
+                    time_of_day=each_time_step,
                     # 0.001 added to avoid division by 0
                     day_length=(0.001),
                 )
@@ -295,7 +295,7 @@ def new_wb_clim_hour(
         for each_time_step in time_relative_to_sunset_sec:
             radiation.append(
                 calculate_radiation_diurnal_pattern(
-                    time_of_the_day=each_time_step,
+                    time_of_day=each_time_step,
                     day_length=sunrise_sunset_daylength_seconds["day_length"],
                 )
             )

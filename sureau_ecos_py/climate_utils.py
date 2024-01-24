@@ -350,13 +350,13 @@ def calculate_radiation_diurnal_pattern(
         operator.__ge__,
         np.array(day_length),
         0,
-        err_msg="\nday_length must be must be value between -100 and 100\n",
+        err_msg="\nday_length must be must be value between 0 and 86400\n",
     )
 
     np.testing.assert_array_less(
         np.array(day_length),
-        86400,
-        err_msg="\nday_length must be must be value between -100 and 100\n",
+        86401,
+        err_msg="\nday_length must be must be value between 0 and 86400\n",
     )
 
     # Raise warning for time_of_day and day_length
