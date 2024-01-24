@@ -118,18 +118,15 @@ def compute_pet(
             net_radiation, int
         ), "net_radiation parameter must be a float or integer value"
 
-
     # g
     assert isinstance(g, float) | isinstance(
             g, int
         ), "g parameter must be a float or integer value"
 
-
     # Formulation
     assert (
         formulation in ["pt", "pm"]
     ), f'{formulation} not a valid option for formulation, select "pt" for Pristeley Taylor (pt) or "pm" for Penmman'
-
 
     # wind_speed
     if formulation == "pm":
@@ -151,7 +148,6 @@ def compute_pet(
         assert isinstance(pt_coeff, float) | isinstance(
             pt_coeff, int
             ), "Parameter pt_coeff required for pt formulation. This must be a float or integer value"
-
 
     # Calculate pet -------------------------------------------------------------
 
@@ -219,18 +215,57 @@ def compute_pet(
 
 
 # %% ../nbs/00_climate_utils.ipynb 18
-#REDO THIS
 def calculate_radiation_diurnal_pattern(
-    time_of_the_day: int,  # a numeric value of vector indicating the time of the day (in seconds)
-    day_length: int,  # value indicating the duration of the day (in seconds). Calculated using the `day_length` function
+    time_of_day: int,  # Numeric value of vector indicating the time of the day (in seconds)
+    day_length: int,  # Value indicating the duration of the day (in seconds). Calculated using the `day_length` function
 ) -> float:
     "Calculated diurnal pattern of temperature assuming a sinusoidal pattern with T = tmin at sunrise and T = (tmin + tmax)/2 at sunset. From sunset to sunrise follows a linear trend"
+
+    # Assert parameters ---------------------------------------------------------
+
+    # time_of_day
+
+    # Using np.testing instead of assert because parameters can be np.arrays OR
+    # single values (i.e. 1). assert only works when params are always one type
+    # Solution from:
+    # https://stackoverflow.com/questions/45987962/why-arent-there-numpy-testing-assert-array-greater-assert-array-less-equal-as
+
+    np.testing.assert_array_compare(
+        operator.__ge__,
+        np.array(time_of_day),
+        0,
+        err_msg="\nrelative_humidity must be must be a integer value between 0-100\n",
+    )
+
+    np.testing.assert_array_less(
+        np.array(time_of_day),
+        86400,
+        err_msg="\nrelative_humidity must be must be a integer value between 0-100\n",
+    )
+
+    # day_length
+    np.testing.assert_array_compare(
+        operator.__ge__,
+        np.array(day_length),
+        0,
+        err_msg="\nday_length must be must be value between -100 and 100\n",
+    )
+
+    np.testing.assert_array_less(
+        np.array(day_length),
+        86400,
+        err_msg="\nday_length must be must be value between -100 and 100\n",
+    )
+
+
+    # Raise warning for time_of_day and day_length
+    warnings.warn('Double check that time_of_day and day_length are in seconds')
 
     # Calculate_radiation_diurnal_pattern ---------------------------------------
 
     # sunrise
     ws = (day_length / 3600.0) * (pi / 24.0)
-    w = ws - (time_of_the_day / day_length) * (ws * 2.0)
+    w = ws - (time_of_day / day_length) * (ws * 2.0)
 
     prop = ((pi / 24.0) * (cos(w) - cos(ws))) / (sin(ws) - ws * cos(ws))
 
