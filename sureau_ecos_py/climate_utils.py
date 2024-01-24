@@ -503,22 +503,18 @@ def rg_units_conversion(
     # Make sure the necessary parameters for a given conversion are provided
     if selected_conversion == "watts_to_mj":
         assert isinstance(rg_watts, float) | isinstance(
-            rg_watts, int
-        ), "rg_watts missing. Parameter must be a float or integer value"
+            rg_watts, int) | isinstance(rg_watts, np.ndarray), "rg_watts missing. Parameter must be a float or integer value"
 
     elif selected_conversion == "mj_to_watts":
         assert isinstance(rg_mj, float) | isinstance(
-            rg_mj, int
-        ), "rg_mj missing. Parameter must be a float or integer value"
+            rg_mj, int) | isinstance(rg_mj, np.ndarray), "rg_mj missing. Parameter must be a float or integer value"
 
     elif selected_conversion == "mj_to_watts_hour":
         assert isinstance(rg_mj, float) | isinstance(
-            rg_mj, int
-        ), "rg_mj missing. Parameter must be a float or integer value"
+            rg_mj, int) | isinstance(rg_mj, np.ndarray) , "rg_mj missing. Parameter must be a float or integer value"
 
         assert isinstance(nhours, float) | isinstance(
-            nhours, int
-        ), "nhours missing. Parameter must be a float or integer value"
+            nhours, int) | isinstance(nhours, np.ndarray) , "nhours missing. Parameter must be a float or integer value"
 
     # Conversions ---------------------------------------------------------------
     if selected_conversion == "watts_to_mj":

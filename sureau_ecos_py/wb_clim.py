@@ -13,8 +13,8 @@ from sureau_ecos_py.climate_utils import (
     compute_vpd_from_t_rh,
     day_length,
     calculate_radiation_diurnal_pattern,
-    # rg_watt_to_ppfd_umol,
-    # rg_convertions
+    rg_watt_ppfd_umol_conversions,
+    rg_units_conversion
 )
 from sureau_ecos_py.create_simulation_parameters import (
     create_simulation_parameters,
@@ -156,7 +156,7 @@ def new_wb_clim(
             "Error setting previous and next temperature conditions"
         )
 
-# %% ../nbs/17_wg_clim.ipynb 11
+# %% ../nbs/17_wg_clim.ipynb 10
 def new_wb_clim_hour(
     wb_clim: Dict,  # Dictionary created using the `new_wb_clim` function
     wb_veg: Dict,  # __No definition found__
@@ -320,10 +320,17 @@ def new_wb_clim_hour(
 
     # Add parameters
     wb_clim_hour["rg"] = wb_clim["rg"] * radiation * 3600
+
     wb_clim_hour["rn"] = wb_clim["net_radiation"] * radiation * 3600
-    # wb_clim_hour["par"] = rg_watt_to_ppfd_umol(
-    #    rg_convertions(rg_mj=wb_clim_hour["rg"], nhours=1)
-    # )
+
+    wb_clim_hour["par"] = rg_watt_ppfd_umol_conversions(
+        rg = rg_units_conversion(rg_mj =1, #wb_clim_hour["rg"],
+                                 nhours=1,
+                                 selected_conversion="mj_to_watts_hour"),
+
+         selected_conversion = "rg_watts_to_ppfd_umol"
+
+         )
     # wb_clim_hour[''] =
 
     return wb_clim_hour
