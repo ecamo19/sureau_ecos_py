@@ -15,14 +15,49 @@ from typing import List, Dict
 from numpy import exp, cos, sin, arccos, arctan
 
 # %% ../nbs/00_climate_utils.ipynb 4
-# REDO THIS
-
 def compute_vpd_from_t_rh(
     relative_humidity: float,  # Air relative_humidity (%)
     temperature: float,  # Air temperature (degrees Celsius)
     air_pressure: float = 101325,  # Unknown parameter definition Air pressure, used?
 ) -> float:
+
     "Compute vapor pressure deficit (VPD) from air relative humidity and air temperature"
+
+    # Assert parameters ---------------------------------------------------------
+
+    # relative_humidity
+
+    # Using np.testing instead of assert because parameters can be np.arrays OR
+    # single values (i.e. 1). assert only works when params are always one type
+    # Solution from:
+    # https://stackoverflow.com/questions/45987962/why-arent-there-numpy-testing-assert-array-greater-assert-array-less-equal-as
+
+    np.testing.assert_array_compare(
+        operator.__gt__,
+        np.array(relative_humidity),
+        0,
+        err_msg="\nrelative_humidity must be must be a integer value between 0-100\n",
+    )
+
+    np.testing.assert_array_less(
+        np.array(relative_humidity),
+        101,
+        err_msg="\nrelative_humidity must be must be a integer value between 0-100\n",
+    )
+
+    # temperature
+    np.testing.assert_array_compare(
+        operator.__gt__,
+        np.array(relative_humidity),
+        -100,
+        err_msg="\ntemperature must be must be value between -100 and 100\n",
+    )
+
+    np.testing.assert_array_less(
+        np.array(relative_humidity),
+        101,
+        err_msg="\ntemperature must be must be value between -100 and 100\n",
+    )
 
     # Constants -----------------------------------------------------------------
 
@@ -30,7 +65,7 @@ def compute_vpd_from_t_rh(
     mass = 28.966
 
     # molar weight H20 H2O(g/mol) Mh2o not used in this function??
-    mass_h2o = 18
+    #mass_h2o = 18
 
     # Perfect gas constant %J/mol/K
     rgz = 8.314472
@@ -39,7 +74,7 @@ def compute_vpd_from_t_rh(
     temp_kelvin = temperature + 273.15
 
     # D_air not used in this function??
-    d_air = ((air_pressure) / (rgz * (temp_kelvin))) * mass
+    #d_air = ((air_pressure) / (rgz * (temp_kelvin))) * mass
 
     # Compute VPD -------------------------------------------------------------
     es = 6.108 * exp(17.27 * temperature / (237.2 + temperature)) * 100
@@ -48,12 +83,17 @@ def compute_vpd_from_t_rh(
 
     vpd = (es - ea) / 1000
 
-    if vpd < 0:
-        vpd = 0
+    # Step implemented in case vpd is a single value i.e. vpd = 41
+    if isinstance(vpd, float):
+        # Transform float into array
+        vpd = np.array([vpd])
+
+    # Remove negative values if exits
+    vpd[vpd < 0] = 0
 
     return vpd
 
-# %% ../nbs/00_climate_utils.ipynb 9
+# %% ../nbs/00_climate_utils.ipynb 10
 def compute_pet(
     tmoy: float,  # Mean temperature over the considered time step (degrees Celsius)
     net_radiation: float,  # Cumulative Net radiation over the considered  time sep (MJ.m2)
@@ -177,7 +217,7 @@ def compute_pet(
         return (n1 + n2) / (d)
 
 
-# %% ../nbs/00_climate_utils.ipynb 17
+# %% ../nbs/00_climate_utils.ipynb 18
 #REDO THIS
 def calculate_radiation_diurnal_pattern(
     time_of_the_day: int,  # a numeric value of vector indicating the time of the day (in seconds)
@@ -195,7 +235,7 @@ def calculate_radiation_diurnal_pattern(
 
     return prop / 3600.0
 
-# %% ../nbs/00_climate_utils.ipynb 20
+# %% ../nbs/00_climate_utils.ipynb 21
 #REDO THIS
 def calculate_temperature_diurnal_pattern(
     time_of_the_day: List[
@@ -237,7 +277,7 @@ def calculate_temperature_diurnal_pattern(
     # Return Temp
     return 0.5 * (tmin + tmax - (tmax - tmin) * ct)
 
-# %% ../nbs/00_climate_utils.ipynb 21
+# %% ../nbs/00_climate_utils.ipynb 22
 def calculate_rh_diurnal_pattern(
     temperature: float,  # Unknown parameter definition
     rhmin: float,  # Unknown parameter definition
@@ -250,7 +290,7 @@ def calculate_rh_diurnal_pattern(
     # calculate rh diurnal pattern ----------------------------------------------
     return rhmax + ((temperature - tmin) / (tmax - tmin)) * (rhmin - rhmax)
 
-# %% ../nbs/00_climate_utils.ipynb 22
+# %% ../nbs/00_climate_utils.ipynb 23
 def rg_watt_ppfd_umol_conversions(
     ppfd: float = None,  # Photosynthetic photon flux density (umol.m-2.s-1)
     rg: float = None,  # Global radiation (W/m2)
@@ -303,7 +343,7 @@ def rg_watt_ppfd_umol_conversions(
     else:
         raise ValueError("Conversion failed")
 
-# %% ../nbs/00_climate_utils.ipynb 26
+# %% ../nbs/00_climate_utils.ipynb 27
 def rg_units_conversion(
     rg_watts: float = None,  # instantaneous radiation (watt)
     rg_mj: float = None,  # instantaneous radiation (in Mega Jule?)
@@ -365,7 +405,7 @@ def rg_units_conversion(
     else:
         raise ValueError("rg units conversion failed")
 
-# %% ../nbs/00_climate_utils.ipynb 31
+# %% ../nbs/00_climate_utils.ipynb 32
 def declination(
     day_of_year: int,  # julian day (day of the year)
     day_of_spring: int = 80,  # Julian day representing the first day of spring
@@ -419,7 +459,7 @@ def declination(
     # Return declination --------------------------------------------------------
     return arctan(x / ((1 - x * x) ** 0.5))
 
-# %% ../nbs/00_climate_utils.ipynb 35
+# %% ../nbs/00_climate_utils.ipynb 36
 def potential_par(
     time_of_day: float,  # Array containing the time of the day (in hours) for which potential par should be calculated
     latitude: float,  # Numeric value specifying the geographic latitude (in decimal degrees) of the location of interest
@@ -513,7 +553,7 @@ def potential_par(
 
     return dpfd + pfd * sin(alt)
 
-# %% ../nbs/00_climate_utils.ipynb 39
+# %% ../nbs/00_climate_utils.ipynb 40
 def day_length(
     latitude: float,  # numeric value specifying the geographic latitude (in decimal degrees) of the location of interest
     day_of_year: int,  # numeric (usually integer) value or vector specifying the Julian day (day of the year), for which calculations should be done.
