@@ -379,11 +379,11 @@ def calculate_radiation_diurnal_pattern(
 def calculate_temperature_diurnal_pattern(
     time_of_day: float,  # Value of vector indicating the time of the day (in seconds from sunrise)
     day_length: int,  # Value indicating the duration of the day (in seconds). Calculated using the `day_length` function
-    tmin: float,  # Unknown parameter definition
-    tmax: float,  # Unknown parameter definition
-    tmin_prev: float,  # Unknown parameter definition
-    tmax_prev: float,  # Unknown parameter definition
-    tmin_next: float,  # Unknown parameter definition
+    tmin: float,  # Minimum temperature (in degrees C) of the target day of the year
+    tmax: float,  # Maximum temperature (in degrees C) of the target day of the year
+    tmin_prev: float,  # Minimum temperature (in degrees C) of the previous target day of the year
+    tmax_prev: float,  # Maximum temperature (in degrees C) of the previous target day of the year
+    tmin_next: float,  # Minimum temperature (in degrees C) of the next target day of the year
 ) -> float:
     "Calculated diurnal pattern of temperature assuming a sinusoidal pattern with T = tmin at sunrise and T = (tmin+tmax)/2 at sunset. From sunset to sunrise follows a linear trend"
 
@@ -392,7 +392,7 @@ def calculate_temperature_diurnal_pattern(
 
     # calculate_temperature_diurnal_pattern -------------------------------------
 
-    if time_of_day < 0.0 or time_of_day > day_length:
+    if time_of_day < 0.0 or time_of_day >= day_length:
         tfin = 86400.0 - day_length
 
         if time_of_day < 0.0:
@@ -417,7 +417,7 @@ def calculate_temperature_diurnal_pattern(
         # Return Temp
         return 0.5 * (tmin + tmax - (tmax - tmin) * ct)
 
-# %% ../nbs/00_climate_utils.ipynb 27
+# %% ../nbs/00_climate_utils.ipynb 29
 def calculate_rh_diurnal_pattern(
     temperature: float,  # Unknown parameter definition
     rhmin: float,  # Unknown parameter definition
@@ -430,7 +430,7 @@ def calculate_rh_diurnal_pattern(
     # calculate rh diurnal pattern ----------------------------------------------
     return rhmax + ((temperature - tmin) / (tmax - tmin)) * (rhmin - rhmax)
 
-# %% ../nbs/00_climate_utils.ipynb 28
+# %% ../nbs/00_climate_utils.ipynb 30
 def rg_watt_ppfd_umol_conversions(
     ppfd: float = None,  # Photosynthetic photon flux density (umol.m-2.s-1)
     rg: float = None,  # Global radiation (W/m2)
@@ -481,7 +481,7 @@ def rg_watt_ppfd_umol_conversions(
     else:
         raise ValueError("Conversion failed")
 
-# %% ../nbs/00_climate_utils.ipynb 32
+# %% ../nbs/00_climate_utils.ipynb 34
 def rg_units_conversion(
     rg_watts: float = None,  # instantaneous radiation (watt)
     rg_mj: float = None,  # instantaneous radiation (in Mega Jule?)
@@ -539,7 +539,7 @@ def rg_units_conversion(
     else:
         raise ValueError("rg units conversion failed")
 
-# %% ../nbs/00_climate_utils.ipynb 37
+# %% ../nbs/00_climate_utils.ipynb 39
 def declination(
     day_of_year: int,  # julian day (day of the year)
     day_of_spring: int = 80,  # Julian day representing the first day of spring
@@ -593,7 +593,7 @@ def declination(
     # Return declination --------------------------------------------------------
     return arctan(x / ((1 - x * x) ** 0.5))
 
-# %% ../nbs/00_climate_utils.ipynb 41
+# %% ../nbs/00_climate_utils.ipynb 43
 def potential_par(
     time_of_day_in_hours: float,  # Array containing the time of the day (in hours) for which potential par should be calculated
     latitude: float,  # Numeric value specifying the geographic latitude (in decimal degrees) of the location of interest

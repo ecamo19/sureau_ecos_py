@@ -16,6 +16,7 @@ from sureau_ecos_py.climate_utils import (
     compute_vpd_from_t_rh,
     rg_watt_ppfd_umol_conversions,
     calculate_radiation_diurnal_pattern,
+    calculate_temperature_diurnal_pattern,
 )
 from sureau_ecos_py.create_simulation_parameters import (
     create_simulation_parameters,
@@ -223,7 +224,11 @@ def new_wb_clim_hour(
 
     else:
         warnings.warn(
-            "Warning: Parameter constant_climate in modeling_options set to True, using default parameters"
+            "Parameter constant_climate in modeling_options set to True, using default parameters"
+        )
+
+        warnings.warn(
+            "Sunrise, sunset and daylenght units are hours for constant_climate"
         )
 
         # Calculate day_length
@@ -267,7 +272,7 @@ def new_wb_clim_hour(
 
     # time relative to sunset (in seconds)
     warnings.warn(
-        "Issue #3 in gitlab not solved. Comment in R code say time relative to sunset but sunrise parameter was used instead."
+        "Issue #3 in gitlab not solved. Comment in R code say time relative to sunset but sunrise was used instead."
     )
     time_relative_to_sunset_sec = (
         time_hour * 3600
@@ -338,5 +343,23 @@ def new_wb_clim_hour(
     wb_clim_hour['potential_par'] = potential_par(time_of_day_in_hours=time_hour,
                                                   latitude=latitude,
                                                   day_of_year=wb_clim["day_of_year"])
+
+
+    # Air temperature
+    air_temperature = []
+    for each_time_step in time_relative_to_sunset_sec:
+        air_temperature.append(
+            calculate_temperature_diurnal_pattern(time_of_day= each_time_step,
+                                                  tmin = wb_clim['Tair_min'],
+                                                  tmax = wb_clim['Tair_max'],
+                                                  tmin_prev = wb_clim['Tair_min_prev'],
+                                                  tmax_prev = wb_clim['Tair_max_prev'],
+                                                  tmin_next = wb_clim['Tair_min_next'],
+                                                  day_length = sunrise_sunset_daylength_seconds['day_length'],
+            )
+        )
+
+    # Convert flatten np.array
+    wb_clim_hour['tair_mean'] = np.array(air_temperature).flatten()
 
     return wb_clim_hour
