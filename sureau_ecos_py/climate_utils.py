@@ -11,7 +11,7 @@ import operator
 import collections
 import numpy as np
 from math import pi
-from typing import List, Dict
+from typing import Dict
 from numpy import exp, cos, sin, arccos, arctan
 
 # %% ../nbs/00_climate_utils.ipynb 4

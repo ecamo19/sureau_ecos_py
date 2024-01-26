@@ -421,4 +421,13 @@ def new_wb_clim_hour(
     else:
         raise ValueError("Error calculating PET in new_wb_clim_hour function")
 
+    # Time
+    wb_clim_hour["time"] = modeling_options["time"]
+
+    # nhours; array showing the difference between each time step
+    #
+    wb_clim_hour["nhours"] = np.concatenate(
+        [np.diff([wb_clim_hour["time"][-1], 24]), np.diff(wb_clim_hour["time"])]
+    )
+
     return wb_clim_hour
