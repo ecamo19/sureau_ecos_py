@@ -101,7 +101,7 @@ def compute_pet(
     vpd: float = None,  # Vapor pressure deficit (kpa) for calculating etp using the Penmman (pm) formulation
     wind_speed_u: float = None,  #  Wind speed (m.s-1) for calculating etp using the Penmman (pm) formulation
     pt_coeff: float = None,  # An empirical constant accounting for the vapor pressure deficit and resistance values. Typically, α is 1.26 for open bodies of water, but has a wide range of values from less than 1 (humid conditions) to almost 2 (arid conditions).
-    formulation: str = [ # String indicating which formulation to use (Pristeley Taylor (pt) or Penmman (pm)) for calculating etp
+    formulation: str = [  # String indicating which formulation to use (Pristeley Taylor (pt) or Penmman (pm)) for calculating etp
         "pt",
         "pm",
     ],
@@ -110,13 +110,23 @@ def compute_pet(
 
     # Assert parameters ---------------------------------------------------------
     # tmoy
-    assert isinstance(tmoy, float) | isinstance(tmoy, int) | isinstance(tmoy, np.ndarray), "tmoy parameter must be a float or integer value"
+    assert (
+        isinstance(tmoy, float)
+        | isinstance(tmoy, int)
+        | isinstance(tmoy, np.ndarray)
+    ), "tmoy parameter must be a float or integer value"
 
     # net_radiation
-    assert isinstance(net_radiation, float) | isinstance(net_radiation, int) | isinstance(net_radiation, np.ndarray), "net_radiation parameter must be a float or integer value"
+    assert (
+        isinstance(net_radiation, float)
+        | isinstance(net_radiation, int)
+        | isinstance(net_radiation, np.ndarray)
+    ), "net_radiation parameter must be a float or integer value"
 
     # g
-    assert isinstance(g, float) | isinstance(g, int) | isinstance(g, np.ndarray), "g parameter must be a float or integer value"
+    assert (
+        isinstance(g, float) | isinstance(g, int) | isinstance(g, np.ndarray)
+    ), "g parameter must be a float or integer value"
 
     # Formulation
     assert (
@@ -126,12 +136,16 @@ def compute_pet(
     # wind_speed
     if formulation == "pm":
         assert (
-            isinstance(wind_speed_u, float) | isinstance(wind_speed_u, int) | isinstance(wind_speed_u, np.ndarray)
+            isinstance(wind_speed_u, float)
+            | isinstance(wind_speed_u, int)
+            | isinstance(wind_speed_u, np.ndarray)
         ), "Parameter wind_speed_u required for pm formulation. This must be a float or integer value"
 
         # vpd
         assert (
-            isinstance(vpd, float) | isinstance(vpd, int) | isinstance(vpd, np.ndarray)
+            isinstance(vpd, float)
+            | isinstance(vpd, int)
+            | isinstance(vpd, np.ndarray)
         ), "Parameter vpd required for pm formulation. This must be a float or integer value"
 
     # pt_coeff
@@ -141,7 +155,9 @@ def compute_pet(
 
     elif formulation == "pt" and pt_coeff is not None:
         assert (
-            isinstance(pt_coeff, float) | isinstance(pt_coeff, int) | isinstance(pt_coeff, np.ndarray)
+            isinstance(pt_coeff, float)
+            | isinstance(pt_coeff, int)
+            | isinstance(pt_coeff, np.ndarray)
         ), "Parameter pt_coeff required for pt formulation. This must be a float or integer value"
 
     # Calculate pet -------------------------------------------------------------
@@ -326,21 +342,22 @@ def calculate_radiation_diurnal_pattern(
     # Solution from:
     # https://stackoverflow.com/questions/45987962/why-arent-there-numpy-testing-assert-array-greater-assert-array-less-equal-as
 
-
     if time_of_day < 0:
-        warnings.warn('time_of_day is a negative value. Not sure if this is correct')
-    #np.testing.assert_array_compare(
+        warnings.warn(
+            "time_of_day is a negative value. Not sure if this is correct"
+        )
+    # np.testing.assert_array_compare(
     #    operator.__ge__,
     #    np.array(time_of_day),
     #    0,
     #    err_msg="\ntime_of_day must be must be value between 0 and 86400\n",
-    #)
+    # )
     #
-    #np.testing.assert_array_less(
+    # np.testing.assert_array_less(
     #    np.array(time_of_day),
     #    86401,
     #    err_msg="\ntime_of_day must be must be value between 0 and 86400\n",
-    #)
+    # )
 
     # day_length
     np.testing.assert_array_compare(
@@ -430,7 +447,7 @@ def rg_watt_ppfd_umol_conversions(
     rg: float = None,  # Global radiation (W/m2)
     j_to_mol: float = 4.6,  # Conversion factor
     frac_par: float = 0.5,  # Function of solar rdiation that is photosynthetically active radiation (PAR)
-    selected_conversion: str = [ # String indicating to what units rg should be converted
+    selected_conversion: str = [  # String indicating to what units rg should be converted
         "rg_watts_to_ppfd_umol",
         "ppfd_umol_to_rg_watts",
     ],
@@ -446,12 +463,18 @@ def rg_watt_ppfd_umol_conversions(
 
     # Make sure the necessary parameters for a given conversion are provided
     if selected_conversion == "ppfd_umol_to_rg_watts":
-        assert isinstance(ppfd, float) | isinstance(
-            ppfd, int) | isinstance(ppfd, np.ndarray), "ppfd missing. Parameter must be a float or integer value"
+        assert (
+            isinstance(ppfd, float)
+            | isinstance(ppfd, int)
+            | isinstance(ppfd, np.ndarray)
+        ), "ppfd missing. Parameter must be a float or integer value"
 
     elif selected_conversion == "rg_watts_to_ppfd_umol":
-        assert isinstance(rg, float) | isinstance(
-            rg, int) | isinstance(rg, np.ndarray), "rg missing. Parameter must be a float or integer value"
+        assert (
+            isinstance(rg, float)
+            | isinstance(rg, int)
+            | isinstance(rg, np.ndarray)
+        ), "rg missing. Parameter must be a float or integer value"
 
     # Warn in case j_to_mol or frac_par are not provided
     if j_to_mol == 4.6:
@@ -480,7 +503,7 @@ def rg_units_conversion(
     rg_watts: float = None,  # instantaneous radiation (watt)
     rg_mj: float = None,  # instantaneous radiation (in Mega Jule?)
     nhours: float = None,  # Unknown parameter definition
-    selected_conversion: str = [ # String indicating to what units rg should be converted
+    selected_conversion: str = [  # String indicating to what units rg should be converted
         "watts_to_mj",
         "mj_to_watts",
         "mj_to_watts_hour",
@@ -497,19 +520,31 @@ def rg_units_conversion(
 
     # Make sure the necessary parameters for a given conversion are provided
     if selected_conversion == "watts_to_mj":
-        assert isinstance(rg_watts, float) | isinstance(
-            rg_watts, int) | isinstance(rg_watts, np.ndarray), "rg_watts missing. Parameter must be a float or integer value"
+        assert (
+            isinstance(rg_watts, float)
+            | isinstance(rg_watts, int)
+            | isinstance(rg_watts, np.ndarray)
+        ), "rg_watts missing. Parameter must be a float or integer value"
 
     elif selected_conversion == "mj_to_watts":
-        assert isinstance(rg_mj, float) | isinstance(
-            rg_mj, int) | isinstance(rg_mj, np.ndarray), "rg_mj missing. Parameter must be a float or integer value"
+        assert (
+            isinstance(rg_mj, float)
+            | isinstance(rg_mj, int)
+            | isinstance(rg_mj, np.ndarray)
+        ), "rg_mj missing. Parameter must be a float or integer value"
 
     elif selected_conversion == "mj_to_watts_hour":
-        assert isinstance(rg_mj, float) | isinstance(
-            rg_mj, int) | isinstance(rg_mj, np.ndarray) , "rg_mj missing. Parameter must be a float or integer value"
+        assert (
+            isinstance(rg_mj, float)
+            | isinstance(rg_mj, int)
+            | isinstance(rg_mj, np.ndarray)
+        ), "rg_mj missing. Parameter must be a float or integer value"
 
-        assert isinstance(nhours, float) | isinstance(
-            nhours, int) | isinstance(nhours, np.ndarray) , "nhours missing. Parameter must be a float or integer value"
+        assert (
+            isinstance(nhours, float)
+            | isinstance(nhours, int)
+            | isinstance(nhours, np.ndarray)
+        ), "nhours missing. Parameter must be a float or integer value"
 
     # Conversions ---------------------------------------------------------------
     if selected_conversion == "watts_to_mj":
@@ -594,7 +629,6 @@ def potential_par(
     day_of_year: int,  # Julian day (day of the year)
 ) -> np.array:  # Potential Photosynthetic Active Radiation (PAR) for each time_of_day at given latitude and given day_of_year
     "Determine potential for a given place and date /used to determine cloud cover return potential par in W.m2"
-
 
     warnings.warn("Make sure time of day is hours in potential_par function")
 
