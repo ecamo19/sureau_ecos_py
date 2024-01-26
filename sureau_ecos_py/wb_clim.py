@@ -400,21 +400,22 @@ def new_wb_clim_hour(
     )
 
     # PET
+    # pet = np.empty((0), float)
     if modeling_options["etp_formulation"] == "pt":
-        compute_pet(
+        wb_clim_hour["pet_pt"] = compute_pet(
             tmoy=wb_clim_hour["tair_mean"],
             net_radiation=wb_clim_hour["rn"],
             pt_coeff=pt_coeff,
             formulation="pt",
         )
 
-    elif modeling_options["etp_formulation"] == "pm":
-        compute_pet(
+    elif modeling_options["etp_formulation"] == "penman":
+        wb_clim_hour["pet_penman"] = compute_pet(
             tmoy=wb_clim_hour["tair_mean"],
             net_radiation=wb_clim_hour["rn"],
             wind_speed_u=wb_clim_hour["wind_speed"],
             vpd=wb_clim_hour["vpd"],
-            formulation="pm",
+            formulation="penman",
         )
 
     else:

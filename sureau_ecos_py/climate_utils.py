@@ -98,15 +98,15 @@ def compute_pet(
     tmoy: float,  # Mean temperature over the considered time step (degrees Celsius)
     net_radiation: float,  # Cumulative Net radiation over the considered  time sep (MJ.m2)
     g: float = 0,  # Unknown parameter definition
-    vpd: float = None,  # Vapor pressure deficit (kpa) for calculating etp using the Penmman (pm) formulation
-    wind_speed_u: float = None,  #  Wind speed (m.s-1) for calculating etp using the Penmman (pm) formulation
+    vpd: float = None,  # Vapor pressure deficit (kpa) for calculating etp using the Penmman (penman) formulation
+    wind_speed_u: float = None,  #  Wind speed (m.s-1) for calculating etp using the Penmman (penman) formulation
     pt_coeff: float = None,  # An empirical constant accounting for the vapor pressure deficit and resistance values. Typically, α is 1.26 for open bodies of water, but has a wide range of values from less than 1 (humid conditions) to almost 2 (arid conditions).
-    formulation: str = [  # String indicating which formulation to use (Pristeley Taylor (pt) or Penmman (pm)) for calculating etp
+    formulation: str = [  # String indicating which formulation to use (Pristeley Taylor (pt) or Penmman (penman)) for calculating etp
         "pt",
-        "pm",
+        "penman",
     ],
 ) -> float:  #  Potential evapotranspiration (PET) (mm)
-    "Calcule Potential Evapotranspiration (mm) PET using Pristeley Taylor (pt) or Penmman (pm) Formulation"
+    "Calcule Potential Evapotranspiration (mm) PET using Pristeley Taylor (pt) or Penmman (penman) formulation"
 
     # Assert parameters ---------------------------------------------------------
     # tmoy
@@ -130,23 +130,23 @@ def compute_pet(
 
     # Formulation
     assert (
-        formulation in ["pt", "pm"]
-    ), f'{formulation} not a valid option for formulation, select "pt" for Pristeley Taylor (pt) or "pm" for Penmman'
+        formulation in ["pt", "penman"]
+    ), f'{formulation} not a valid option for formulation, select "pt" for Pristeley Taylor (pt) or "penman" for Penmman'
 
     # wind_speed
-    if formulation == "pm":
+    if formulation == "penman":
         assert (
             isinstance(wind_speed_u, float)
             | isinstance(wind_speed_u, int)
             | isinstance(wind_speed_u, np.ndarray)
-        ), "Parameter wind_speed_u required for pm formulation. This must be a float or integer value"
+        ), "Parameter wind_speed_u required for penman formulation. This must be a float or integer value"
 
         # vpd
         assert (
             isinstance(vpd, float)
             | isinstance(vpd, int)
             | isinstance(vpd, np.ndarray)
-        ), "Parameter vpd required for pm formulation. This must be a float or integer value"
+        ), "Parameter vpd required for penman formulation. This must be a float or integer value"
 
     # pt_coeff
     if formulation == "pt" and pt_coeff is None:
@@ -191,7 +191,7 @@ def compute_pet(
         )
 
     # Penman formulation
-    elif formulation == "pm":
+    elif formulation == "penman":
         # Define Constants
 
         # Stefan-Boltzman constant [MJ.K^-4.m^-2.day^-1]
