@@ -110,19 +110,13 @@ def compute_pet(
 
     # Assert parameters ---------------------------------------------------------
     # tmoy
-    assert isinstance(tmoy, float) | isinstance(
-        tmoy, int
-    ), "tmoy parameter must be a float or integer value"
+    assert isinstance(tmoy, float) | isinstance(tmoy, int) | isinstance(tmoy, np.ndarray), "tmoy parameter must be a float or integer value"
 
     # net_radiation
-    assert isinstance(net_radiation, float) | isinstance(
-        net_radiation, int
-    ), "net_radiation parameter must be a float or integer value"
+    assert isinstance(net_radiation, float) | isinstance(net_radiation, int) | isinstance(net_radiation, np.ndarray), "net_radiation parameter must be a float or integer value"
 
     # g
-    assert isinstance(g, float) | isinstance(
-        g, int
-    ), "g parameter must be a float or integer value"
+    assert isinstance(g, float) | isinstance(g, int) | isinstance(g, np.ndarray), "g parameter must be a float or integer value"
 
     # Formulation
     assert (
@@ -132,12 +126,12 @@ def compute_pet(
     # wind_speed
     if formulation == "pm":
         assert (
-            isinstance(wind_speed_u, float) | isinstance(wind_speed_u, int)
+            isinstance(wind_speed_u, float) | isinstance(wind_speed_u, int) | isinstance(wind_speed_u, np.ndarray)
         ), "Parameter wind_speed_u required for pm formulation. This must be a float or integer value"
 
         # vpd
         assert (
-            isinstance(vpd, float) | isinstance(vpd, int)
+            isinstance(vpd, float) | isinstance(vpd, int) | isinstance(vpd, np.ndarray)
         ), "Parameter vpd required for pm formulation. This must be a float or integer value"
 
     # pt_coeff
@@ -147,7 +141,7 @@ def compute_pet(
 
     elif formulation == "pt" and pt_coeff is not None:
         assert (
-            isinstance(pt_coeff, float) | isinstance(pt_coeff, int)
+            isinstance(pt_coeff, float) | isinstance(pt_coeff, int) | isinstance(pt_coeff, np.ndarray)
         ), "Parameter pt_coeff required for pt formulation. This must be a float or integer value"
 
     # Calculate pet -------------------------------------------------------------

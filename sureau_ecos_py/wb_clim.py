@@ -12,11 +12,14 @@ from pandera.typing import DataFrame
 from sureau_ecos_py.climate_utils import (
     day_length,
     potential_par,
+    compute_pet,
     rg_units_conversion,
     compute_vpd_from_t_rh,
+    calculate_rh_diurnal_pattern,
     rg_watt_ppfd_umol_conversions,
     calculate_radiation_diurnal_pattern,
     calculate_temperature_diurnal_pattern,
+
 )
 from sureau_ecos_py.create_simulation_parameters import (
     create_simulation_parameters,
@@ -262,9 +265,6 @@ def new_wb_clim_hour(
         sunrise_sunset_daylength_seconds["sunrise"] = 12 * 3600
         sunrise_sunset_daylength_seconds["sunset"] = 12 * 3600
 
-        warnings.warn(
-            "day_length = 0, this might cause error in calculate_radiation_diurnal_pattern"
-        )
         sunrise_sunset_daylength_seconds["day_length"] = 0
 
     # Desegregation at the hourly time step -------------------------------------
@@ -283,7 +283,7 @@ def new_wb_clim_hour(
 
     if sunrise_sunset_daylength_seconds["day_length"] == 0:
         warnings.warn(
-            "day_length is 0 using 0.001 for calculating radiation instead"
+            "day_length is 0 using 0.001 in calculate_radiation_diurnal_pattern function"
         )
 
         for each_time_step in time_relative_to_sunset_sec:
@@ -326,7 +326,7 @@ def new_wb_clim_hour(
     # Empty dict
     wb_clim_hour = collections.defaultdict(list)
 
-    # Add parameters
+    # Add parameters ------------------------------------------------------------
     wb_clim_hour["rg"] = wb_clim["rg"] * radiation * 3600
 
     wb_clim_hour["rn"] = wb_clim["net_radiation"] * radiation * 3600
@@ -359,7 +359,66 @@ def new_wb_clim_hour(
             )
         )
 
-    # Convert flatten np.array
+    # Convert air_temperature to flatten np.array
     wb_clim_hour['tair_mean'] = np.array(air_temperature).flatten()
+
+    # Air relative humidity
+    relative_humidity = np.empty((0),float)
+    for each_tair_temp in wb_clim_hour['tair_mean']:
+       relative_humidity =  np.append(relative_humidity,
+            calculate_rh_diurnal_pattern(temperature= each_tair_temp,
+                                         tmin = wb_clim['Tair_min'],
+
+                                         # 0.0000001 added to prevent crash when
+                                         # tmin = tmax
+                                         tmax = wb_clim['Tair_max'] + 0.0000001,
+                                         rhmin= wb_clim['RHair_min'],
+
+                                         # 0.0000001 added to prevent crash when
+                                         # RHair_min = RHair_max
+                                         rhmax = wb_clim['RHair_max'] + 0.0000001 ,
+                                         )
+
+        )
+
+    # Give a value of 0.5 if negative values are found
+    relative_humidity[relative_humidity < 0] = 0.5
+
+    # Convert relative_humidity to flatten np.array
+    wb_clim_hour['rhair_mean'] = relative_humidity
+
+    # Wind Speed
+    warnings.warn(
+        "No time interpolation for wind speed. Assumed to be constant during the day"
+    )
+
+    wb_clim_hour['wind_speed'] = np.repeat(wb_clim['WS_mean'], 24)
+
+    # VPD
+    wb_clim_hour['vpd'] = compute_vpd_from_t_rh(relative_humidity= wb_clim_hour['rhair_mean'],
+                                                temperature = wb_clim_hour['tair_mean']
+                                                )
+
+    # PET
+    if modeling_options['etp_formulation'] == "pt":
+        compute_pet(tmoy = wb_clim_hour['tair_mean'],
+                    net_radiation = wb_clim_hour['rn'],
+                    pt_coeff = pt_coeff,
+                    formulation="pt"
+                    )
+
+    elif modeling_options['etp_formulation'] == "pm":
+        compute_pet(tmoy= wb_clim_hour['tair_mean'],
+                    net_radiation= wb_clim_hour['rn'],
+                    wind_speed_u=wb_clim_hour['wind_speed'],
+                    vpd=wb_clim_hour['vpd'],
+                    formulation = "pm")
+
+    else:
+        raise ValueError(
+            "Error calculating PET in new_wb_clim_hour function"
+        )
+
+
 
     return wb_clim_hour
