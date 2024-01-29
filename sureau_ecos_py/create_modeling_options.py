@@ -220,5 +220,7 @@ def create_modeling_options(
         modeling_options["threshold_mortality"] = threshold_mortality
         modeling_options["transpiration_model"] = transpiration_model
         modeling_options["print_prog"] = print_prog
+        modeling_options["stop_simulation_dead_plant"] = print_prog
+
 
     return modeling_options

@@ -402,7 +402,7 @@ def new_wb_clim_hour(
     # PET
     # pet = np.empty((0), float)
     if modeling_options["etp_formulation"] == "pt":
-        wb_clim_hour["pet_pt"] = compute_pet(
+        wb_clim_hour["pet"] = compute_pet(
             tmoy=wb_clim_hour["tair_mean"],
             net_radiation=wb_clim_hour["rn"],
             pt_coeff=pt_coeff,
@@ -410,7 +410,7 @@ def new_wb_clim_hour(
         )
 
     elif modeling_options["etp_formulation"] == "penman":
-        wb_clim_hour["pet_penman"] = compute_pet(
+        wb_clim_hour["pet"] = compute_pet(
             tmoy=wb_clim_hour["tair_mean"],
             net_radiation=wb_clim_hour["rn"],
             wind_speed_u=wb_clim_hour["wind_speed"],
@@ -424,10 +424,35 @@ def new_wb_clim_hour(
     # Time
     wb_clim_hour["time"] = modeling_options["time"]
 
-    # nhours; array showing the difference between each time step
-    #
+    # nhours; array showing the difference between each time step. Done in this
+    # way for making circular. meaning that it show the difference between
+    # that 24 is the end and 0 is the beggining
     wb_clim_hour["nhours"] = np.concatenate(
         [np.diff([wb_clim_hour["time"][-1], 24]), np.diff(wb_clim_hour["time"])]
     )
+
+
+    # Get the index where time_hour and time are the same.
+    # Remember that python index start at 0
+    index_matched = np.where(np.in1d(time_hour, wb_clim_hour["time"]))
+
+    # Get the params corresponding to each time
+    if len(modeling_options["time"]) < 24:
+        wb_clim_hour["rg"] = wb_clim_hour["rg"][index_matched]
+        wb_clim_hour["rn"] = wb_clim_hour["rn"][index_matched]
+        wb_clim_hour["par"] = wb_clim_hour["par"][index_matched]
+        wb_clim_hour["pet"] = wb_clim_hour["pet"][index_matched]
+        wb_clim_hour["tair_mean"] = wb_clim_hour["tair_mean"][index_matched]
+        wb_clim_hour["rhair_mean"] = wb_clim_hour["rhair_mean"][index_matched]
+        wb_clim_hour["vpd"] = wb_clim_hour["vpd"][index_matched]
+        wb_clim_hour["wind_speed"] = wb_clim_hour["wind_speed"][index_matched]
+
+    # All ppt of the day fall at midnight
+    wb_clim_hour['ppt'] = np.zeros(len(modeling_options["time"]))
+    #wb_clim_hour['ppt'][0] = wb_clim_hour['ppt']
+    print("Line 141 in functionsWBclim.R not understood")
+
+
+
 
     return wb_clim_hour
