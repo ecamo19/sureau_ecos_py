@@ -17,36 +17,30 @@ def create_modeling_options(
     defoliation: bool = False,  # Boolean indicating whether trees should loose leaves when`occurs.cavitation` occurs of the above part of plant. Defoliation starts only when PLC_Leaf > 10% .
     threshold_mortality: int = 90,  # Percentange value indicating the percentage loss of conductivity above which the plant is considered dead and simulation stops for the current year.
     transpiration_model: str = ["jarvis", "granier"],  # Transpiration model type
-    etp_formulation: str = [
-        "pt",
-        "penman",
-    ],  # the formulation of ETP to be used, either `pt` (Priestley-Taylor) or `penman` (Penmman)
-    rn_formulation: str = [
-        "linacre",
-        "linear",
-    ],  # method to be used to calculate net radiation from global radiation, either `linacre`  or 'linear' (the linear method is not implemnted yet)
-    pedo_transfer_formulation: str = ["vg", "campbell"],
+    etp_formulation: str = "pt", # Formulation of ETP to be used, either `pt` (Priestley-Taylor) or `penman` (Penmman)
+    rn_formulation: str = "linacre", # method to be used to calculate net radiation from global radiation, either `linacre`  or 'linear' (the linear method is not implemnted yet)
+    pedo_transfer_formulation: str = ["vg", "campbell"], # Unknown parameter definition
     constant_climate: bool = False,  # Boolian indicating whether the climate should be considered constant or not
-    comp_options_for_evapo: str = [
+    comp_options_for_evapo: str = [ # Option to be used for the loops  (voir avec Francois)
         "normal",
         "accurate",
         "fast",
         "custom",
-    ],  # option to be used for the loops  (voir avec Francois)
+    ],
     custom_small_time_step_in_sec: int = 600,  # Time step in seconds. Use if comp_options_for_evapo is set to `custom`
     lcav: int = 1,  # Unknown parameter definition
     scav: int = 1,  # Unknown parameter definition
     eord: int = 1,  # Unknown parameter definition
-    numerical_scheme: str = [
+    numerical_scheme: str = [ # Unknown parameter definition
         "implicit",
         "semi-implicit",
         "explicit",
-    ],  # Unknown parameter definition
-    stomatal_reg_formulation: str = [
+    ],
+    stomatal_reg_formulation: str = [ # Type of regulation to be used for stomatal response to leaf symplasmic water potential, either `sigmoid` or `piecewise_linear`
         "sigmoid",
         "piecewise_linear",
         "turgor",
-    ],  # type of regulation to be used for stomatal response to leaf symplasmic water potential, either `sigmoid` or `piecewise_linear`
+    ],
     print_prog: bool = True,  # Unknown parameter definition
 ) -> Dict:
     "Create a dictionary containing modeling options that can be used as an input in run.SurEauR"
