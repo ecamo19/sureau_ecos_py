@@ -137,13 +137,13 @@ def stomatal_regulation_turgor(
 
 # %% ../nbs/02_plant_utils.ipynb 16
 def plc_comp(
-    p_min: float,  # Unknown parameter definition
+    psi: float,  # Unknown parameter definition
     slope: float,  # Unknown parameter definition
     p50: float,  # Unknown parameter definition
 ) -> float:
     "Compute Percentage loss of conductivity"
 
-    return 100 / (1 + np.exp(slope / 25 * (p_min - p50)))
+    return 100 / (1 + np.exp(slope / 25 * (psi - p50)))
 
 # %% ../nbs/02_plant_utils.ipynb 17
 def plc_prime_comp(

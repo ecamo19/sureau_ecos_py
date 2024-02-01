@@ -9,17 +9,8 @@ import collections
 import numpy as np
 from typing import Dict
 from pandera.typing import DataFrame
-from sureau_ecos_py.climate_utils import (
-    day_length,
-    compute_pet,
-    potential_par,
-    rg_units_conversion,
-    compute_vpd_from_t_rh,
-    calculate_rh_diurnal_pattern,
-    rg_watt_ppfd_umol_conversions,
-    calculate_radiation_diurnal_pattern,
-    calculate_temperature_diurnal_pattern,
-)
+from .plant_utils import plc_comp
+
 from sureau_ecos_py.create_vegetation_parameters import (
     create_vegetation_parameters
 )
@@ -76,6 +67,161 @@ def new_wb_veg(veg_params:Dict # Dictionary created using the `create_vegetation
     # constant value during simulation
     wb_veg["k_ssym"]  =  wb_veg["params"]["k_ssyminit"]
 
+    # Value is updated in compute_kplant_wb_veg
+    wb_veg["k_rsapo"] =  np.nan
+
+    # Value is updated in compute_kplant_wb_veg
+    wb_veg["k_slapo"] =  np.nan
+
+    # Conductance rhisophere for each soil layer
+    wb_veg['k_soil_to_stem'] = np.array([np.nan, np.nan, np.nan], dtype=float)
+
+    # Capacitances
+    # Symplasm capacitance updated as a function of water content and Leaf area
+    # (mmol/m2leaf/MPa) /updated in update.capacitancesSymAndApo()
+    # (NM : 25/10/2021)
+
+    wb_veg['c_lsym'] = np.nan
+    wb_veg['c_sapo'] = np.nan
+
+    # Leaf and canopy conductance
+
+    # initialised at 0 to compute Tleaf on first time step considering gs = 0
+    # and not NA s
+    wb_veg['gmin'] = 0
+
+    # Gmin for stem and branches
+    wb_veg['gmin_s'] = wb_veg["params"]["gmin_s"]
+
+    # TODO voir si y'a besoin d'initialiser
+    # see if there is a need to initialize
+
+    wb_veg['regul_fact'] = 0.01
+
+    # TODO voir pour mettre tout en NA si TranspirationMod = 0
+    # see to put everything in NA if TranspirationMod = 0
+
+    wb_veg['gs_bound'] = np.nan
+
+    # initialised to 0 to compute Tleaf on first time step considering gs = 0
+    # and not NA
+    wb_veg['gs_lim'] = 0
+    wb_veg['gcanopy_bound'] = np.nan
+    wb_veg['gcanopy_lim'] = np.nan
+    wb_veg['g_bl'] = np.nan
+    wb_veg['g_crown'] = np.nan
+
+    # Fluxes
+    wb_veg['e_prime'] = 0
+    wb_veg['e_min'] = 0
+    wb_veg['e_min_s'] = 0
+    wb_veg['e_bound'] = 0
+    wb_veg['e_lim'] = 0
+    wb_veg['flux_soil_to_stem'] = np.zeros(3)
+    wb_veg['transpiration_mm'] = 0
+    wb_veg['e_min_mm'] = 0
+    wb_veg['e_min_s_mm'] = 0
+
+    # LAI and LAI-dependent variables
+    wb_veg['lai_pheno'] = np.zeros(1)
+    wb_veg['lai']      = np.zeros(1)
+    wb_veg['canopy_storage_capacity'] = np.zeros(1)
+
+    # rainfall and interception
+
+    # ppt that reach the soil
+    wb_veg['ppt_soil'] = 0
+
+    # interceptedWater /quantite d'eau dans la canopee
+    wb_veg['intercepted_water_amount'] = 0
+    wb_veg['evaporation_intercepted'] = 0
+    wb_veg['etpr'] = 0
+
+    # defoliation // no defoliation (add an option to set defoliation due to
+    # cavitation of the Plant Above)
+    wb_veg['defoliation'] = 0
+    wb_veg['lai_dead'] = 0
+
+
+    # Cavitation
+    # percent loss of conductivity [%]
+    wb_veg["plc_leaf"] = 0
+
+    # percent loss of conductivity [%]
+    wb_veg["plc_stem"] = 0
+
+    # leaf temp
+    wb_veg["leaf_temperature"] = np.nan
+
+    # Pheno, parameters if deciduous
+    if wb_veg["params"]["foliage"] == "deciduous":
+
+        wb_veg['lai_pheno'] = 0
+
+        # temmpeerature sum to determine budburst
+        wb_veg['sum_temperature'] = 0
+
+        # budburst date
+        wb_veg['bud_burst_date'] = np.nan
+
+        print("wb_veg params for deciduous forest created")
+
+    # water storage in canopy
+
+    # Fuel moisture content of the dead compartment (gH20/gMS)
+    wb_veg['dfmc']     = np.nan
+
+    # Live fuel moisture content of the apoplasmic compartment (gH20/gMS)
+    wb_veg['lfmc_apo']  = np.nan
+
+    # Live fuel moisture content of the apoplasmic compartment (gH20/gMS)
+    wb_veg['lfmc_symp'] = np.nan
+
+    # live fuel moisture content (gH20/gMS)
+    wb_veg['lfmc']     = np.nan
+
+    # Live Canopy dry matter [gMS/m2 soil]
+    wb_veg['dm_live_canopy']  = np.nan
+
+    # Dead Canopy dry matter [gMS/m2 soil]
+    wb_veg['dm_dead_canopy']  = 0
+
+    # Q leaf apo (mol/m2leaf)
+    wb_veg['q_lapo_sat_mmol'] = 0
+    wb_veg['q_lapo_sat_l'] = 0
+
+    # Q stem apo (mol/m2leaf)
+    wb_veg['q_sapo_sat_mmol'] = 0
+    wb_veg['q_sapo_sat_l'] = 0
+
+    # Q leaf symplasm (mol/m2leaf)
+    wb_veg['q_lsym_sat_mmol'] = 0
+    wb_veg['q_lsym_sat_l']    = 0
+
+    # Q Stem symplasm (mol/m2leaf)
+    wb_veg['q_ssym_sat_mmol'] = 0
+    wb_veg['q_ssym_sat_l']    = 0
+
+    # Q Stem and Leaf apo and symp in liter/kg TODO 13/08/2021: better in mmol?
+    wb_veg['q_lapo_l'] = 0
+    wb_veg['q_sapo_l'] = 0
+    wb_veg['q_lsym_l'] = 0
+    wb_veg['q_ssym_l'] = 0
+
+    wb_veg['delta_q_lapo_mmol_diag'] = 0
+
+    wb_veg['f_l_cav'] = 0
+    wb_veg['f_s_cav'] = 0
+
+    # Compute PLC
+    wb_veg['plc_leaf'] = plc_comp(psi = wb_veg['psi_lapo'],
+                                  slope = wb_veg['params']['slope_vc_leaf'],
+                                  p50 = wb_veg['params']['p50_vc_leaf']
+                                  )
+
+    #wb_veg['plc_stem'] = plc_comp(psi = WBveg$Psi_SApo,
+    #                              slope = WBveg$params$slope_VC_Stem,
+    #                              P50 = WBveg$params$P50_VC_Stem)
 
 
     return wb_veg
