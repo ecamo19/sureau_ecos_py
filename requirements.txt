@@ -97,7 +97,6 @@ six==1.16.0
 sniffio==1.3.0
 soupsieve==2.5
 stack-data==0.6.3
--e git+https://github.com/ecamo19/sureau_ecos_py.git@9d4d0961cdd7fcb0f0d11f3ccb4521da8ec20cd9#egg=sureau_ecos_py
 terminado==0.17.1
 tinycss2==1.2.1
 tokenize-rt==5.2.0
