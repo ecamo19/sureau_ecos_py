@@ -1,6 +1,6 @@
 FROM python:3.9.18
 
-WORKDIR /code
+WORKDIR /workspaces/sureau_ecos_py
 
 COPY ./requirements.txt ./
 
