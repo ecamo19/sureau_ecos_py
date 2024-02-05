@@ -11,4 +11,5 @@ website:
       - 14_create_soil_parameters.ipynb
       - 15_create_stand_parameters.ipynb
       - 16_create_vegetation_parameters.ipynb
-      - 17_wg_clim.ipynb
+      - 17_wb_veg.ipynb
+      - 18_wb_clim.ipynb

@@ -244,7 +244,7 @@ def compute_gmin(
     q10_2: float,  # Q10 values for g_cuti = f(T) above T_phase
     gmin_temp_off=False,  # Unknown parameter definition
 ) -> float:
-    "Calculate minimum conductance (gmin) following Cochard et al. (2019)"
+    "Calculate minimum conductance (gmin) following Cochard et al. (2019). Equantion 31 and 32 from SurEau-Ecos paper"
 
     print("original R code have a ambiguous gmin_temp_off specification")
     if gmin_temp_off is False:
@@ -261,15 +261,15 @@ def compute_gmin(
             return gmin
 
     else:
-        gmin = gmin_20
-        return gmin
+        print("gmin_temp_off = True. Returning gmin20 as gmin value")
+        return gmin_20
 
 # %% ../nbs/02_plant_utils.ipynb 20
 def compute_emin(
-    gmin: float,  # minimum conductance
+    gmin: float,  # Minimum conductance
     vpd: float,  # Vapor Pressure Deficit  (kPa)
     g_bl: float,  # Unknown parameter definition
-    g_crown: float,  # Unknown parameter definition. Use `compute_g_crown`
+    g_crown: float,  # Conductance of the tree crown. Calculated using `compute_g_crown` function
     air_pressure: float = 101.3,  # Surface air pressure (kPa)
 ) -> float:
     "Calculate minimum transpiration (emin)"
@@ -319,7 +319,7 @@ def distribute_conductances(
 
 # %% ../nbs/02_plant_utils.ipynb 25
 def compute_g_crown(
-    g_crown0: float,  # Unknown parameter definition
+    g_crown0: float,  # Reference tree crown conductance
     wind_speed: float,  # Unknown parameter definition
 ) -> float:
     "Calcultate g_crown"

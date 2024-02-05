@@ -129,7 +129,7 @@ def new_wb_veg(veg_params:Dict # Dictionary created using the `create_vegetation
 
     # rainfall and interception
 
-    # ppt that reach the soil
+    # precipitation (ppt) that reach the soil
     wb_veg['ppt_soil'] = 0
 
     # interceptedWater /quantite d'eau dans la canopee
@@ -210,6 +210,8 @@ def new_wb_veg(veg_params:Dict # Dictionary created using the `create_vegetation
 
     wb_veg['delta_q_lapo_mmol_diag'] = 0
 
+    # Water from the cavitated part, term from equations 6 and 7 in the
+    # SurEau-Ecos paper
     wb_veg['f_l_cav'] = 0
     wb_veg['f_s_cav'] = 0
 

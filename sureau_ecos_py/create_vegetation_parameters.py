@@ -230,12 +230,15 @@ def create_vegetation_parameters(
 
     # Determine root lenght (La gardner cowan)
 
-    # I am assumming that this is the LAI growth rate per day
+    # Total fine root area equation 18 from the SurEau-Ecos paper
     rai = vegetation_parameters["lai_max"] * vegetation_parameters["froottoleaf"]
 
+    # Root length per soil area
     vegetation_parameters["la"] = (
         rai * vegetation_parameters["root_distribution"]
     ) / (2 * math.pi * vegetation_parameters["rootradius"])
+
+    # Root length per soil volume
     vegetation_parameters["lv"] = vegetation_parameters["la"] / (
         soil_parameters["layer_thickness"]
         * (1 - (soil_parameters["rock_fragment_content"] / 100))
