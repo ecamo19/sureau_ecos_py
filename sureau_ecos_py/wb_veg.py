@@ -378,13 +378,58 @@ def update_capacitances_apo_and_sym_wb_veg(wb_veg:Dict, # Dictionary created usi
                            e_symp = wb_veg['params']['epsilonsym_leaf'],
                            psi = wb_veg['psi_lsym'] - dbxmin
                            )
-    return rwc_lsym
+    # Compute the derivative of the relative water content of the symplasm
+    if wb_veg['psi_lsym'] > wb_veg['params']['psi_tlp_leaf']:
+
+        # FP derivative of -Pi0- Eps(1-RWC)+Pi0/RWC
+        rwc_lsym_prime = rwc_lsym / (-wb_veg['params']['pifullturgor_leaf'] - wb_veg['psi_lsym'] - wb_veg['params']['epsilonsym_leaf'] + 2 * wb_veg['params']['epsilonsym_leaf'] * rwc_lsym)
+
+    else:
+        # FP derivative of Pi0/Psi
+        rwc_lsym_prime = -wb_veg['params']['pifullturgor_leaf'] / wb_veg['psi_lsym']**2
 
 
-# %% ../nbs/17_wb_veg.ipynb 22
+    # Compute the leaf capacitance (mmol/MPa/m2_sol)
+    if wb_veg['lai'] == 0:
+        wb_veg['c_lsym'] = 0
+
+    else:
+        wb_veg['c_lsym'] = wb_veg['q_lsym_sat_mmol_per_leaf_area'] * rwc_lsym_prime
+
+    # Stem symplasmic canopy water content --------------------------------------
+    rwc_ssym = 1 - rs_comp(pi_ft = wb_veg['params']['pifullturgor_stem'],
+                           e_symp = wb_veg['params']['epsilonsym_stem'],
+                           psi = wb_veg['psi_ssym'] - dbxmin
+                           )
+
+    # Compute the derivative of the relative water content of the symplasm
+    if wb_veg['psi_ssym'] > wb_veg['params']['psi_tlp_stem']:
+
+        # FP derivative of -Pi0- Eps(1-RWC)+Pi0/RWC
+        rwc_ssym_prime = rwc_ssym / (-wb_veg['params']['pifullturgor_stem'] - wb_veg['psi_ssym'] - wb_veg['params']['epsilonsym_stem'] + 2 * wb_veg['params']['epsilonsym_stem'] * rwc_ssym)
+
+    else:
+        # FP derivative of Pi0/Psi
+        rwc_ssym_prime = -wb_veg['params']['pifullturgor_stem'] / wb_veg['psi_ssym']**2
+
+
+    # Compute the capacitance (mmol/MPa/m2_leaf)
+    # Stem capacitance per leaf area can only decrease with LAI
+    # (cannot increase when LAI<1 )
+    wb_veg['c_ssym'] = wb_veg['q_ssym_sat_mmol_per_leaf_area'] * rwc_ssym_prime
+
+    # Add c_sapo and c_lapo -----------------------------------------------------
+    wb_veg['c_sapo'] = wb_veg['params']['c_sapoinit']
+    wb_veg['c_lapo'] = wb_veg['params']['c_lapoinit']
+
+    return wb_veg
+
+
+# %% ../nbs/17_wb_veg.ipynb 20
 def update_lai_and_stocks_wb_veg(wb_veg:Dict, # Dictionary created using the `new_wb_veg` function
-                                modeling_options: Dict,  # Dictionary created using the `create_modeling_options` function
+                                modeling_options: Dict, # Dictionary created using the `create_modeling_options` function
                                 ) -> Dict:
+    "Update leaf area index (LAI) as a function of lai_pheno and caviation and update LAI dependent parameters"
 
     # Assert parameters ---------------------------------------------------------
 
@@ -399,9 +444,84 @@ def update_lai_and_stocks_wb_veg(wb_veg:Dict, # Dictionary created using the `ne
         modeling_options, Dict
     ), f"modeling_options must be a dictionary not a {type(modeling_options)}"
 
-    #
-    pass
+    # Set lai_dead parameter ----------------------------------------------------
+
+    # Cavitation does not affect LAI
+    if modeling_options['defoliation'] is False:
+        wb_veg['lai_dead'] = 0
+
+    # Cavitation does affect LAI
+    elif modeling_options['defoliation'] is True:
+
+        # Leaf shedding because of cavitation. Starts only if PLCabove > 10%
+        if wb_veg['plc_leaf'] > 10:
+            wb_veg['lai_dead'] = np.maximum(0, wb_veg['lai_pheno'] * wb_veg['plc_leaf'] / 100)
+
+        else:
+            wb_veg['lai_dead'] = 0
+    else:
+        raise ValueError(
+                    'Error setting lai_dead in update_lai_and_stocks_wb_veg function'
+                    )
+
+    # Update lai ----------------------------------------------------------------
+    wb_veg['lai'] = wb_veg['lai_pheno'] - wb_veg['lai_dead']
+
+    # Update LAI-dependent variables --------------------------------------------
+    wb_veg['fcc'] = (1 - np.exp(-wb_veg['params']['k'] * wb_veg['lai']))
+    wb_veg['canopy_storage_capacity'] = 1.5 * wb_veg['lai']
+
+    # Update water storing capacities of the dead and living canopy -------------
+    # Water storing capacities of the living component
+    wb_veg['dm_live_canopy'] = wb_veg['lai'] * wb_veg['params']['lma']
+
+    # water storing capacities of the dead component
+    wb_veg['dm_dead_canopy'] = wb_veg['lai_dead'] * wb_veg['params']['lma']
+
+    # Calculate symplastic water content ----------------------------------------
+
+    # Leaf symplastic water content in l/m2 (i.e. mm)
+    wb_veg['q_lsym_sat_l'] = (1 / (wb_veg['params']['ldmc'] / 1000) - 1) * wb_veg['dm_live_canopy'] * (1 - wb_veg['params']['apofrac_leaf'])/1000
+
+    wb_veg['q_lsym_sat_mmol'] = wb_veg['q_lsym_sat_l'] * 1000000/18
+
+    # Calculate q_lsym_sat_mmol_per_leaf_area
+    if wb_veg['lai'] == 0:
+        wb_veg['q_lsym_sat_mmol_per_leaf_area'] = 0
+
+    else:
+        wb_veg['q_lsym_sat_mmol_per_leaf_area'] = wb_veg['q_lsym_sat_mmol'] / np.maximum(1, wb_veg['lai'])
+
+    # Stem symplastic water content in l/m2 (i.e. mm)
+    wb_veg['q_ssym_sat_l'] = wb_veg['params']['vol_stem'] * wb_veg['params']['symfrac_stem']
+
+    wb_veg['q_ssym_sat_mmol'] = wb_veg['q_ssym_sat_l'] * 1000000/18
+
+    # used max(1,LAI) to avoid that Q_SSym_sat_mmol_perLeafArea--> inF when
+    # LAI --> 0 (limit imposed by computing water fluxes by m2leaf)
+    wb_veg['q_ssym_sat_mmol_per_leaf_area'] = wb_veg['q_ssym_sat_mmol'] / np.maximum(1, wb_veg['lai'])
 
 
+    # Calculate apoplastic water content ----------------------------------------
+    # Leaf apoplastic water content in l/m2 (i.e. mm)
+    wb_veg['q_lapo_sat_l'] = (1 / (wb_veg['params']['ldmc'] / 1000) - 1) * wb_veg['dm_live_canopy'] * (wb_veg['params']['apofrac_leaf'])/1000
 
+    wb_veg['q_lapo_sat_mmol'] = wb_veg['q_lapo_sat_l'] * 1000000/18
 
+    # Calculate q_lsym_sat_mmol_per_leaf_area
+    if wb_veg['lai'] == 0:
+        wb_veg['q_lapo_sat_mmol_per_leaf_area'] = 0
+
+    else:
+        wb_veg['q_lapo_sat_mmol_per_leaf_area'] = wb_veg['q_lapo_sat_mmol'] / np.maximum(1, wb_veg['lai'])
+
+    # Stem apoplastic water content in l/m2 (i.e. mm)
+    wb_veg['q_sapo_sat_l'] = wb_veg['params']['vol_stem'] * wb_veg['params']['apofrac_stem']
+
+    wb_veg['q_sapo_sat_mmol'] = wb_veg['q_sapo_sat_l'] * 1000000/18
+
+    # Used max(1,LAI) to avoid that Q_SApo_sat_mmol_perLeafArea--> inF when
+    # LAI --> 0 (limit imposed by computing water fluxes by m2leaf)
+    wb_veg['q_s_sat_mmol_per_leaf_area'] = wb_veg['q_sapo_sat_mmol'] / np.maximum(1, wb_veg['lai'])
+
+    return update_capacitances_apo_and_sym_wb_veg(wb_veg)
