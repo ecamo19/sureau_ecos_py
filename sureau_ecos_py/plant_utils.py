@@ -24,16 +24,19 @@ from .create_modeling_options import create_modeling_options
 def rs_comp(
     pi_ft: float,  # Osmotic potential at full turgor (MPa)
     e_symp: float,  # Modulus of elastoicoty of the Symplasm (MPa/%)
-    p_min: float,  # Unknown parameter definition
+    psi: float,  # Unknown parameter definition
 ) -> float:
     "Compute Rs from pmin (resolution from Bartlet et al 2012 EcolLett and email Herve Cochard 19/06/2015)"
     return max(
+        # Firts term
         (
-            -1 * (p_min + pi_ft - e_symp)
-            - np.sqrt((p_min + pi_ft - e_symp) ** 2 + 4 * (p_min * e_symp))
+            -1 * (psi + pi_ft - e_symp)
+            - np.sqrt((psi + pi_ft - e_symp) ** 2 + 4 * (psi * e_symp))
         )
         / (2 * e_symp),
-        1 - pi_ft / p_min,
+
+        # Second term
+        1 - pi_ft / psi,
     )
 
 # %% ../nbs/02_plant_utils.ipynb 5
