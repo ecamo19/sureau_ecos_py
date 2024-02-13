@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['new_wb_veg', 'compute_pheno_wb_veg', 'update_capacitances_apo_and_sym_wb_veg', 'update_lai_and_stocks_wb_veg',
-           'compute_interception_wb_veg']
+           'compute_interception_wb_veg', 'compute_water_storage_wb_veg']
 
 # %% ../nbs/17_wb_veg.ipynb 3
 import warnings
@@ -11,7 +11,8 @@ import numpy as np
 from typing import Dict
 from sureau_ecos_py.plant_utils import (
     plc_comp,
-    rs_comp
+    rs_comp,
+    compute_dfmc
 )
 
 from sureau_ecos_py.create_vegetation_parameters import (
@@ -566,3 +567,69 @@ def compute_interception_wb_veg(wb_veg:Dict, # Dictionary created using the `new
                     )
 
     return wb_veg
+
+# %% ../nbs/17_wb_veg.ipynb 26
+def compute_water_storage_wb_veg(wb_veg:Dict, # Dictionary created using the `new_wb_veg` function
+                                vpd:float,  # Vapor Pressure Deficit (kPa)
+) -> Dict:
+
+    "Compute water stocks in leaves/wood in SUREAU_ECOS (one vegetation layer only)"
+
+    # Assert parameters ---------------------------------------------------------
+
+    # wb_veg
+    assert (
+        isinstance(wb_veg, Dict)
+    ), f"wb_veg must be a Dictionary not a {type(wb_veg)}"
+
+    assert (
+        isinstance(vpd, float) or isinstance(vpd, int)
+    ), "VPD must be a numeric value"
+
+    # Symplasmic canopy water content of the leaves -----------------------------
+
+    # Relative water content (unitless)
+    rwc_lsym = 1 - rs_comp(pi_ft = wb_veg['params']['pifullturgor_leaf'],
+                           e_symp = wb_veg['params']['epsilonsym_leaf'],
+                           psi = wb_veg['psi_lsym']
+                           )
+
+    q_lsym = np.maximum(0, rwc_lsym)* wb_veg['q_lsym_sat_l']
+    wb_veg['q_lsym_l'] = q_lsym
+    wb_veg['lfmc_symp'] = 100 * (q_lsym / (wb_veg["dm_live_canopy"] * (1 - wb_veg["params"]['apofrac_leaf']) / 1000))
+
+    # Apoplasmic water content of the leaves ------------------------------------
+    q_lapo = (1 - wb_veg['plc_leaf']/100) * wb_veg['q_lapo_sat_l']
+    wb_veg['q_lapo_l'] = q_lapo
+
+    #  LFMC of Apo (relative moisture content to dry mass), gH20/gMS
+    wb_veg['lfmc_apo'] = 100 * (q_lapo / (wb_veg['dm_live_canopy'] * wb_veg['params']['apofrac_leaf'] / 1000))
+
+    # LFMC leaf total (Apo+Symp) ------------------------------------------------
+    wb_veg['lfmc'] = 100 * (q_lapo + q_lsym) / (wb_veg['dm_live_canopy'] / 1000)
+
+    # Symplasmic canopy water content of the stem -------------------------------
+    # Relative water content (unitless)
+    rwc_ssym = 1 - rs_comp(pi_ft = wb_veg['params']['pifullturgor_stem'],
+                           e_symp = wb_veg['params']['epsilonsym_stem'],
+                           psi = wb_veg['psi_ssym']
+                           )
+
+    q_ssym = np.maximum(0, rwc_ssym) * wb_veg['q_ssym_sat_l']
+    wb_veg['q_ssym_l'] = q_ssym
+
+    # Apoplasmic water content of the stem --------------------------------------
+    q_sapo = (1 - wb_veg['plc_stem']/100) *  wb_veg['q_sapo_sat_l']
+    wb_veg['q_sapo_l'] = q_sapo
+
+    # FMC canopy ----------------------------------------------------------------
+    # Dead FMC [%]
+    wb_veg['dfmc'] <- compute_dfmc(vpd)
+
+    # Water quantity of dead foliage (l/m2 sol ou mm)
+    q_ldead = (wb_veg['dfmc'] / 100) * wb_veg['dm_dead_canopy'] / 1000
+    wb_veg['fmc_canopy'] = 100 * (q_lapo + q_lsym + q_ldead) / (wb_veg["dm_live_canopy"] / 1000 + wb_veg["dm_dead_canopy"] / 1000)
+
+    return wb_veg
+
+
