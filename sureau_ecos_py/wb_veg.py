@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['new_wb_veg', 'compute_pheno_wb_veg', 'update_capacitances_apo_and_sym_wb_veg', 'update_lai_and_stocks_wb_veg',
-           'compute_interception_wb_veg', 'compute_water_storage_wb_veg']
+           'compute_interception_wb_veg', 'compute_water_storage_wb_veg', 'compute_evapo_intercepted_wb_veg']
 
 # %% ../nbs/17_wb_veg.ipynb 3
 import warnings
@@ -138,7 +138,7 @@ def new_wb_veg(veg_params:Dict # Dictionary created using the `create_vegetation
     # interceptedWater /quantite d'eau dans la canopee
     wb_veg['intercepted_water_amount'] = 0
     wb_veg['evaporation_intercepted'] = 0
-    wb_veg['etpr'] = 0
+    wb_veg['petr'] = 0
 
     # defoliation // no defoliation (add an option to set defoliation due to
     # cavitation of the Plant Above)
@@ -632,4 +632,40 @@ def compute_water_storage_wb_veg(wb_veg:Dict, # Dictionary created using the `ne
 
     return wb_veg
 
+# %% ../nbs/17_wb_veg.ipynb 29
+def compute_evapo_intercepted_wb_veg(wb_veg:Dict, # Dictionary created using the `new_wb_veg` function
+                                     pet:float, # Potential evapotranspiration
+) -> Dict:
 
+    # Assert parameters ---------------------------------------------------------
+
+    # wb_veg
+    assert (
+        isinstance(wb_veg, Dict)
+    ), f"wb_veg must be a Dictionary not a {type(wb_veg)}"
+
+    assert (
+        isinstance(pet, float) or isinstance(pet, int)
+    ), "pet must be a numeric value"
+
+    # Calculate PETr and evaporation intercepted --------------------------------
+    if pet >= 0:
+        if pet >= wb_veg['intercepted_water_amount']:
+            wb_veg['petr'] = wb_veg['intercepted_water_amount'] - pet
+            wb_veg['evaporation_intercepted'] = wb_veg['intercepted_water_amount'] - pet
+
+        # empty the reservoir
+        wb_veg['qr'] = 0
+
+    # Energy not sufficient to evaporate the intercepted water
+    elif pet < wb_veg['qr']:
+        wb_veg['intercepted_water_amount'] = wb_veg['intercepted_water_amount']  - pet
+        wb_veg['petr'] = 0
+        wb_veg['evaporation_intercepted'] =  wb_veg['intercepted_water_amount']  - pet
+
+    else:
+        raise ValueError(
+                    'Error calculating PETr and evaporation intercepted in compute_evapo_intercepted_wb_veg function'
+                    )
+
+    return wb_veg
