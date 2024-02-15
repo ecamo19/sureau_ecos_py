@@ -5,7 +5,7 @@ __all__ = ['rs_comp', 'turgor_comp', 'compute_turgor_from_psi', 'osmo_comp', 'ps
            'plc_comp', 'plc_prime_comp', 'gs_curve', 'compute_gmin', 'compute_emin', 'compute_dfmc',
            'distribute_conductances', 'compute_g_crown', 'convert_flux_from_mmolm2s_to_mm',
            'convert_flux_from_mm_to_mmolm2s', 'calculate_ebound_mm_granier', 'calculate_ebound_granier',
-           'convert_f_cm3_to_v_mm', 'compute_tleaf', 'VegetationFile', 'read_vegetation_file']
+           'convert_f_cm3_to_v_mm', 'compute_tleaf', 'VegetationFile', 'read_vegetation_file', 'k_series_sum']
 
 # %% ../nbs/02_plant_utils.ipynb 3
 import os
@@ -919,3 +919,22 @@ def read_vegetation_file(
         raise ValueError(print("penman option have been not implemented yet"))
 
     return vegetation_parameters
+
+# %% ../nbs/02_plant_utils.ipynb 42
+def k_series_sum(k1:float,
+                 k2:float
+                 )->float:
+
+    "Function to sum 2 conductances in series"
+
+    # Assert parameters ---------------------------------------------------------
+    assert isinstance(k1, float) or isinstance(
+        k1, int
+    ), "k1 must be a numeric value"
+
+    assert isinstance(k1, float) or isinstance(
+        k2, int
+    ), "k2 must be a numeric value"
+
+    # Sum conductances ----------------------------------------------------------
+    return 1/(1 / k1 + 1 / k2)
