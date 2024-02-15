@@ -34,7 +34,6 @@ def rs_comp(
             - np.sqrt((psi + pi_ft - e_symp) ** 2 + 4 * (psi * e_symp))
         )
         / (2 * e_symp),
-
         # Second term
         1 - pi_ft / psi,
     )

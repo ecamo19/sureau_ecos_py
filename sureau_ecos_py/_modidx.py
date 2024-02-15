@@ -129,5 +129,7 @@ d = { 'settings': { 'branch': 'main',
                                        'sureau_ecos_py.wb_veg.new_wb_veg': ('wb_veg.html#new_wb_veg', 'sureau_ecos_py/wb_veg.py'),
                                        'sureau_ecos_py.wb_veg.update_capacitances_apo_and_sym_wb_veg': ( 'wb_veg.html#update_capacitances_apo_and_sym_wb_veg',
                                                                                                          'sureau_ecos_py/wb_veg.py'),
+                                       'sureau_ecos_py.wb_veg.update_kplant_wb_veg': ( 'wb_veg.html#update_kplant_wb_veg',
+                                                                                       'sureau_ecos_py/wb_veg.py'),
                                        'sureau_ecos_py.wb_veg.update_lai_and_stocks_wb_veg': ( 'wb_veg.html#update_lai_and_stocks_wb_veg',
                                                                                                'sureau_ecos_py/wb_veg.py')}}}

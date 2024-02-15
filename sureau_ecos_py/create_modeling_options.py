@@ -17,11 +17,14 @@ def create_modeling_options(
     defoliation: bool = False,  # Boolean indicating whether trees should loose leaves when`occurs.cavitation` occurs of the above part of plant. Defoliation starts only when PLC_Leaf > 10% .
     threshold_mortality: int = 90,  # Percentange value indicating the percentage loss of conductivity above which the plant is considered dead and simulation stops for the current year.
     transpiration_model: str = ["jarvis", "granier"],  # Transpiration model type
-    etp_formulation: str = "pt", # Formulation of ETP to be used, either `pt` (Priestley-Taylor) or `penman` (Penmman)
-    rn_formulation: str = "linacre", # method to be used to calculate net radiation from global radiation, either `linacre`  or 'linear' (the linear method is not implemnted yet)
-    pedo_transfer_formulation: str = ["vg", "campbell"], # Unknown parameter definition
+    etp_formulation: str = "pt",  # Formulation of ETP to be used, either `pt` (Priestley-Taylor) or `penman` (Penmman)
+    rn_formulation: str = "linacre",  # method to be used to calculate net radiation from global radiation, either `linacre`  or 'linear' (the linear method is not implemnted yet)
+    pedo_transfer_formulation: str = [
+        "vg",
+        "campbell",
+    ],  # Unknown parameter definition
     constant_climate: bool = False,  # Boolian indicating whether the climate should be considered constant or not
-    comp_options_for_evapo: str = [ # Option to be used for the loops  (voir avec Francois)
+    comp_options_for_evapo: str = [  # Option to be used for the loops  (voir avec Francois)
         "normal",
         "accurate",
         "fast",
@@ -31,12 +34,12 @@ def create_modeling_options(
     lcav: int = 1,  # Unknown parameter definition
     scav: int = 1,  # Unknown parameter definition
     eord: int = 1,  # Unknown parameter definition
-    numerical_scheme: str = [ # Unknown parameter definition
+    numerical_scheme: str = [  # Unknown parameter definition
         "implicit",
         "semi-implicit",
         "explicit",
     ],
-    stomatal_reg_formulation: str = [ # Type of regulation to be used for stomatal response to leaf symplasmic water potential, either `sigmoid` or `piecewise_linear`
+    stomatal_reg_formulation: str = [  # Type of regulation to be used for stomatal response to leaf symplasmic water potential, either `sigmoid` or `piecewise_linear`
         "sigmoid",
         "piecewise_linear",
         "turgor",
@@ -215,6 +218,5 @@ def create_modeling_options(
         modeling_options["transpiration_model"] = transpiration_model
         modeling_options["print_prog"] = print_prog
         modeling_options["stop_simulation_dead_plant"] = print_prog
-
 
     return modeling_options

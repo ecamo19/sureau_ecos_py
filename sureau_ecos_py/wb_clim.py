@@ -161,12 +161,12 @@ def new_wb_clim(
         )
 
 # %% ../nbs/18_wb_clim.ipynb 10
-def compute_rn_and_pet_wb_clim(wb_veg:Dict,
-                               wb_clim:Dict, # Dictionary created using the `new_wb_clim` function
-                               rn_formulation:str, # Method to be used to calculate net radiation from global radiation, either `linacre`  or 'linear' (the linear method is not implemnted yet)
-                               etp_formulation = "pt", # Formulation of ETP to be used, either `pt` (Priestley-Taylor) or `penman` (Penmman)
-                               ):
-
+def compute_rn_and_pet_wb_clim(
+    wb_veg: Dict,
+    wb_clim: Dict,  # Dictionary created using the `new_wb_clim` function
+    rn_formulation: str,  # Method to be used to calculate net radiation from global radiation, either `linacre`  or 'linear' (the linear method is not implemnted yet)
+    etp_formulation="pt",  # Formulation of ETP to be used, either `pt` (Priestley-Taylor) or `penman` (Penmman)
+):
     "Compute daily potential evapotranspiration (pet) and net radiation (rn) for wb_clim"
 
     # Assert parameters ---------------------------------------------------------
@@ -175,7 +175,6 @@ def compute_rn_and_pet_wb_clim(wb_veg:Dict,
     assert isinstance(
         wb_veg, Dict
     ), f"wb_veg must be a Dictionary not a {type(wb_veg)}"
-
 
     # wb_clim
     assert isinstance(
@@ -196,43 +195,49 @@ def compute_rn_and_pet_wb_clim(wb_veg:Dict,
 
     # Calculate net radiation ---------------------------------------------------
     if rn_formulation == "linacre":
-
         # if wb_clim['nN'] is empty
-        if not wb_clim['nN']:
-
+        if not wb_clim["nN"]:
             # Step done for deleting wb_clim['nN']
-            del wb_clim['nN']
+            del wb_clim["nN"]
 
-            #nN = np.zeros(1)
-            if wb_clim['ppt'] > 0:
-
+            # nN = np.zeros(1)
+            if wb_clim["ppt"] > 0:
                 # if rain (is pluie)
                 nN = 0.25
 
         else:
-
             # if no rain (si pas de pluie)
             nN = 0.75
             print(nN)
 
-        wb_clim["net_radiation"] = np.maximum(0, 1e-6 * ((1 - 0.17) * 1e6 * wb_clim['rg'] - 1927.987 * (1 + 4 * nN) * (100 - wb_clim["Tair_mean"])))
+        wb_clim["net_radiation"] = np.maximum(
+            0,
+            1e-6
+            * (
+                (1 - 0.17) * 1e6 * wb_clim["rg"]
+                - 1927.987 * (1 + 4 * nN) * (100 - wb_clim["Tair_mean"])
+            ),
+        )
 
     elif rn_formulation == "linear":
-        wb_clim["net_radiation"] = wb_veg['arad'] * wb_clim['rg'] + wb_veg['brad']
+        wb_clim["net_radiation"] = (
+            wb_veg["arad"] * wb_clim["rg"] + wb_veg["brad"]
+        )
 
     else:
         raise ValueError(
-            print("Error calculating net radiation in compute_rn_and_pet_wb_clim")
+            print(
+                "Error calculating net radiation in compute_rn_and_pet_wb_clim"
+            )
         )
-
 
     # Calculate PET -------------------------------------------------------------
     if etp_formulation == "pt":
-
-        wb_clim['pet'] = compute_pet(tmoy= wb_clim['Tair_mean'],
-                                     net_radiation= wb_clim['net_radiation'],
-                                     pt_coeff= wb_veg["params"]["pt_coeff"],
-                                     formulation="pt"
+        wb_clim["pet"] = compute_pet(
+            tmoy=wb_clim["Tair_mean"],
+            net_radiation=wb_clim["net_radiation"],
+            pt_coeff=wb_veg["params"]["pt_coeff"],
+            formulation="pt",
         )
 
     elif etp_formulation == "penman":
@@ -247,22 +252,21 @@ def compute_rn_and_pet_wb_clim(wb_veg:Dict,
 
     return wb_clim
 
-
 # %% ../nbs/18_wb_clim.ipynb 14
-def interp_wb_clim(clim_1:Dict, # Unknown parameter definition
-                   clim_2:Dict, # Unknown parameter definition
-                   p:float = 0.5 # Unknown parameter definition
-                   ):
-
+def interp_wb_clim(
+    clim_1: Dict,  # Unknown parameter definition
+    clim_2: Dict,  # Unknown parameter definition
+    p: float = 0.5,  # Unknown parameter definition
+):
     "Interpolate climate values between two WBclim objects"
 
     res = clim_1
-    res['Tair_mean'] =  (1-p) * clim_1['Tair_mean']   + p * clim_2['Tair_mean']
-    res['RG'] =  (1-p) * clim_1['RG']                 + p * clim_2['RG']
-    res['WS'] =  (1-p) * clim_1['WS']                 + p * clim_2['WS']
-    res['VPD'] =  (1-p) * clim_1['VPD']               + p * clim_2['VPD']
-    res['RHair_mean'] =  (1-p) * clim_1['RHair_mean'] + p * clim_2['RHair_mean']
-    res['pet'] =  (1-p) * clim_1['pet']               + p * clim_2['pet']
+    res["Tair_mean"] = (1 - p) * clim_1["Tair_mean"] + p * clim_2["Tair_mean"]
+    res["RG"] = (1 - p) * clim_1["RG"] + p * clim_2["RG"]
+    res["WS"] = (1 - p) * clim_1["WS"] + p * clim_2["WS"]
+    res["VPD"] = (1 - p) * clim_1["VPD"] + p * clim_2["VPD"]
+    res["RHair_mean"] = (1 - p) * clim_1["RHair_mean"] + p * clim_2["RHair_mean"]
+    res["pet"] = (1 - p) * clim_1["pet"] + p * clim_2["pet"]
 
 # %% ../nbs/18_wb_clim.ipynb 15
 def new_wb_clim_hour(
@@ -551,8 +555,7 @@ def new_wb_clim_hour(
         wb_clim_hour["wind_speed"] = wb_clim_hour["wind_speed"][index_matched]
 
     # All ppt of the day fall at midnight
-    wb_clim_hour['ppt'] = np.zeros(len(modeling_options["time"]))
-    wb_clim_hour['ppt'][0] = wb_clim['ppt']
-
+    wb_clim_hour["ppt"] = np.zeros(len(modeling_options["time"]))
+    wb_clim_hour["ppt"][0] = wb_clim["ppt"]
 
     return wb_clim_hour
