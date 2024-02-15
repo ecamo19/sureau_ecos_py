@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['new_wb_veg', 'compute_pheno_wb_veg', 'update_capacitances_apo_and_sym_wb_veg', 'update_lai_and_stocks_wb_veg',
            'compute_interception_wb_veg', 'compute_water_storage_wb_veg', 'compute_evapo_intercepted_wb_veg',
-           'update_kplant_wb_veg']
+           'update_kplant_wb_veg', 'compute_transpiration_wb_veg']
 
 # %% ../nbs/18_wb_veg.ipynb 3
 import warnings
@@ -767,7 +767,7 @@ def compute_evapo_intercepted_wb_veg(
 
     return wb_veg
 
-# %% ../nbs/18_wb_veg.ipynb 31
+# %% ../nbs/18_wb_veg.ipynb 32
 def update_kplant_wb_veg(
     wb_veg: Dict,  # Dictionary created using the `new_wb_veg` function
     wb_soil: Dict,  # Missing definition
@@ -804,3 +804,14 @@ def update_kplant_wb_veg(
     )
 
     return wb_veg
+
+# %% ../nbs/18_wb_veg.ipynb 35
+def compute_transpiration_wb_veg(
+    wb_veg: Dict,  # Dictionary created using the `new_wb_veg` function
+    wb_clim: Dict,  # Dictionary created using the `new_wb_clim` function
+    modeling_options: Dict,  # Dictionary created using the `create_modeling_options` function
+    nhours:np.array, # Array showing the difference between each time step
+) -> Dict:
+
+    pass
+
