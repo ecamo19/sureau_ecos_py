@@ -1,4 +1,4 @@
-FROM python:3.9.18
+FROM python:3.12
 
 WORKDIR /workspaces/sureau_ecos_py
 
