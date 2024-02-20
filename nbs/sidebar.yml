@@ -5,11 +5,11 @@ website:
       - 00_climate_utils.ipynb
       - 01_soil_utils.ipynb
       - 02_plant_utils.ipynb
-      - 11_create_modeling_options.ipynb
-      - 12_create_climate_data.ipynb
-      - 13_create_simulation_parameters.ipynb
-      - 14_create_soil_parameters.ipynb
-      - 15_create_stand_parameters.ipynb
-      - 16_create_vegetation_parameters.ipynb
-      - 17_wb_veg.ipynb
-      - 18_wb_clim.ipynb
+      - 10_create_modeling_options.ipynb
+      - 11_create_climate_data.ipynb
+      - 12_create_simulation_parameters.ipynb
+      - 13_create_soil_parameters.ipynb
+      - 14_create_stand_parameters.ipynb
+      - 15_create_vegetation_parameters.ipynb
+      - 21_sureau_core_veg.ipynb
+      - 22_sureau_core_clim.ipynb
