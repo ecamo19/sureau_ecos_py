@@ -21,7 +21,7 @@ from .create_modeling_options import create_modeling_options
 def compute_b(
     lv: float,  # length of fine root per unit volume
 ) -> float:
-    "Calculate b used to compute the B of the Gardnar-Cowen model"
+    'Calculate b used to compute the B of the Gardnar-Cowen model'
 
     return 1 / np.sqrt(pi * lv)
 
@@ -31,7 +31,7 @@ def compute_b_gc(
     b: float,  # Unknown parameter definition
     root_radius: float,  # Calculated using the `compute_b` function
 ) -> float:
-    "Calculate B Gardner cowen thhe scaling factor for soil conductance"
+    'Calculate B Gardner cowen thhe scaling factor for soil conductance'
 
     return la * 2 * pi / np.log(b / root_radius)
 
@@ -54,8 +54,8 @@ def compute_k_soil(
     k_soil_gc = 1000 * b_gc * k_soil
 
     # Append to dictionary ------------------------------------------------------
-    k_soil_parameters["k_soil"] = k_soil
-    k_soil_parameters["k_soil_gc"] = k_soil_gc
+    k_soil_parameters['k_soil'] = k_soil
+    k_soil_parameters['k_soil_gc'] = k_soil_gc
 
     return k_soil_parameters
 
@@ -107,7 +107,7 @@ def compute_theta_at_given_p_soil(
         operator.__gt__,
         np.array(psi_target),
         0,
-        err_msg="\nError: psi_target values must be greater than 0\n",
+        err_msg='\nError: psi_target values must be greater than 0\n',
     )
 
     return theta_res + (theta_sat - theta_res) / (
@@ -127,17 +127,17 @@ def compute_theta_at_given_p_soil_camp(
     # type
 
     np.testing.assert_array_less(
-        np.array(psie), 0, err_msg="\nError: psie values must be negative\n"
+        np.array(psie), 0, err_msg='\nError: psie values must be negative\n'
     )
 
     np.testing.assert_array_less(
-        np.array(b_camp), 0, err_msg="\nError: b_camp values must be negative\n"
+        np.array(b_camp), 0, err_msg='\nError: b_camp values must be negative\n'
     )
 
     np.testing.assert_array_less(
         np.array(psi_target),
         0,
-        err_msg="\nError: psi_target values must be negative\n",
+        err_msg='\nError: psi_target values must be negative\n',
     )
 
     return theta_sat * (psi_target / psie) ** (1 / b_camp)
@@ -146,10 +146,10 @@ def compute_theta_at_given_p_soil_camp(
 # This class was created for validating the input dataframe
 # If the data don't follow the structure specified the function will fail
 class SoilFile(pa.SchemaModel):
-    "Schema for validating the input soil parameter file"
+    'Schema for validating the input soil parameter file'
 
-    Name: Series[str] = pa.Field(description="Parameter names")
-    Value: Series[float] = pa.Field(description="Parameter values")
+    Name: Series[str] = pa.Field(description='Parameter names')
+    Value: Series[float] = pa.Field(description='Parameter values')
 
     # Added for making sure that it only accepts the columns specified above
     class Config:
@@ -159,20 +159,20 @@ class SoilFile(pa.SchemaModel):
 def read_soil_file(
     file_path: Path,  # Path to a csv file containing parameter values i.e path/to/file_name.csv
     modeling_options: Dict = None,  # Dictionary created using the `create_modeling_options` function
-    sep: str = ";",  # CSV file separator can be ',' or ';'
+    sep: str = ';',  # CSV file separator can be ',' or ';'
 ) -> Dict:
-    "Function for reading a data frame containing information about soil characteristics"
+    'Function for reading a data frame containing information about soil characteristics'
 
     # Assert parameters ---------------------------------------------------------
     # Make sure that modeling_options is a dictionary
     assert isinstance(
         modeling_options, Dict
-    ), f"modeling_options must be a dictionary not a {type(modeling_options)}"
+    ), f'modeling_options must be a dictionary not a {type(modeling_options)}'
 
     # Make sure the file_path exist
     assert os.path.exists(
         file_path
-    ), f"Path: {file_path} not found, check spelling"
+    ), f'Path: {file_path} not found, check spelling'
 
     # Read data frame -----------------------------------------------------------
 
@@ -182,63 +182,63 @@ def read_soil_file(
     SoilFile.validate(soil_data, lazy=True)
 
     # Setting common parameters for WB_soil (regardless of the options) ---------
-    if modeling_options["pedo_transfer_formulation"] == "vg":
+    if modeling_options['pedo_transfer_formulation'] == 'vg':
         # 14 params
         params = np.array(
             [
-                "rfc_1",
-                "rfc_2",
-                "rfc_3",
-                "depth_1",
-                "depth_2",
-                "depth_3",
-                "wilting_point",
-                "alpha_vg",
-                "n_vg",
-                "i_vg",
-                "ksat_vg",
-                "saturation_capacity_vg",
-                "residual_capacity_vg",
-                "g_soil_0",
+                'rfc_1',
+                'rfc_2',
+                'rfc_3',
+                'depth_1',
+                'depth_2',
+                'depth_3',
+                'wilting_point',
+                'alpha_vg',
+                'n_vg',
+                'i_vg',
+                'ksat_vg',
+                'saturation_capacity_vg',
+                'residual_capacity_vg',
+                'g_soil_0',
             ],
             dtype=object,
         )
 
-    if modeling_options["pedo_transfer_formulation"] == "campbell":
+    if modeling_options['pedo_transfer_formulation'] == 'campbell':
         # 12 params
         params = np.array(
             [
-                "rfc_1",
-                "rfc_2",
-                "rfc_3",
-                "depth_1",
-                "depth_2",
-                "depth_3",
-                "wilting_point",
-                "ksat_campbell",
-                "saturation_capacity_campbell",
-                "b_camp",
-                "psie",
-                "g_soil_0",
+                'rfc_1',
+                'rfc_2',
+                'rfc_3',
+                'depth_1',
+                'depth_2',
+                'depth_3',
+                'wilting_point',
+                'ksat_campbell',
+                'saturation_capacity_campbell',
+                'b_camp',
+                'psie',
+                'g_soil_0',
             ],
             dtype=object,
         )
 
     # Get only the required params ----------------------------------------------
-    soil_data = soil_data[soil_data["Name"].isin(params)]
+    soil_data = soil_data[soil_data['Name'].isin(params)]
 
     # Make sure that no parameters are missing (12 or 14) -----------------------
     for each_parameter in params:
         # Raise error if a parameter is missing from params
-        if each_parameter not in np.array(soil_data["Name"]):
+        if each_parameter not in np.array(soil_data['Name']):
             raise ValueError(
-                f"{each_parameter} not provided in input soil parameter CSV file, check presence or spelling\n"
+                f'{each_parameter} not provided in input soil parameter CSV file, check presence or spelling\n'
             )
 
     # Make sure there are no duplicate parameters -------------------------------
-    if len(soil_data["Name"]) is not len(set(soil_data["Name"])):
+    if len(soil_data['Name']) is not len(set(soil_data['Name'])):
         raise ValueError(
-            "Parameter repeated several times in input soil parameter file"
+            'Parameter repeated several times in input soil parameter file'
         )
 
     # Get values in the dataframe and get rid of the colnames. Save everything

@@ -16,16 +16,16 @@ from pandera.typing import Series
 # This class was created for validating the input dataframe
 # If the data don't follow the structure specified the function will fail
 class StandFile(pa.SchemaModel):
-    "Schema for validating the input stand parameter data. The CSV must contain columns with the plot_id, lai_max, latitude, and longitude"
+    'Schema for validating the input stand parameter data. The CSV must contain columns with the plot_id, lai_max, latitude, and longitude'
 
     # plot_id: Series[str] = pa.Field(
     #    description="Plot id from which the data was collected"
     # )
     lai_max: Series[float] = pa.Field(
-        ge=0, description="Maximum leaf area index of the stand (m2/m2)"
+        ge=0, description='Maximum leaf area index of the stand (m2/m2)'
     )
-    latitude: Series[float] = pa.Field(description="Latitude of the stand")
-    longitude: Series[float] = pa.Field(description="Longitude of the stand")
+    latitude: Series[float] = pa.Field(description='Latitude of the stand')
+    longitude: Series[float] = pa.Field(description='Longitude of the stand')
 
     # Added for making sure that it only accepts the columns specified above
     class Config:
@@ -37,33 +37,33 @@ def create_stand_parameters(
     lai_max: float = None,  # Value indicating the maximum leaf area index of the stand (m2/m2)
     latitude: float = None,  # Value indicating the latitude of the stand
     longitude: float = None,  # Value indicating the longitude of the stand
-    sep: str = ";",  # CSV file separator can be ',' or ';'
+    sep: str = ';',  # CSV file separator can be ',' or ';'
 ) -> Dict:  # Dictionary containing parameters
-    "Create a dictionary with stand parameters that can be used as in input in \code{run.SureauR}"
+    'Create a dictionary with stand parameters that can be used as in input in \code{run.SureauR}'
 
     # Assert parameters ---------------------------------------------------------
 
     # Make sure the file_path exist or is None
     assert file_path is None or os.path.exists(
         file_path
-    ), f"Path: {file_path} not found, check spelling"
+    ), f'Path: {file_path} not found, check spelling'
 
     # Make sure that if file_path is None, the other params are provided and
     # are the correct data type
     if file_path is None:
         assert isinstance(
             lai_max, float
-        ), "Missing lai_max or incorrect data type. Provide lai_max as a floating point i.e. lai_max = 6.0011"
+        ), 'Missing lai_max or incorrect data type. Provide lai_max as a floating point i.e. lai_max = 6.0011'
 
         assert (
             isinstance(latitude, float) and isinstance(longitude, float)
-        ), "Missing latitude and/or longitude. Provide latitude and/or longitude as Coordinates points i.e. latitude = 41.40338, longitude = 2.17403"
+        ), 'Missing latitude and/or longitude. Provide latitude and/or longitude as Coordinates points i.e. latitude = 41.40338, longitude = 2.17403'
 
     # Raise error if file_path and parameters are provided
     if file_path is not None:
         assert (
             lai_max is None and latitude is None and longitude is None
-        ), "file_path, lai_max, latitude and longitude were provided. If CSV file is provided set lai_max, latitude and longitude to None"
+        ), 'file_path, lai_max, latitude and longitude were provided. If CSV file is provided set lai_max, latitude and longitude to None'
 
     # Create stand_parameters from csv file -------------------------------------
     if file_path is not None:
@@ -81,7 +81,7 @@ def create_stand_parameters(
         # Reshape dataframe for converting it to a list
         stand_params_csv = pd.DataFrame(
             stand_params_csv.melt(ignore_index=True).reset_index()[
-                ["variable", "value"]
+                ['variable', 'value']
             ]
         )
 
@@ -101,8 +101,8 @@ def create_stand_parameters(
         stand_params = collections.defaultdict(list)
 
         # Add params to empty dict
-        stand_params["lai_max"] = lai_max
-        stand_params["latitude"] = latitude
-        stand_params["longitude"] = longitude
+        stand_params['lai_max'] = lai_max
+        stand_params['latitude'] = latitude
+        stand_params['longitude'] = longitude
 
     return stand_params

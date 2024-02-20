@@ -20,7 +20,7 @@ def compute_vpd_from_t_rh(
     temperature: float,  # Air temperature (degrees Celsius)
     air_pressure: float = 101325,  # Unknown parameter definition Air pressure, used?
 ) -> float:
-    "Compute vapor pressure deficit (VPD) from air relative humidity and air temperature"
+    'Compute vapor pressure deficit (VPD) from air relative humidity and air temperature'
 
     # Assert parameters ---------------------------------------------------------
 
@@ -35,13 +35,13 @@ def compute_vpd_from_t_rh(
         operator.__gt__,
         np.array(relative_humidity),
         0,
-        err_msg="\nrelative_humidity must be must be a integer value between 0-100\n",
+        err_msg='\nrelative_humidity must be must be a integer value between 0-100\n',
     )
 
     np.testing.assert_array_less(
         np.array(relative_humidity),
         101,
-        err_msg="\nrelative_humidity must be must be a integer value between 0-100\n",
+        err_msg='\nrelative_humidity must be must be a integer value between 0-100\n',
     )
 
     # temperature
@@ -49,13 +49,13 @@ def compute_vpd_from_t_rh(
         operator.__gt__,
         np.array(temperature),
         -100,
-        err_msg="\ntemperature must be must be value between -100 and 100\n",
+        err_msg='\ntemperature must be must be value between -100 and 100\n',
     )
 
     np.testing.assert_array_less(
         np.array(temperature),
         101,
-        err_msg="\ntemperature must be must be value between -100 and 100\n",
+        err_msg='\ntemperature must be must be value between -100 and 100\n',
     )
 
     # Define Constants ----------------------------------------------------------
@@ -102,11 +102,11 @@ def compute_pet(
     wind_speed_u: float = None,  #  Wind speed (m.s-1) for calculating etp using the Penmman (penman) formulation
     pt_coeff: float = None,  # An empirical constant accounting for the vapor pressure deficit and resistance values. Typically, α is 1.26 for open bodies of water, but has a wide range of values from less than 1 (humid conditions) to almost 2 (arid conditions).
     formulation: str = [  # String indicating which formulation to use (Pristeley Taylor (pt) or Penmman (penman)) for calculating etp
-        "pt",
-        "penman",
+        'pt',
+        'penman',
     ],
 ) -> float:  #  Potential evapotranspiration (PET) (mm)
-    "Calcule Potential Evapotranspiration (mm) PET using Pristeley Taylor (pt) or Penmman (penman) formulation"
+    'Calcule Potential Evapotranspiration (mm) PET using Pristeley Taylor (pt) or Penmman (penman) formulation'
 
     # Assert parameters ---------------------------------------------------------
     # tmoy
@@ -114,56 +114,56 @@ def compute_pet(
         isinstance(tmoy, float)
         | isinstance(tmoy, int)
         | isinstance(tmoy, np.ndarray)
-    ), "tmoy parameter must be a float or integer value"
+    ), 'tmoy parameter must be a float or integer value'
 
     # net_radiation
     assert (
         isinstance(net_radiation, float)
         | isinstance(net_radiation, int)
         | isinstance(net_radiation, np.ndarray)
-    ), "net_radiation parameter must be a float or integer value"
+    ), 'net_radiation parameter must be a float or integer value'
 
     # g
     assert (
         isinstance(g, float) | isinstance(g, int) | isinstance(g, np.ndarray)
-    ), "g parameter must be a float or integer value"
+    ), 'g parameter must be a float or integer value'
 
     # Formulation
     assert (
-        formulation in ["pt", "penman"]
+        formulation in ['pt', 'penman']
     ), f'{formulation} not a valid option for formulation, select "pt" for Pristeley Taylor (pt) or "penman" for Penmman'
 
     # wind_speed
-    if formulation == "penman":
+    if formulation == 'penman':
         assert (
             isinstance(wind_speed_u, float)
             | isinstance(wind_speed_u, int)
             | isinstance(wind_speed_u, np.ndarray)
-        ), "Parameter wind_speed_u required for penman formulation. This must be a float or integer value"
+        ), 'Parameter wind_speed_u required for penman formulation. This must be a float or integer value'
 
         # vpd
         assert (
             isinstance(vpd, float)
             | isinstance(vpd, int)
             | isinstance(vpd, np.ndarray)
-        ), "Parameter vpd required for penman formulation. This must be a float or integer value"
+        ), 'Parameter vpd required for penman formulation. This must be a float or integer value'
 
     # pt_coeff
-    if formulation == "pt" and pt_coeff is None:
-        warnings.warn("Using default value of 1.26 for pt_coeff")
+    if formulation == 'pt' and pt_coeff is None:
+        warnings.warn('Using default value of 1.26 for pt_coeff')
         pt_coeff = 1.26
 
-    elif formulation == "pt" and pt_coeff is not None:
+    elif formulation == 'pt' and pt_coeff is not None:
         assert (
             isinstance(pt_coeff, float)
             | isinstance(pt_coeff, int)
             | isinstance(pt_coeff, np.ndarray)
-        ), "Parameter pt_coeff required for pt formulation. This must be a float or integer value"
+        ), 'Parameter pt_coeff required for pt formulation. This must be a float or integer value'
 
     # Calculate pet -------------------------------------------------------------
 
     # Pristeley-Taylor formulation
-    if formulation == "pt":
+    if formulation == 'pt':
         # Define Constants
 
         # Stefan-Boltzman constant [MJ.K^-4.m^-2.day^-1]
@@ -191,7 +191,7 @@ def compute_pet(
         )
 
     # Penman formulation
-    elif formulation == "penman":
+    elif formulation == 'penman':
         # Define Constants
 
         # Stefan-Boltzman constant [MJ.K^-4.m^-2.day^-1]
@@ -228,16 +228,16 @@ def day_length(
     day_of_year: int,  # numeric (usually integer) value or vector specifying the Julian day (day of the year), for which calculations should be done.
     no_times_as_na: bool = False,  # parameter to determine whether for days without sunrise or sunset, na should be returned for Sunset and Sunrise. If left at FALSE, the function returns -99 and 99 for sunrise and sunset or polar nights and polar days, respectively
 ) -> Dict:  # Dictionary with three elements Sunrise, Sunset and Daylength. For days without sunrise (polar nights),sunset and sunrise become -99 and the daylength 0. For days without sunset, sunset and sunrise are 99 and daylength 24.
-    "Original function from chillR R package. This function computes sunrise time, sunset time and daylength for a particular location and day of the year (Julian day). This is done using equations by Spencer (1971) and Almorox et al. (2005)."
+    'Original function from chillR R package. This function computes sunrise time, sunset time and daylength for a particular location and day of the year (Julian day). This is done using equations by Spencer (1971) and Almorox et al. (2005).'
 
-    warnings.warn("Double check day_length function works for Australia")
+    warnings.warn('Double check day_length function works for Australia')
 
     # Assert parameters ---------------------------------------------------------
     # Latitude
     assert (
         isinstance(latitude, float) | isinstance(latitude, int)
         and 95 >= latitude >= -95
-    ), "Provide latitude as coordinates points bewteen -90 and 90 i.e. latitude = 41.40338"
+    ), 'Provide latitude as coordinates points bewteen -90 and 90 i.e. latitude = 41.40338'
 
     # Day of year
     # Using np.testing instead of assert because parameters can be np.arrays OR
@@ -249,13 +249,13 @@ def day_length(
         operator.__gt__,
         np.array(day_of_year),
         0,
-        err_msg="\nday_of_year must be must be a integer value between 1-366\n",
+        err_msg='\nday_of_year must be must be a integer value between 1-366\n',
     )
 
     np.testing.assert_array_less(
         np.array(day_of_year),
         367,
-        err_msg="\nError: day_of_year must be must be a integer value between 1-366\n",
+        err_msg='\nError: day_of_year must be must be a integer value between 1-366\n',
     )
 
     # Define constants ----------------------------------------------------------
@@ -319,11 +319,11 @@ def day_length(
         or any(np.isnan(sunset))
         or any(np.isnan(day_length))
     ):
-        warnings.warn("nan found in sunrise, sunset or day_length")
+        warnings.warn('nan found in sunrise, sunset or day_length')
 
     # Return dictionary
     return collections.defaultdict(
-        list, {"sunrise": sunrise, "sunset": sunset, "day_length": day_length}
+        list, {'sunrise': sunrise, 'sunset': sunset, 'day_length': day_length}
     )
 
 # %% ../nbs/00_climate_utils.ipynb 23
@@ -331,7 +331,7 @@ def calculate_radiation_diurnal_pattern(
     time_of_day: int,  # Numeric value of vector indicating the time of the day (in seconds)
     day_length: int,  # Value indicating the duration of the day (in seconds). Calculated using the `day_length` function
 ) -> float:
-    "Calculated diurnal pattern of temperature assuming a sinusoidal pattern with T = tmin at sunrise and T = (tmin + tmax)/2 at sunset. From sunset to sunrise follows a linear trend"
+    'Calculated diurnal pattern of temperature assuming a sinusoidal pattern with T = tmin at sunrise and T = (tmin + tmax)/2 at sunset. From sunset to sunrise follows a linear trend'
 
     # Assert parameters ---------------------------------------------------------
 
@@ -344,7 +344,7 @@ def calculate_radiation_diurnal_pattern(
 
     if time_of_day < 0:
         warnings.warn(
-            "time_of_day is a negative value. Not sure if this is correct"
+            'time_of_day is a negative value. Not sure if this is correct'
         )
     # np.testing.assert_array_compare(
     #    operator.__ge__,
@@ -364,17 +364,17 @@ def calculate_radiation_diurnal_pattern(
         operator.__ge__,
         np.array(day_length),
         0,
-        err_msg="\nday_length must be must be value between 0 and 86400\n",
+        err_msg='\nday_length must be must be value between 0 and 86400\n',
     )
 
     np.testing.assert_array_less(
         np.array(day_length),
         86401,
-        err_msg="\nday_length must be must be value between 0 and 86400\n",
+        err_msg='\nday_length must be must be value between 0 and 86400\n',
     )
 
     # Raise warning for time_of_day and day_length
-    warnings.warn("Double check that time_of_day and day_length are in seconds")
+    warnings.warn('Double check that time_of_day and day_length are in seconds')
 
     # Calculate_radiation_diurnal_pattern ---------------------------------------
 
@@ -396,10 +396,10 @@ def calculate_temperature_diurnal_pattern(
     tmax_prev: float,  # Maximum temperature (in degrees C) of the previous target day of the year
     tmin_next: float,  # Minimum temperature (in degrees C) of the next target day of the year
 ) -> float:
-    "Calculated diurnal pattern of temperature assuming a sinusoidal pattern with T = tmin at sunrise and T = (tmin+tmax)/2 at sunset. From sunset to sunrise follows a linear trend"
+    'Calculated diurnal pattern of temperature assuming a sinusoidal pattern with T = tmin at sunrise and T = (tmin+tmax)/2 at sunset. From sunset to sunrise follows a linear trend'
 
     # Raise warning for time_of_day and day_length
-    warnings.warn("Double check that time_of_day and day_length are in seconds")
+    warnings.warn('Double check that time_of_day and day_length are in seconds')
 
     # calculate_temperature_diurnal_pattern -------------------------------------
 
@@ -436,7 +436,7 @@ def calculate_rh_diurnal_pattern(
     tmin: float,  # Unknown parameter definition
     tmax: float,  # Unknown parameter definition
 ) -> float:
-    "Calculate diurnal pattern of relative humidity from temperature"
+    'Calculate diurnal pattern of relative humidity from temperature'
 
     # calculate rh diurnal pattern ----------------------------------------------
     return rhmax + ((temperature - tmin) / (tmax - tmin)) * (rhmin - rhmax)
@@ -448,55 +448,55 @@ def rg_watt_ppfd_umol_conversions(
     j_to_mol: float = 4.6,  # Conversion factor
     frac_par: float = 0.5,  # Function of solar rdiation that is photosynthetically active radiation (PAR)
     selected_conversion: str = [  # String indicating to what units rg should be converted
-        "rg_watts_to_ppfd_umol",
-        "ppfd_umol_to_rg_watts",
+        'rg_watts_to_ppfd_umol',
+        'ppfd_umol_to_rg_watts',
     ],
 ) -> float:
-    "Convert Global Radiation (rg) in watts to Photosynthetic Photon Flux Density (ppfd) in umol and viceversa"
+    'Convert Global Radiation (rg) in watts to Photosynthetic Photon Flux Density (ppfd) in umol and viceversa'
 
     # Assert parameters ---------------------------------------------------------
 
     # Make sure that selected_conversion only has three options
     assert (
-        selected_conversion in ["ppfd_umol_to_rg_watts", "rg_watts_to_ppfd_umol"]
+        selected_conversion in ['ppfd_umol_to_rg_watts', 'rg_watts_to_ppfd_umol']
     ), f'{selected_conversion} not a valid option for selected_conversion, select "ppfd_umol_to_rg_watts" or "rg_watts_to_ppfd_umol"'
 
     # Make sure the necessary parameters for a given conversion are provided
-    if selected_conversion == "ppfd_umol_to_rg_watts":
+    if selected_conversion == 'ppfd_umol_to_rg_watts':
         assert (
             isinstance(ppfd, float)
             | isinstance(ppfd, int)
             | isinstance(ppfd, np.ndarray)
-        ), "ppfd missing. Parameter must be a float or integer value"
+        ), 'ppfd missing. Parameter must be a float or integer value'
 
-    elif selected_conversion == "rg_watts_to_ppfd_umol":
+    elif selected_conversion == 'rg_watts_to_ppfd_umol':
         assert (
             isinstance(rg, float)
             | isinstance(rg, int)
             | isinstance(rg, np.ndarray)
-        ), "rg missing. Parameter must be a float or integer value"
+        ), 'rg missing. Parameter must be a float or integer value'
 
     # Warn in case j_to_mol or frac_par are not provided
     if j_to_mol == 4.6:
-        warnings.warn("Using j_to_mol default value of 4.6")
+        warnings.warn('Using j_to_mol default value of 4.6')
 
     if frac_par == 0.5:
-        warnings.warn("Using frac_par default value of 0.5")
+        warnings.warn('Using frac_par default value of 0.5')
 
     # Conversions ---------------------------------------------------------------
 
     # Calculate rg from ppfd (rg)(W/m2)
-    if selected_conversion == "ppfd_umol_to_rg_watts":
-        print("Conversion of ppfd to rg")
+    if selected_conversion == 'ppfd_umol_to_rg_watts':
+        print('Conversion of ppfd to rg')
         return ppfd / frac_par / j_to_mol
 
     # Calculate ppfd (umol.m-2.s-1) from rg
-    elif selected_conversion == "rg_watts_to_ppfd_umol":
-        print("Conversion of rg to ppfd")
+    elif selected_conversion == 'rg_watts_to_ppfd_umol':
+        print('Conversion of rg to ppfd')
         return rg * frac_par * j_to_mol
 
     else:
-        raise ValueError("Conversion failed")
+        raise ValueError('Conversion failed')
 
 # %% ../nbs/00_climate_utils.ipynb 34
 def rg_units_conversion(
@@ -504,76 +504,76 @@ def rg_units_conversion(
     rg_mj: float = None,  # instantaneous radiation (in Mega Jule?)
     nhours: float = None,  # Unknown parameter definition
     selected_conversion: str = [  # String indicating to what units rg should be converted
-        "watts_to_mj",
-        "mj_to_watts",
-        "mj_to_watts_hour",
+        'watts_to_mj',
+        'mj_to_watts',
+        'mj_to_watts_hour',
     ],
 ) -> float:
-    "Convert instantaneous radiation in watt to dialy cumulative radiation in MJ (MJ.day-1) and viceversa"
+    'Convert instantaneous radiation in watt to dialy cumulative radiation in MJ (MJ.day-1) and viceversa'
 
     # Assert parameters ---------------------------------------------------------
 
     # Make sure that selected_conversion only has three options
     assert (
-        selected_conversion in ["watts_to_mj", "mj_to_watts", "mj_to_watts_hour"]
+        selected_conversion in ['watts_to_mj', 'mj_to_watts', 'mj_to_watts_hour']
     ), f'{selected_conversion} not a valid option for selected_conversion, select "watts_to_mj","mj_to_watts" or "mj_to_watts_hour"'
 
     # Make sure the necessary parameters for a given conversion are provided
-    if selected_conversion == "watts_to_mj":
+    if selected_conversion == 'watts_to_mj':
         assert (
             isinstance(rg_watts, float)
             | isinstance(rg_watts, int)
             | isinstance(rg_watts, np.ndarray)
-        ), "rg_watts missing. Parameter must be a float or integer value"
+        ), 'rg_watts missing. Parameter must be a float or integer value'
 
-    elif selected_conversion == "mj_to_watts":
+    elif selected_conversion == 'mj_to_watts':
         assert (
             isinstance(rg_mj, float)
             | isinstance(rg_mj, int)
             | isinstance(rg_mj, np.ndarray)
-        ), "rg_mj missing. Parameter must be a float or integer value"
+        ), 'rg_mj missing. Parameter must be a float or integer value'
 
-    elif selected_conversion == "mj_to_watts_hour":
+    elif selected_conversion == 'mj_to_watts_hour':
         assert (
             isinstance(rg_mj, float)
             | isinstance(rg_mj, int)
             | isinstance(rg_mj, np.ndarray)
-        ), "rg_mj missing. Parameter must be a float or integer value"
+        ), 'rg_mj missing. Parameter must be a float or integer value'
 
         assert (
             isinstance(nhours, float)
             | isinstance(nhours, int)
             | isinstance(nhours, np.ndarray)
-        ), "nhours missing. Parameter must be a float or integer value"
+        ), 'nhours missing. Parameter must be a float or integer value'
 
     # Conversions ---------------------------------------------------------------
-    if selected_conversion == "watts_to_mj":
-        print("Conversion of rg from watts to Mega Jules per day")
+    if selected_conversion == 'watts_to_mj':
+        print('Conversion of rg from watts to Mega Jules per day')
 
         # Conversion from watts to Mega Jules
         return rg_watts * 0.0864
 
-    elif selected_conversion == "mj_to_watts":
-        print("Conversion of rg from Mega Jules per day to Watts")
+    elif selected_conversion == 'mj_to_watts':
+        print('Conversion of rg from Mega Jules per day to Watts')
 
         # Conversion from Mega Jules to watts
         return rg_mj * (1 / 0.0864)
 
-    elif selected_conversion == "mj_to_watts_hour":
-        print("Conversion of rg from Mega Jules to Watts per hour")
+    elif selected_conversion == 'mj_to_watts_hour':
+        print('Conversion of rg from Mega Jules to Watts per hour')
 
         # Conversion from Mega Jules to watts/hour
         return rg_mj * (10**6 / (nhours * 3600))
 
     else:
-        raise ValueError("rg units conversion failed")
+        raise ValueError('rg units conversion failed')
 
 # %% ../nbs/00_climate_utils.ipynb 39
 def declination(
     day_of_year: int,  # julian day (day of the year)
     day_of_spring: int = 80,  # Julian day representing the first day of spring
 ) -> float:  # Earth declination at day_of_year
-    "Calculate declination of sun (radians ? ) for a given julian day (DOY)"
+    'Calculate declination of sun (radians ? ) for a given julian day (DOY)'
 
     # Hervé's formula for solar declination
 
@@ -591,19 +591,19 @@ def declination(
         operator.__gt__,
         np.array(day_of_year),
         0,
-        err_msg="\nday_of_year must be must be a integer value between 1-366\n",
+        err_msg='\nday_of_year must be must be a integer value between 1-366\n',
     )
 
     np.testing.assert_array_less(
         np.array(day_of_year),
         367,
-        err_msg="\nError: day_of_year must be must be a integer value between 1-366\n",
+        err_msg='\nError: day_of_year must be must be a integer value between 1-366\n',
     )
 
     # date_of_spring
     assert isinstance(
         day_of_spring, int
-    ), "day_of_spring must be must be a integer value i.e. 80, 90, 1"
+    ), 'day_of_spring must be must be a integer value i.e. 80, 90, 1'
 
     # Constans ------------------------------------------------------------------
 
@@ -614,7 +614,7 @@ def declination(
     # date of spring
     day_of_spring_c3 = day_of_spring
     warnings.warn(
-        f"date of spring set to {day_of_spring_c3}. This might change for Australia"
+        f'date of spring set to {day_of_spring_c3}. This might change for Australia'
     )
 
     x = c1 * sin((day_of_year - day_of_spring_c3) * c2)
@@ -628,9 +628,9 @@ def potential_par(
     latitude: float,  # Numeric value specifying the geographic latitude (in decimal degrees) of the location of interest
     day_of_year: int,  # Julian day (day of the year)
 ) -> np.array:  # Potential Photosynthetic Active Radiation (PAR) for each time_of_day at given latitude and given day_of_year
-    "Determine potential for a given place and date /used to determine cloud cover return potential par in W.m2"
+    'Determine potential for a given place and date /used to determine cloud cover return potential par in W.m2'
 
-    warnings.warn("Make sure time of day is hours in potential_par function")
+    warnings.warn('Make sure time of day is hours in potential_par function')
 
     # Assert parameters ---------------------------------------------------------
 
@@ -639,20 +639,20 @@ def potential_par(
         operator.__ge__,
         np.array(time_of_day_in_hours),
         0,
-        err_msg="\ntime_of_day must be must equal or greater than 0\n",
+        err_msg='\ntime_of_day must be must equal or greater than 0\n',
     )
 
     np.testing.assert_array_less(
         np.array(time_of_day_in_hours),
         25,
-        err_msg="\nError: time_of_day must be must be equal or lower than 24\n",
+        err_msg='\nError: time_of_day must be must be equal or lower than 24\n',
     )
 
     # Latitude
     assert (
         isinstance(latitude, float) | isinstance(latitude, int)
         and 95 >= latitude >= -95
-    ), "Provide latitude as coordinates points bewteen -90 and 90 i.e. latitude = 41.40338"
+    ), 'Provide latitude as coordinates points bewteen -90 and 90 i.e. latitude = 41.40338'
 
     # Day of year
     # Using np.testing instead of assert because parameters can be np.arrays OR
@@ -664,13 +664,13 @@ def potential_par(
         operator.__gt__,
         np.array(day_of_year),
         0,
-        err_msg="\nday_of_year must be must be a integer value between 1-366\n",
+        err_msg='\nday_of_year must be must be a integer value between 1-366\n',
     )
 
     np.testing.assert_array_less(
         np.array(day_of_year),
         367,
-        err_msg="\nError: day_of_year must be must be a integer value between 1-366\n",
+        err_msg='\nError: day_of_year must be must be a integer value between 1-366\n',
     )
 
     # Calculate declination -----------------------------------------------------

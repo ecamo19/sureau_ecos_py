@@ -32,46 +32,46 @@ def new_wb_clim(
     year: int,  # Year,
     day_of_year: int,  # Day of the year
 ) -> Dict:  # Dictionary containing parameters to run the model
-    "Create a list with all necessary daily climate values to run SureauR from climate_data"
+    'Create a list with all necessary daily climate values to run SureauR from climate_data'
 
     # Assert parameters ---------------------------------------------------------
 
     # Year
     assert (
         isinstance(year, int) and 3000 >= year > 0
-    ), "year must be a integer value between 0-3000"
+    ), 'year must be a integer value between 0-3000'
 
     # Day of year
     assert (
         isinstance(day_of_year, int) and 366 >= day_of_year >= 1
-    ), "day_of_year must be a integer value between 1-366"
+    ), 'day_of_year must be a integer value between 1-366'
 
     # Assert row index start at 1 and not at 0
     assert (
         np.array(climate_data.index)[0] != 0
-    ), "First row index is 0 and should be 1. Fix before proceeding"
+    ), 'First row index is 0 and should be 1. Fix before proceeding'
 
     # Create wb_clim dictionary -------------------------------------------------
 
     # Check that year and day_of_year are present inside the dataframe
     if (
-        year in climate_data["year"].values
-        and day_of_year in climate_data["day_of_year"].values
+        year in climate_data['year'].values
+        and day_of_year in climate_data['day_of_year'].values
     ):
         # Make sure there are no rows with the same date
         if (
             len(
                 climate_data[
-                    (climate_data["year"] == year)
-                    & (climate_data["day_of_year"] == day_of_year)
+                    (climate_data['year'] == year)
+                    & (climate_data['day_of_year'] == day_of_year)
                 ]
             )
             == 1
         ):
             # Get row index in climate frame based on year and doy
             row_index = climate_data[
-                (climate_data["year"] == year)
-                & (climate_data["day_of_year"] == day_of_year)
+                (climate_data['year'] == year)
+                & (climate_data['day_of_year'] == day_of_year)
             ].index[0]
 
             # Transfrom row to a dictionary with params
@@ -81,30 +81,30 @@ def new_wb_clim(
 
         else:
             raise ValueError(
-                "Erroneous climate data format : duplicated lines ?"
+                'Erroneous climate data format : duplicated lines ?'
             )
 
     else:
         raise ValueError(
-            f"year:{year} and/or day_of_year:{day_of_year} not found in climate dataframe"
+            f'year:{year} and/or day_of_year:{day_of_year} not found in climate dataframe'
         )
 
     # Add parameters to dictionary ----------------------------------------------
-    wb_clim_dict["net_radiation"] = float("NAN")
-    wb_clim_dict["pet"] = float("NAN")
+    wb_clim_dict['net_radiation'] = float('NAN')
+    wb_clim_dict['pet'] = float('NAN')
 
-    wb_clim_dict["vpd"] = compute_vpd_from_t_rh(
-        relative_humidity=wb_clim_dict["RHair_mean"],
-        temperature=wb_clim_dict["Tair_mean"],
+    wb_clim_dict['vpd'] = compute_vpd_from_t_rh(
+        relative_humidity=wb_clim_dict['RHair_mean'],
+        temperature=wb_clim_dict['Tair_mean'],
     )
 
     # Rename parameters
-    wb_clim_dict["ppt"] = wb_clim_dict["PPT_sum"]
-    wb_clim_dict["rg"] = wb_clim_dict["RG_sum"]
+    wb_clim_dict['ppt'] = wb_clim_dict['PPT_sum']
+    wb_clim_dict['rg'] = wb_clim_dict['RG_sum']
 
     # Delete old parameters
-    del wb_clim_dict["PPT_sum"]
-    del wb_clim_dict["RG_sum"]
+    del wb_clim_dict['PPT_sum']
+    del wb_clim_dict['RG_sum']
 
     # Add Temperature from previous and next days -------------------------------
 
@@ -114,14 +114,14 @@ def new_wb_clim(
 
     # if the row_index is not the first nor the last
     if row_index != 1 and row_index != climate_data.shape[0]:
-        wb_clim_dict["Tair_min_prev"] = climate_data.loc[row_index - 1][
-            "Tair_min"
+        wb_clim_dict['Tair_min_prev'] = climate_data.loc[row_index - 1][
+            'Tair_min'
         ]
-        wb_clim_dict["Tair_min_next"] = climate_data.loc[row_index + 1][
-            "Tair_min"
+        wb_clim_dict['Tair_min_next'] = climate_data.loc[row_index + 1][
+            'Tair_min'
         ]
-        wb_clim_dict["Tair_max_prev"] = climate_data.loc[row_index - 1][
-            "Tair_max"
+        wb_clim_dict['Tair_max_prev'] = climate_data.loc[row_index - 1][
+            'Tair_max'
         ]
 
         return wb_clim_dict
@@ -130,34 +130,34 @@ def new_wb_clim(
 
     # if the row_index is the first
     elif row_index == 1:
-        print("Firts day of the simulation. Tair is the same as the current")
+        print('Firts day of the simulation. Tair is the same as the current')
 
-        wb_clim_dict["Tair_min_prev"] = climate_data.loc[row_index]["Tair_min"]
-        wb_clim_dict["Tair_min_next"] = climate_data.loc[row_index + 1][
-            "Tair_min"
+        wb_clim_dict['Tair_min_prev'] = climate_data.loc[row_index]['Tair_min']
+        wb_clim_dict['Tair_min_next'] = climate_data.loc[row_index + 1][
+            'Tair_min'
         ]
-        wb_clim_dict["Tair_max_prev"] = climate_data.loc[row_index]["Tair_max"]
+        wb_clim_dict['Tair_max_prev'] = climate_data.loc[row_index]['Tair_max']
 
         return wb_clim_dict
 
     elif row_index == climate_data.shape[0]:
         print(
-            "Last day of the simulation. Tair_min_next is the same as the Tair_min"
+            'Last day of the simulation. Tair_min_next is the same as the Tair_min'
         )
 
-        wb_clim_dict["Tair_min_prev"] = climate_data.loc[row_index - 1][
-            "Tair_min"
+        wb_clim_dict['Tair_min_prev'] = climate_data.loc[row_index - 1][
+            'Tair_min'
         ]
-        wb_clim_dict["Tair_min_next"] = climate_data.loc[row_index]["Tair_min"]
-        wb_clim_dict["Tair_max_prev"] = climate_data.loc[row_index - 1][
-            "Tair_max"
+        wb_clim_dict['Tair_min_next'] = climate_data.loc[row_index]['Tair_min']
+        wb_clim_dict['Tair_max_prev'] = climate_data.loc[row_index - 1][
+            'Tair_max'
         ]
 
         return wb_clim_dict
 
     else:
         raise ValueError(
-            "Error setting previous and next temperature conditions"
+            'Error setting previous and next temperature conditions'
         )
 
 # %% ../nbs/22_sureau_core_clim.ipynb 10
@@ -165,43 +165,43 @@ def compute_rn_and_pet_wb_clim(
     wb_veg: Dict,
     wb_clim: Dict,  # Dictionary created using the `new_wb_clim` function
     rn_formulation: str,  # Method to be used to calculate net radiation from global radiation, either `linacre`  or 'linear' (the linear method is not implemnted yet)
-    etp_formulation="pt",  # Formulation of ETP to be used, either `pt` (Priestley-Taylor) or `penman` (Penmman)
+    etp_formulation='pt',  # Formulation of ETP to be used, either `pt` (Priestley-Taylor) or `penman` (Penmman)
 ):
-    "Compute daily potential evapotranspiration (pet) and net radiation (rn) for wb_clim"
+    'Compute daily potential evapotranspiration (pet) and net radiation (rn) for wb_clim'
 
     # Assert parameters ---------------------------------------------------------
 
     # wb_veg
     assert isinstance(
         wb_veg, Dict
-    ), f"wb_veg must be a Dictionary not a {type(wb_veg)}"
+    ), f'wb_veg must be a Dictionary not a {type(wb_veg)}'
 
     # wb_clim
     assert isinstance(
         wb_clim, Dict
-    ), f"wb_clim must be a Dictionary not a {type(wb_clim)}"
+    ), f'wb_clim must be a Dictionary not a {type(wb_clim)}'
 
     # rn_formulation
     assert rn_formulation in [
-        "linacre",
-        "linear",
+        'linacre',
+        'linear',
     ], f'{rn_formulation} not a valid option, choose "linacre" or "linear"'
 
     # pet formulation
     assert etp_formulation in [
-        "pt",
-        "penman",
+        'pt',
+        'penman',
     ], f'{etp_formulation} not a valid option, choose "pt" or "penman"'
 
     # Calculate net radiation ---------------------------------------------------
-    if rn_formulation == "linacre":
+    if rn_formulation == 'linacre':
         # if wb_clim['nN'] is empty
-        if not wb_clim["nN"]:
+        if not wb_clim['nN']:
             # Step done for deleting wb_clim['nN']
-            del wb_clim["nN"]
+            del wb_clim['nN']
 
             # nN = np.zeros(1)
-            if wb_clim["ppt"] > 0:
+            if wb_clim['ppt'] > 0:
                 # if rain (is pluie)
                 nN = 0.25
 
@@ -210,44 +210,44 @@ def compute_rn_and_pet_wb_clim(
             nN = 0.75
             print(nN)
 
-        wb_clim["net_radiation"] = np.maximum(
+        wb_clim['net_radiation'] = np.maximum(
             0,
             1e-6
             * (
-                (1 - 0.17) * 1e6 * wb_clim["rg"]
-                - 1927.987 * (1 + 4 * nN) * (100 - wb_clim["Tair_mean"])
+                (1 - 0.17) * 1e6 * wb_clim['rg']
+                - 1927.987 * (1 + 4 * nN) * (100 - wb_clim['Tair_mean'])
             ),
         )
 
-    elif rn_formulation == "linear":
-        wb_clim["net_radiation"] = (
-            wb_veg["arad"] * wb_clim["rg"] + wb_veg["brad"]
+    elif rn_formulation == 'linear':
+        wb_clim['net_radiation'] = (
+            wb_veg['arad'] * wb_clim['rg'] + wb_veg['brad']
         )
 
     else:
         raise ValueError(
             print(
-                "Error calculating net radiation in compute_rn_and_pet_wb_clim"
+                'Error calculating net radiation in compute_rn_and_pet_wb_clim'
             )
         )
 
     # Calculate PET -------------------------------------------------------------
-    if etp_formulation == "pt":
-        wb_clim["pet"] = compute_pet(
-            tmoy=wb_clim["Tair_mean"],
-            net_radiation=wb_clim["net_radiation"],
-            pt_coeff=wb_veg["params"]["pt_coeff"],
-            formulation="pt",
+    if etp_formulation == 'pt':
+        wb_clim['pet'] = compute_pet(
+            tmoy=wb_clim['Tair_mean'],
+            net_radiation=wb_clim['net_radiation'],
+            pt_coeff=wb_veg['params']['pt_coeff'],
+            formulation='pt',
         )
 
-    elif etp_formulation == "penman":
+    elif etp_formulation == 'penman':
         raise ValueError(
-            print("Pennman formulation for ETP not implemented yet")
+            print('Pennman formulation for ETP not implemented yet')
         )
 
     else:
         raise ValueError(
-            print("Error calculating PET in compute_rn_and_pet_wb_clim")
+            print('Error calculating PET in compute_rn_and_pet_wb_clim')
         )
 
     return wb_clim
@@ -258,15 +258,15 @@ def interp_wb_clim(
     clim_2: Dict,  # Unknown parameter definition
     p: float = 0.5,  # Unknown parameter definition
 ):
-    "Interpolate climate values between two WBclim objects"
+    'Interpolate climate values between two WBclim objects'
 
     res = clim_1
-    res["Tair_mean"] = (1 - p) * clim_1["Tair_mean"] + p * clim_2["Tair_mean"]
-    res["RG"] = (1 - p) * clim_1["RG"] + p * clim_2["RG"]
-    res["WS"] = (1 - p) * clim_1["WS"] + p * clim_2["WS"]
-    res["VPD"] = (1 - p) * clim_1["VPD"] + p * clim_2["VPD"]
-    res["RHair_mean"] = (1 - p) * clim_1["RHair_mean"] + p * clim_2["RHair_mean"]
-    res["pet"] = (1 - p) * clim_1["pet"] + p * clim_2["pet"]
+    res['Tair_mean'] = (1 - p) * clim_1['Tair_mean'] + p * clim_2['Tair_mean']
+    res['RG'] = (1 - p) * clim_1['RG'] + p * clim_2['RG']
+    res['WS'] = (1 - p) * clim_1['WS'] + p * clim_2['WS']
+    res['VPD'] = (1 - p) * clim_1['VPD'] + p * clim_2['VPD']
+    res['RHair_mean'] = (1 - p) * clim_1['RHair_mean'] + p * clim_2['RHair_mean']
+    res['pet'] = (1 - p) * clim_1['pet'] + p * clim_2['pet']
 
 # %% ../nbs/22_sureau_core_clim.ipynb 15
 def new_wb_clim_hour(
@@ -277,37 +277,37 @@ def new_wb_clim_hour(
     modeling_options: Dict,  # Dictionary created using the `create_modeling_options` function
     pt_coeff: float,  # An empirical constant accounting for the vapor pressure deficit and resistance values Typically, α is 1.26 for open bodies of water, but has a wide range of values from less than 1 (humid conditions) to almost 2 (arid conditions).
 ) -> Dict:  # Dictionary containing parameters to run the model
-    "Create a list with interpolated climate data at the required time step"
+    'Create a list with interpolated climate data at the required time step'
 
     # Assert parameters ---------------------------------------------------------
 
     # wb_clim
     assert isinstance(
         wb_clim, Dict
-    ), f"wb_clim must be a Dictionary not a {type(wb_clim)}"
+    ), f'wb_clim must be a Dictionary not a {type(wb_clim)}'
 
     # wb_veg
     assert isinstance(
         wb_veg, Dict
-    ), f"wb_veg must be a Dictionary not a {type(wb_veg)}"
+    ), f'wb_veg must be a Dictionary not a {type(wb_veg)}'
 
     # modeling_options
     assert isinstance(
         modeling_options, Dict
-    ), f"modeling_options must be a Dictionary not a {type(modeling_options)}"
+    ), f'modeling_options must be a Dictionary not a {type(modeling_options)}'
 
     # Latitude and longitude
     assert (
         isinstance(latitude, float) and isinstance(longitude, float)
-    ), "Missing latitude and/or longitude. Provide latitude and/or longitude as Coordinates points i.e. latitude = 41.40338, longitude = 2.17403"
+    ), 'Missing latitude and/or longitude. Provide latitude and/or longitude as Coordinates points i.e. latitude = 41.40338, longitude = 2.17403'
 
     # pt_coeff
     assert isinstance(
         pt_coeff, float
-    ), f"pt_coeff must be a float i.e. 2.0001 not a {type(pt_coeff)}"
+    ), f'pt_coeff must be a float i.e. 2.0001 not a {type(pt_coeff)}'
 
     # Calculate day_lenght ------------------------------------------------------
-    if modeling_options["constant_climate"] is False:
+    if modeling_options['constant_climate'] is False:
         # calculate sunrise, sunset and daylength (in seconds from midgnight)
         # depends of DAY, latt and lon
         # sunrise_sunset_daylen <- as.numeric(daylength(lat = lat, long = lon,
@@ -315,7 +315,7 @@ def new_wb_clim_hour(
 
         # Calculate day_length
         sunrise_sunset_daylength_hours = day_length(
-            latitude=latitude, day_of_year=wb_clim["day_of_year"]
+            latitude=latitude, day_of_year=wb_clim['day_of_year']
         )
 
         # Create empty dict
@@ -334,11 +334,11 @@ def new_wb_clim_hour(
 
     else:
         warnings.warn(
-            "Parameter constant_climate in modeling_options set to True, using default parameters"
+            'Parameter constant_climate in modeling_options set to True, using default parameters'
         )
 
         warnings.warn(
-            "Sunrise, sunset and daylenght units are hours for constant_climate"
+            'Sunrise, sunset and daylenght units are hours for constant_climate'
         )
 
         # Calculate day_length
@@ -360,37 +360,37 @@ def new_wb_clim_hour(
             )
 
     # Set new values for days with day_length equal to 24 hours -----------------
-    if sunrise_sunset_daylength_seconds["day_length"] == 24 * 3600:
-        print("Days with no nights")
-        sunrise_sunset_daylength_seconds["sunrise"] = 0
-        sunrise_sunset_daylength_seconds["sunset"] = 24 * 3600
-        sunrise_sunset_daylength_seconds["day_length"] = 24 * 3600
+    if sunrise_sunset_daylength_seconds['day_length'] == 24 * 3600:
+        print('Days with no nights')
+        sunrise_sunset_daylength_seconds['sunrise'] = 0
+        sunrise_sunset_daylength_seconds['sunset'] = 24 * 3600
+        sunrise_sunset_daylength_seconds['day_length'] = 24 * 3600
 
     # Set new values for days with day_length equal to 0 hours ------------------
-    if sunrise_sunset_daylength_seconds["day_length"] == 0:
-        print("Days with no daylight")
-        sunrise_sunset_daylength_seconds["sunrise"] = 12 * 3600
-        sunrise_sunset_daylength_seconds["sunset"] = 12 * 3600
+    if sunrise_sunset_daylength_seconds['day_length'] == 0:
+        print('Days with no daylight')
+        sunrise_sunset_daylength_seconds['sunrise'] = 12 * 3600
+        sunrise_sunset_daylength_seconds['sunset'] = 12 * 3600
 
-        sunrise_sunset_daylength_seconds["day_length"] = 0
+        sunrise_sunset_daylength_seconds['day_length'] = 0
 
     # Desegregation at the hourly time step -------------------------------------
     time_hour = np.arange(0, 24)
 
     # time relative to sunset (in seconds)
     warnings.warn(
-        "Issue #3 in gitlab not solved. Comment in R code say time relative to sunset but sunrise was used instead."
+        'Issue #3 in gitlab not solved. Comment in R code say time relative to sunset but sunrise was used instead.'
     )
     time_relative_to_sunset_sec = (
         time_hour * 3600
-    ) - sunrise_sunset_daylength_seconds["sunrise"]
+    ) - sunrise_sunset_daylength_seconds['sunrise']
 
     # Calculate radiation  ------------------------------------------------------
     radiation = []
 
-    if sunrise_sunset_daylength_seconds["day_length"] == 0:
+    if sunrise_sunset_daylength_seconds['day_length'] == 0:
         warnings.warn(
-            "day_length is 0 using 0.001 in calculate_radiation_diurnal_pattern function"
+            'day_length is 0 using 0.001 in calculate_radiation_diurnal_pattern function'
         )
 
         for each_time_step in time_relative_to_sunset_sec:
@@ -402,12 +402,12 @@ def new_wb_clim_hour(
                 )
             )
 
-    elif sunrise_sunset_daylength_seconds["day_length"] > 0:
+    elif sunrise_sunset_daylength_seconds['day_length'] > 0:
         for each_time_step in time_relative_to_sunset_sec:
             radiation.append(
                 calculate_radiation_diurnal_pattern(
                     time_of_day=each_time_step,
-                    day_length=sunrise_sunset_daylength_seconds["day_length"],
+                    day_length=sunrise_sunset_daylength_seconds['day_length'],
                 )
             )
 
@@ -422,7 +422,7 @@ def new_wb_clim_hour(
     # Set 0 radiation at night
     radiation[
         (time_relative_to_sunset_sec < 0)
-        | ((time_hour * 3600) >= sunrise_sunset_daylength_seconds["sunset"])
+        | ((time_hour * 3600) >= sunrise_sunset_daylength_seconds['sunset'])
     ] = 0
 
     # Create wb_clim_hour dictionary --------------------------------------------
@@ -431,25 +431,25 @@ def new_wb_clim_hour(
     wb_clim_hour = collections.defaultdict(list)
 
     # Add parameters ------------------------------------------------------------
-    wb_clim_hour["rg"] = wb_clim["rg"] * radiation * 3600
+    wb_clim_hour['rg'] = wb_clim['rg'] * radiation * 3600
 
-    wb_clim_hour["rn"] = wb_clim["net_radiation"] * radiation * 3600
+    wb_clim_hour['rn'] = wb_clim['net_radiation'] * radiation * 3600
 
     # Get Photosyntetic Photon Flux Density (aka PAR) from rg
-    wb_clim_hour["par"] = rg_watt_ppfd_umol_conversions(
+    wb_clim_hour['par'] = rg_watt_ppfd_umol_conversions(
         rg=rg_units_conversion(
-            rg_mj=wb_clim_hour["rg"],
+            rg_mj=wb_clim_hour['rg'],
             nhours=1,
-            selected_conversion="mj_to_watts_hour",
+            selected_conversion='mj_to_watts_hour',
         ),
-        selected_conversion="rg_watts_to_ppfd_umol",
+        selected_conversion='rg_watts_to_ppfd_umol',
     )
 
     # Potential par
-    wb_clim_hour["potential_par"] = potential_par(
+    wb_clim_hour['potential_par'] = potential_par(
         time_of_day_in_hours=time_hour,
         latitude=latitude,
-        day_of_year=wb_clim["day_of_year"],
+        day_of_year=wb_clim['day_of_year'],
     )
 
     # Air temperature
@@ -458,33 +458,33 @@ def new_wb_clim_hour(
         air_temperature.append(
             calculate_temperature_diurnal_pattern(
                 time_of_day=each_time_step,
-                tmin=wb_clim["Tair_min"],
-                tmax=wb_clim["Tair_max"],
-                tmin_prev=wb_clim["Tair_min_prev"],
-                tmax_prev=wb_clim["Tair_max_prev"],
-                tmin_next=wb_clim["Tair_min_next"],
-                day_length=sunrise_sunset_daylength_seconds["day_length"],
+                tmin=wb_clim['Tair_min'],
+                tmax=wb_clim['Tair_max'],
+                tmin_prev=wb_clim['Tair_min_prev'],
+                tmax_prev=wb_clim['Tair_max_prev'],
+                tmin_next=wb_clim['Tair_min_next'],
+                day_length=sunrise_sunset_daylength_seconds['day_length'],
             )
         )
 
     # Convert air_temperature to flatten np.array
-    wb_clim_hour["tair_mean"] = np.array(air_temperature).flatten()
+    wb_clim_hour['tair_mean'] = np.array(air_temperature).flatten()
 
     # Air relative humidity
     relative_humidity = np.empty((0), float)
-    for each_tair_temp in wb_clim_hour["tair_mean"]:
+    for each_tair_temp in wb_clim_hour['tair_mean']:
         relative_humidity = np.append(
             relative_humidity,
             calculate_rh_diurnal_pattern(
                 temperature=each_tair_temp,
-                tmin=wb_clim["Tair_min"],
+                tmin=wb_clim['Tair_min'],
                 # 0.0000001 added to prevent crash when
                 # tmin = tmax
-                tmax=wb_clim["Tair_max"] + 0.0000001,
-                rhmin=wb_clim["RHair_min"],
+                tmax=wb_clim['Tair_max'] + 0.0000001,
+                rhmin=wb_clim['RHair_min'],
                 # 0.0000001 added to prevent crash when
                 # RHair_min = RHair_max
-                rhmax=wb_clim["RHair_max"] + 0.0000001,
+                rhmax=wb_clim['RHair_max'] + 0.0000001,
             ),
         )
 
@@ -492,70 +492,70 @@ def new_wb_clim_hour(
     relative_humidity[relative_humidity < 0] = 0.5
 
     # Convert relative_humidity to flatten np.array
-    wb_clim_hour["rhair_mean"] = relative_humidity
+    wb_clim_hour['rhair_mean'] = relative_humidity
 
     # Wind Speed
     warnings.warn(
-        "No time interpolation for wind speed. Assumed to be constant during the day"
+        'No time interpolation for wind speed. Assumed to be constant during the day'
     )
 
-    wb_clim_hour["wind_speed"] = np.repeat(wb_clim["WS_mean"], 24)
+    wb_clim_hour['wind_speed'] = np.repeat(wb_clim['WS_mean'], 24)
 
     # VPD
-    wb_clim_hour["vpd"] = compute_vpd_from_t_rh(
-        relative_humidity=wb_clim_hour["rhair_mean"],
-        temperature=wb_clim_hour["tair_mean"],
+    wb_clim_hour['vpd'] = compute_vpd_from_t_rh(
+        relative_humidity=wb_clim_hour['rhair_mean'],
+        temperature=wb_clim_hour['tair_mean'],
     )
 
     # PET
     # pet = np.empty((0), float)
-    if modeling_options["etp_formulation"] == "pt":
-        wb_clim_hour["pet"] = compute_pet(
-            tmoy=wb_clim_hour["tair_mean"],
-            net_radiation=wb_clim_hour["rn"],
+    if modeling_options['etp_formulation'] == 'pt':
+        wb_clim_hour['pet'] = compute_pet(
+            tmoy=wb_clim_hour['tair_mean'],
+            net_radiation=wb_clim_hour['rn'],
             pt_coeff=pt_coeff,
-            formulation="pt",
+            formulation='pt',
         )
 
-    elif modeling_options["etp_formulation"] == "penman":
-        wb_clim_hour["pet"] = compute_pet(
-            tmoy=wb_clim_hour["tair_mean"],
-            net_radiation=wb_clim_hour["rn"],
-            wind_speed_u=wb_clim_hour["wind_speed"],
-            vpd=wb_clim_hour["vpd"],
-            formulation="penman",
+    elif modeling_options['etp_formulation'] == 'penman':
+        wb_clim_hour['pet'] = compute_pet(
+            tmoy=wb_clim_hour['tair_mean'],
+            net_radiation=wb_clim_hour['rn'],
+            wind_speed_u=wb_clim_hour['wind_speed'],
+            vpd=wb_clim_hour['vpd'],
+            formulation='penman',
         )
 
     else:
-        raise ValueError("Error calculating PET in new_wb_clim_hour function")
+        raise ValueError('Error calculating PET in new_wb_clim_hour function')
 
     # Time
-    wb_clim_hour["time"] = modeling_options["time"]
+    wb_clim_hour['time'] = modeling_options['time']
 
     # nhours; array showing the difference between each time step. Done in this
     # way for making circular. meaning that it show the difference between
     # that 24 is the end and 0 is the beggining
-    wb_clim_hour["nhours"] = np.concatenate(
-        [np.diff([wb_clim_hour["time"][-1], 24]), np.diff(wb_clim_hour["time"])]
+    wb_clim_hour['nhours'] = np.concatenate(
+        [np.diff([wb_clim_hour['time'][-1], 24]), np.diff(wb_clim_hour['time'])]
     )
 
     # Get the index where time_hour and time are the same.
     # Remember that python index start at 0
-    index_matched = np.where(np.in1d(time_hour, wb_clim_hour["time"]))
+    index_matched = np.where(np.in1d(time_hour, wb_clim_hour['time']))
 
     # Get the params corresponding to each time
-    if len(modeling_options["time"]) < 24:
-        wb_clim_hour["rg"] = wb_clim_hour["rg"][index_matched]
-        wb_clim_hour["rn"] = wb_clim_hour["rn"][index_matched]
-        wb_clim_hour["par"] = wb_clim_hour["par"][index_matched]
-        wb_clim_hour["pet"] = wb_clim_hour["pet"][index_matched]
-        wb_clim_hour["tair_mean"] = wb_clim_hour["tair_mean"][index_matched]
-        wb_clim_hour["rhair_mean"] = wb_clim_hour["rhair_mean"][index_matched]
-        wb_clim_hour["vpd"] = wb_clim_hour["vpd"][index_matched]
-        wb_clim_hour["wind_speed"] = wb_clim_hour["wind_speed"][index_matched]
+    if len(modeling_options['time']) < 24:
+        wb_clim_hour['rg'] = wb_clim_hour['rg'][index_matched]
+        wb_clim_hour['rn'] = wb_clim_hour['rn'][index_matched]
+        wb_clim_hour['par'] = wb_clim_hour['par'][index_matched]
+        wb_clim_hour['pet'] = wb_clim_hour['pet'][index_matched]
+        wb_clim_hour['tair_mean'] = wb_clim_hour['tair_mean'][index_matched]
+        wb_clim_hour['rhair_mean'] = wb_clim_hour['rhair_mean'][index_matched]
+        wb_clim_hour['vpd'] = wb_clim_hour['vpd'][index_matched]
+        wb_clim_hour['wind_speed'] = wb_clim_hour['wind_speed'][index_matched]
 
     # All ppt of the day fall at midnight
-    wb_clim_hour["ppt"] = np.zeros(len(modeling_options["time"]))
-    wb_clim_hour["ppt"][0] = wb_clim["ppt"]
+    wb_clim_hour['ppt'] = np.zeros(len(modeling_options['time']))
+    wb_clim_hour['ppt'][0] = wb_clim['ppt']
 
     return wb_clim_hour

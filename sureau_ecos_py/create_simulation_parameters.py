@@ -16,34 +16,34 @@ def create_simulation_parameters(
     end_year_simulation: int,  # Integer indicating the ending year for the simulation (must match the dates of the input climate data file)
     output_path: str,  # Path of output result file.
     output_type: str = None,  # The output variables of the model that should be written in the output model file.
-    resolution_output: str = "subdaily",  # the resolution chosen to write variables in files, `subdaily`, `daily` or `yearly`.
+    resolution_output: str = 'subdaily',  # the resolution chosen to write variables in files, `subdaily`, `daily` or `yearly`.
     overwrite: bool = False,  # Indicates whether the output result file can be overwritten if it already exists
 ) -> Dict:
-    "Create a dictionary with the simulation parameters to run SureauEcos. Can be used as an input in"
+    'Create a dictionary with the simulation parameters to run SureauEcos. Can be used as an input in'
 
     # Assert parameters ---------------------------------------------------------
 
     # Make sure output_path and main_dir are str
     assert isinstance(
         output_path, str
-    ), f"output_path must be a string not a {type(output_path)}"
+    ), f'output_path must be a string not a {type(output_path)}'
 
     assert isinstance(
         main_dir, str
-    ), f"main_dir must be a string not a {type(main_dir)}"
+    ), f'main_dir must be a string not a {type(main_dir)}'
 
     if not os.path.isdir(main_dir):
         raise ValueError(
-            f"Directory: {main_dir}, does not exist, check presence or spelling"
+            f'Directory: {main_dir}, does not exist, check presence or spelling'
         )
 
     # Make sure that resolution output only has three options
     assert (
         resolution_output
         in [
-            "subdaily",
-            "daily",
-            "yearly",
+            'subdaily',
+            'daily',
+            'yearly',
         ]
     ), f'{resolution_output} not a valid option, select "subdaily", "daily" or "yearly"'
 
@@ -52,56 +52,56 @@ def create_simulation_parameters(
         output_type
         in [
             None,
-            "simple_subdaily",
-            "simple_daily",
-            "simple_yearly",
+            'simple_subdaily',
+            'simple_daily',
+            'simple_yearly',
         ]
     ), f'{output_type} not a valid option, select  None, "simple_subdaily", "simple_daily" or "simple_yearly"'
 
     # Compare end_year_simulation is larger than start_year_simulation
     assert (
         start_year_simulation <= end_year_simulation
-    ), f"start_year_simulation ({start_year_simulation}) is larger than end_year_simulation ({end_year_simulation})  "
+    ), f'start_year_simulation ({start_year_simulation}) is larger than end_year_simulation ({end_year_simulation})  '
 
     # Create simulation paramters -----------------------------------------------
     simulation_parameters = collections.defaultdict(list)
 
     # Add parameters
-    simulation_parameters["main_dir"] = main_dir
-    simulation_parameters["resolution_output"] = resolution_output
-    simulation_parameters["start_year_simulation"] = start_year_simulation
-    simulation_parameters["end_year_simulation"] = end_year_simulation
-    simulation_parameters["output_path"] = output_path
+    simulation_parameters['main_dir'] = main_dir
+    simulation_parameters['resolution_output'] = resolution_output
+    simulation_parameters['start_year_simulation'] = start_year_simulation
+    simulation_parameters['end_year_simulation'] = end_year_simulation
+    simulation_parameters['output_path'] = output_path
 
     if output_type is None:
-        if resolution_output == "subdaily":
-            simulation_parameters["output_type"] = "simple_subdaily"
+        if resolution_output == 'subdaily':
+            simulation_parameters['output_type'] = 'simple_subdaily'
 
-        elif resolution_output == "daily":
-            simulation_parameters["output_type"] = "simple_daily"
+        elif resolution_output == 'daily':
+            simulation_parameters['output_type'] = 'simple_daily'
 
-        elif resolution_output == "yearly":
-            simulation_parameters["output_type"] = "simple_yearly"
+        elif resolution_output == 'yearly':
+            simulation_parameters['output_type'] = 'simple_yearly'
     else:
-        simulation_parameters["output_type"] = output_type
+        simulation_parameters['output_type'] = output_type
 
     # Create folder for storing output ------------------------------------------
 
     # Join path for storing output
-    output_path = os.path.join(output_path, "sureau_output")
+    output_path = os.path.join(output_path, 'sureau_output')
 
     # New folder
     if not os.path.exists(output_path):
         # Create folder
         os.mkdir(output_path)
-        print("Directory for storing output created at {output_path}")
+        print('Directory for storing output created at {output_path}')
 
     # Overwrite folder
     elif os.path.exists(output_path) and overwrite is True:
         shutil.rmtree(output_path)
         os.makedirs(output_path)
-        simulation_parameters["output_path"] = output_path
-        print(f"Directory ({output_path}) for storing output overwritten")
+        simulation_parameters['output_path'] = output_path
+        print(f'Directory ({output_path}) for storing output overwritten')
 
     # Errors
     elif os.path.exists(output_path) and overwrite is False:
@@ -111,7 +111,7 @@ def create_simulation_parameters(
 
     else:
         raise ValueError(
-            "Error creating folder in simulation_parameters function"
+            'Error creating folder in simulation_parameters function'
         )
 
     return simulation_parameters
