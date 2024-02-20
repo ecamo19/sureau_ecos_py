@@ -369,13 +369,33 @@ def calculate_ebound_mm_granier(
 
 # %% ../nbs/02_plant_utils.ipynb 29
 def calculate_ebound_granier(
-    etp: float,  # Unknown parameter definition
+    pet: float,  # Unknown parameter definition
     lai: float,  # Leaf area index of the stand (m2leaf.m-2soil)
     time_step: float,  # Time step (in hours)
 ) -> float:
     "No description found in R source code"
 
-    ebound_mm = calculate_ebound_mm_granier(etp=etp, lai=lai)
+    # Assert parameters ---------------------------------------------------------
+    # pet
+    assert (
+        isinstance(pet, float)
+        | isinstance(pet, int)
+        | isinstance(pet, np.ndarray)
+    ), "pet missing. Parameter must be a float or integer value"
+
+    # lai
+    assert (
+        isinstance(lai, float)
+        | isinstance(lai, int)
+        | isinstance(lai, np.ndarray)
+    ), "lai missing. Parameter must be a float or integer value"
+
+    # time_step
+    assert isinstance(time_step, int) | isinstance(
+        time_step, np.ndarray
+    ), "nhours missing. Parameter must be a float or integer value"
+
+    ebound_mm = calculate_ebound_mm_granier(etp=pet, lai=lai)
 
     return convert_flux_from_mm_to_mmolm2s(
         x=ebound_mm, time_step=time_step, lai=lai
@@ -408,14 +428,46 @@ def compute_tleaf(
 ) -> Dict:  # Dictionary with parameters
     "Compute leaf temperature and Vapour Pressure deficit"
 
-    # Assert parameters -----------------------------------------------------
-    assert (
-        0 <= relative_humidity <= 100
-    ), "relative_humidity must be a value between 0 and 100"
+    # Assert parameters ---------------------------------------------------------
 
+    # t_air
     assert (
         -40 <= t_air <= 70
     ), "Unrealistic air temperature, value must be a value between -40 and 70"
+
+    # par
+    assert (
+        0 < par <= 2500
+    ), "Unrealistic par, value must be a value between 0 and 2500"
+
+    # potential_par
+    assert (
+        0 < potential_par <= 2500
+    ), "Unrealistic potential_par, value must be a value between 0 and 2500"
+
+    # gs
+    assert 0 < gs <= 25, "Unrealistic gs, value must be a value between 0 and 25"
+
+    # g_cuti
+    assert (
+        0 < g_cuti <= 200
+    ), "Unrealistic g_cuti, value must be a value between 0 and 200"
+
+    # e_inst
+    assert 0 < e_inst, "Unrealistic e_inst, value must be a value greater than 0"
+
+    # psi_leaf
+    assert 0 > psi_leaf, "Water potential values must be negative"
+
+    # Leaf size
+    assert isinstance(leaf_size, float) | isinstance(
+        leaf_size, int
+    ), "turn_off_eb must be boolean (True or False)"
+
+    # Relative humidity
+    assert (
+        0 <= relative_humidity <= 100
+    ), "relative_humidity must be a value between 0 and 100"
 
     assert isinstance(
         turn_off_eb, bool
@@ -428,7 +480,7 @@ def compute_tleaf(
         "granier",
     ], f'{transpiration_model} not a valid option, choose  "jarvis" or "granier"'
 
-    # Constants -------------------------------------------------------------
+    # Constants -----------------------------------------------------------------
 
     # Force minimum wind speed to avoid excessive heating
     wind_speed = np.maximum(wind_speed, 0.1)
@@ -522,7 +574,7 @@ def compute_tleaf(
     # Update VPD with esat and ea (why?)
     vpd_x = e_sat - ea
 
-    # Bilan radiatif --------------------------------------------------------
+    # Bilan radiatif ------------------------------------------------------------
 
     # Radiation absorbed by leaves
     swr_abs = (
@@ -598,7 +650,7 @@ def compute_tleaf(
     # Unknown meaning of ym
     ym = psychro_constant * (rst / rblr)
 
-    # Compute Tleaf with linear approximation -------------------------------
+    # Compute Tleaf with linear approximation -----------------------------------
     delta_t = (
         ym * rni * rblr / (dry_air_density * heat_capacity_dry_air) - vpd_x
     ) / (s + ym)
@@ -921,10 +973,7 @@ def read_vegetation_file(
     return vegetation_parameters
 
 # %% ../nbs/02_plant_utils.ipynb 42
-def k_series_sum(k1:float,
-                 k2:float
-                 )->float:
-
+def k_series_sum(k1: float, k2: float) -> float:
     "Function to sum 2 conductances in series"
 
     # Assert parameters ---------------------------------------------------------
@@ -937,4 +986,4 @@ def k_series_sum(k1:float,
     ), "k2 must be a numeric value"
 
     # Sum conductances ----------------------------------------------------------
-    return 1/(1 / k1 + 1 / k2)
+    return 1 / (1 / k1 + 1 / k2)

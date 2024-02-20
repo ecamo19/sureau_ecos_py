@@ -6,11 +6,17 @@ __all__ = ['new_wb_veg', 'compute_pheno_wb_veg', 'update_capacitances_apo_and_sy
            'update_kplant_wb_veg', 'compute_transpiration_wb_veg']
 
 # %% ../nbs/21_sureau_core_veg.ipynb 3
-import warnings
 import collections
 import numpy as np
 from typing import Dict
-from .plant_utils import plc_comp, rs_comp, compute_dfmc, k_series_sum
+from sureau_ecos_py.plant_utils import (
+    plc_comp,
+    rs_comp,
+    compute_dfmc,
+    k_series_sum,
+    compute_tleaf,
+    calculate_ebound_granier,
+)
 
 from sureau_ecos_py.create_vegetation_parameters import (
     create_vegetation_parameters,
@@ -721,7 +727,7 @@ def compute_water_storage_wb_veg(
 
     return wb_veg
 
-# %% ../nbs/21_sureau_core_veg.ipynb 29
+# %% ../nbs/21_sureau_core_veg.ipynb 28
 def compute_evapo_intercepted_wb_veg(
     wb_veg: Dict,  # Dictionary created using the `new_wb_veg` function
     pet: float,  # Potential evapotranspiration
@@ -767,7 +773,7 @@ def compute_evapo_intercepted_wb_veg(
 
     return wb_veg
 
-# %% ../nbs/21_sureau_core_veg.ipynb 32
+# %% ../nbs/21_sureau_core_veg.ipynb 30
 def update_kplant_wb_veg(
     wb_veg: Dict,  # Dictionary created using the `new_wb_veg` function
     wb_soil: Dict,  # Missing definition
@@ -805,14 +811,13 @@ def update_kplant_wb_veg(
 
     return wb_veg
 
-# %% ../nbs/21_sureau_core_veg.ipynb 35
+# %% ../nbs/21_sureau_core_veg.ipynb 32
 def compute_transpiration_wb_veg(
     wb_veg: Dict,  # Dictionary created using the `new_wb_veg` function
     wb_clim: Dict,  # Dictionary created using the `new_wb_clim` function
     modeling_options: Dict,  # Dictionary created using the `create_modeling_options` function
-    nhours:int, # Array showing the difference between each time step
+    nhours: int,  # Array showing the difference between each time step
 ) -> Dict:
-
     # Assert parameters ---------------------------------------------------------
 
     # wb_veg
@@ -830,5 +835,37 @@ def compute_transpiration_wb_veg(
         modeling_options, Dict
     ), f"modeling_options must be a dictionary not a {type(modeling_options)}"
 
+    # nhours
+    assert isinstance(nhours, int) | isinstance(
+        nhours, np.ndarray
+    ), "nhours missing. Parameter must be a float or integer value"
 
+    # Compute transpiration for wb_veg ------------------------------------------
 
+    if modeling_options["transpiration_model"] == "granier":
+        e_inst = wb_veg["e_lim"] + wb_veg["e_min"]
+
+        # Compute tleaf
+        t_gbl_leaf = compute_tleaf(
+            t_air=wb_clim["Tair_mean"],
+            par=wb_clim["par"],
+            potential_par=wb_clim["potential_par"],
+            wind_speed=wb_clim["wind_speed"],
+            relative_humidity=wb_clim["rhair_mean"],
+            e_inst=e_inst,
+            psi_leaf=wb_veg["psi_lsym"],
+            leaf_size=50,
+            leaf_angle=45,
+            turn_off_eb=False,
+            transpiration_model=modeling_options["transpiration_model"],
+        )
+
+        # Add params to dictionary
+        wb_veg["leaf_temperature"] = t_gbl_leaf["t_leaf"]
+        wb_veg["g_bl"] = t_gbl_leaf["g_bl"]
+        wb_veg["leaf_vpd"] = t_gbl_leaf["vpd_leaf"]
+
+        # Calculate e_bound
+        wb_veg["e_bound"] = calculate_ebound_granier(
+            etp=wb_clim[""], lai=wb_veg["lai"], time_step=nhours
+        )
